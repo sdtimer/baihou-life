@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.baihou.mapper.BaihouOrderMapper">
+
+    <resultMap id="BaihouOrderResultMap" type="com.ruoyi.baihou.domain.BaihouOrder">
+        <id property="orderId" column="order_id"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="userId" column="user_id"/>
+        <result property="regionId" column="region_id"/>
+        <result property="totalAmount" column="total_amount"/>
+        <result property="payAmount" column="pay_amount"/>
+        <result property="status" column="status"/>
+        <result property="paymentMethod" column="payment_method"/>
+        <result property="transactionId" column="transaction_id"/>
+        <result property="remark" column="remark"/>
+        <result property="adminNote" column="admin_note"/>
+        <result property="trackingNo" column="tracking_no"/>
+        <result property="paidAt" column="paid_at"/>
+        <result property="shippedAt" column="shipped_at"/>
+        <result property="completedAt" column="completed_at"/>
+        <result property="closedAt" column="closed_at"/>
+        <result property="expiresAt" column="expires_at"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="selectOrderList" parameterType="com.ruoyi.baihou.domain.BaihouOrder" resultMap="BaihouOrderResultMap">
+        select order_id,
+               order_no,
+               user_id,
+               region_id,
+               total_amount,
+               pay_amount,
+               status,
+               payment_method,
+               transaction_id,
+               remark,
+               admin_note,
+               tracking_no,
+               paid_at,
+               shipped_at,
+               completed_at,
+               closed_at,
+               expires_at,
+               create_time,
+               update_time
+        from bh_order
+        <where>
+            <if test="regionId != null and regionId != ''">
+                and region_id = #{regionId}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+        order by order_id desc
+    </select>
+
+    <select id="selectOrderById" parameterType="long" resultMap="BaihouOrderResultMap">
+        select order_id,
+               order_no,
+               user_id,
+               region_id,
+               total_amount,
+               pay_amount,
+               status,
+               payment_method,
+               transaction_id,
+               remark,
+               admin_note,
+               tracking_no,
+               paid_at,
+               shipped_at,
+               completed_at,
+               closed_at,
+               expires_at,
+               create_time,
+               update_time
+        from bh_order
+        where order_id = #{orderId}
+    </select>
+
+    <update id="updateOrder">
+        update bh_order
+        <set>
+            <if test="request.status != null and request.status != ''">
+                status = #{request.status},
+            </if>
+            <if test="request.trackingNo != null and request.trackingNo != ''">
+                tracking_no = #{request.trackingNo},
+            </if>
+            <if test="request.adminNote != null">
+                admin_note = #{request.adminNote},
+            </if>
+            <if test="request.status == 'shipped'">
+                shipped_at = now(),
+            </if>
+            <if test="request.status == 'completed'">
+                completed_at = now(),
+            </if>
+            <if test="request.status == 'closed'">
+                closed_at = now(),
+            </if>
+            update_time = now()
+        </set>
+        where order_id = #{orderId}
+    </update>
+
+    <update id="closeExpiredPendingPayOrders">
+        update bh_order
+        set status = 'closed',
+            closed_at = now(),
+            update_time = now()
+        where status = 'pending_pay'
+          and expires_at is not null
+          and expires_at <![CDATA[ < ]]> now()
+    </update>
+
+    <update id="autoCompleteShippedOrders">
+        update bh_order
+        set status = 'completed',
+            completed_at = now(),
+            update_time = now()
+        where status = 'shipped'
+          and shipped_at is not null
+          and shipped_at <![CDATA[ < ]]> date_sub(now(), interval 15 day)
+    </update>
+</mapper>

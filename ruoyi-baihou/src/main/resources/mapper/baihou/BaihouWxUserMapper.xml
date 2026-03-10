@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.baihou.mapper.BaihouWxUserMapper">
+
+    <select id="selectUserIdByPhoneHash" resultType="long">
+        select uid
+        from bh_wx_user
+        where phone_hash = #{phoneHash}
+        limit 1
+    </select>
+
+    <update id="updateUserRole">
+        update bh_wx_user
+        set role = #{role},
+            update_time = now()
+        where uid = #{userId}
+    </update>
+
+    <update id="updateUserStatus">
+        update bh_wx_user
+        set status = #{status},
+            update_time = now()
+        where uid = #{userId}
+    </update>
+
+</mapper>

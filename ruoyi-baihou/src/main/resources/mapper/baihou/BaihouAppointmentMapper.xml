@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.baihou.mapper.BaihouAppointmentMapper">
+
+    <resultMap id="BaihouAppointmentResultMap" type="com.ruoyi.baihou.domain.BaihouAppointment">
+        <id property="appointmentId" column="appointment_id"/>
+        <result property="appointmentNo" column="appointment_no"/>
+        <result property="userId" column="user_id"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerPhone" column="customer_phone"/>
+        <result property="serviceType" column="service_type"/>
+        <result property="preferredDate" column="preferred_date"/>
+        <result property="preferredTime" column="preferred_time"/>
+        <result property="address" column="address"/>
+        <result property="remark" column="remark"/>
+        <result property="productId" column="product_id"/>
+        <result property="regionId" column="region_id"/>
+        <result property="status" column="status"/>
+        <result property="assignedTo" column="assigned_to"/>
+        <result property="adminNote" column="admin_note"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="selectAppointmentList" parameterType="com.ruoyi.baihou.domain.BaihouAppointment" resultMap="BaihouAppointmentResultMap">
+        select appointment_id,
+               appointment_no,
+               user_id,
+               customer_name,
+               customer_phone,
+               service_type,
+               preferred_date,
+               preferred_time,
+               address,
+               remark,
+               product_id,
+               region_id,
+               status,
+               assigned_to,
+               admin_note,
+               create_time,
+               update_time
+        from bh_appointment
+        <where>
+            <if test="regionId != null and regionId != ''">
+                and region_id = #{regionId}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+        order by appointment_id desc
+    </select>
+
+    <select id="selectAppointmentById" parameterType="long" resultMap="BaihouAppointmentResultMap">
+        select appointment_id,
+               appointment_no,
+               user_id,
+               customer_name,
+               customer_phone,
+               service_type,
+               preferred_date,
+               preferred_time,
+               address,
+               remark,
+               product_id,
+               region_id,
+               status,
+               assigned_to,
+               admin_note,
+               create_time,
+               update_time
+        from bh_appointment
+        where appointment_id = #{appointmentId}
+    </select>
+
+    <update id="updateAppointment">
+        update bh_appointment
+        <set>
+            <if test="request.status != null and request.status != ''">
+                status = #{request.status},
+            </if>
+            <if test="request.assignedTo != null">
+                assigned_to = #{request.assignedTo},
+            </if>
+            <if test="request.adminNote != null">
+                admin_note = #{request.adminNote},
+            </if>
+            <if test="request.status == 'confirmed'">
+                confirmed_at = now(),
+            </if>
+            <if test="request.status == 'completed'">
+                completed_at = now(),
+            </if>
+            <if test="request.status == 'cancelled'">
+                cancelled_at = now(),
+            </if>
+            update_time = now()
+        </set>
+        where appointment_id = #{appointmentId}
+    </update>
+</mapper>
