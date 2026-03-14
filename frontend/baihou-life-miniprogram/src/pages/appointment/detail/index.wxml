@@ -1,0 +1,33 @@
+<bh-shell title="预约详情" subtitle="量尺、配送、安装等服务状态在这里统一查看。">
+  <bh-empty wx:if="{{loading}}" title="预约详情加载中" subtitle="正在同步最新服务状态。" />
+  <bh-empty wx:elif="{{!detail}}" title="预约不存在" subtitle="请返回预约列表重新进入。" />
+  <view wx:else class="detail-card bh-card">
+    <view class="detail-card__header">
+      <view>
+        <view class="detail-card__order-no">{{detail.appointment_no}}</view>
+        <view class="detail-card__create-time">{{detail.preferred_date}}</view>
+      </view>
+      <bh-status-chip status="{{detail.status}}" text="{{detail.status_text}}" />
+    </view>
+
+    <view class="detail-card__section">
+      <view class="detail-card__label">服务类型</view>
+      <view class="detail-card__value">{{detail.service_type_text}}</view>
+    </view>
+
+    <view class="detail-card__section">
+      <view class="detail-card__label">预约人</view>
+      <view class="detail-card__value">{{detail.customer_name}}</view>
+    </view>
+
+    <view class="detail-card__section">
+      <view class="detail-card__label">联系电话</view>
+      <view class="detail-card__value">{{detail.customer_phone}}</view>
+    </view>
+
+    <view class="detail-card__section">
+      <view class="detail-card__label">备注</view>
+      <view class="detail-card__value">{{detail.remark || '未填写'}}</view>
+    </view>
+  </view>
+</bh-shell>

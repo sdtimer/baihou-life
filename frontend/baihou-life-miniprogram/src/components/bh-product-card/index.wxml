@@ -1,0 +1,24 @@
+<view class="bh-product-card bh-card" bindtap="handleTap">
+  <view class="bh-product-card__image-wrap">
+    <image class="bh-product-card__image" mode="aspectFill" src="{{item.cover_image}}" />
+    <view class="bh-product-card__image-overlay"></view>
+    <text class="bh-product-card__category-badge">{{item.category_name}}</text>
+  </view>
+  <view class="bh-product-card__body">
+    <view class="bh-product-card__brand">{{item.brand}}</view>
+    <view class="bh-product-card__name">{{item.name}}</view>
+    <view wx:if="{{item.space_tags.length || item.scene_tags.length}}" class="bh-product-card__tags">
+      <text wx:for="{{item.space_tags}}" wx:key="*this" class="bh-product-card__tag">{{item}}</text>
+      <text wx:for="{{item.scene_tags}}" wx:key="*this" class="bh-product-card__tag">{{item}}</text>
+    </view>
+    <view class="bh-product-card__footer">
+      <view class="bh-price">
+        <text wx:if="{{showDesigner && item.designer_price}}" class="bh-price__main">¥{{item.designer_price}}</text>
+        <text wx:elif="{{item.guide_price !== null && item.guide_price !== undefined}}" class="bh-price__main">¥{{item.guide_price}}</text>
+        <text wx:else class="bh-meta">登录后查看价格</text>
+        <text wx:if="{{showDesigner && item.guide_price !== null && item.guide_price !== undefined}}" class="bh-price__secondary">¥{{item.guide_price}}</text>
+      </view>
+      <text class="bh-meta">{{item.price_unit}}</text>
+    </view>
+  </view>
+</view>

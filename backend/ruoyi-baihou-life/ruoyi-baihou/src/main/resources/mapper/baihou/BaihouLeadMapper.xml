@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.baihou.mapper.BaihouLeadMapper">
+
+    <resultMap id="BaihouLeadResultMap" type="com.ruoyi.baihou.domain.BaihouLead">
+        <id property="leadId" column="lead_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="regionId" column="region_id"/>
+        <result property="status" column="status"/>
+        <result property="assignedTo" column="assigned_to"/>
+        <result property="followNote" column="follow_note"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="selectLeadList" parameterType="com.ruoyi.baihou.domain.BaihouLead" resultMap="BaihouLeadResultMap">
+        select lead_id,
+               user_id,
+               product_id,
+               product_name,
+               category_id,
+               name,
+               phone,
+               region_id,
+               status,
+               assigned_to,
+               follow_note,
+               create_time,
+               update_time
+        from bh_lead
+        where del_flag = '0'
+        <if test="regionId != null and regionId != ''">
+            and region_id = #{regionId}
+        </if>
+        <if test="status != null and status != ''">
+            and status = #{status}
+        </if>
+        <if test="categoryId != null">
+            and category_id = #{categoryId}
+        </if>
+        <if test="assignedTo != null">
+            and assigned_to = #{assignedTo}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            and create_time <![CDATA[ >= ]]> #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            and create_time <![CDATA[ <= ]]> #{endDate}
+        </if>
+        order by lead_id desc
+    </select>
+
+    <select id="selectLeadById" parameterType="long" resultMap="BaihouLeadResultMap">
+        select lead_id,
+               user_id,
+               product_id,
+               product_name,
+               category_id,
+               name,
+               phone,
+               region_id,
+               status,
+               assigned_to,
+               follow_note,
+               create_time,
+               update_time
+        from bh_lead
+        where lead_id = #{leadId}
+          and del_flag = '0'
+    </select>
+
+    <update id="updateLead">
+        update bh_lead
+        <set>
+            <if test="request.status != null and request.status != ''">
+                status = #{request.status},
+            </if>
+            <if test="request.assignedTo != null">
+                assigned_to = #{request.assignedTo},
+            </if>
+            <if test="request.followNote != null">
+                follow_note = #{request.followNote},
+            </if>
+            update_time = now()
+        </set>
+        where lead_id = #{leadId}
+          and del_flag = '0'
+    </update>
+
+    <insert id="insertLead" parameterType="com.ruoyi.baihou.domain.BaihouLead" useGeneratedKeys="true" keyProperty="leadId">
+        insert into bh_lead (user_id, product_id, product_name, name, phone, region_id, status, del_flag, create_time, update_time)
+        values (#{userId}, #{productId}, #{productName}, #{name}, #{phone}, #{regionId}, #{status}, '0', now(), now())
+    </insert>
+
+    <select id="countRecentDuplicateLead" resultType="int">
+        select count(1)
+        from bh_lead
+        where del_flag = '0'
+          and phone = #{phone}
+          <if test="productId != null">
+              and product_id = #{productId}
+          </if>
+          <if test="userId != null">
+              and user_id = #{userId}
+          </if>
+          and create_time <![CDATA[ >= ]]> date_sub(now(), interval 24 hour)
+    </select>
+</mapper>

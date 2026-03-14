@@ -1,0 +1,39 @@
+.detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.detail-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.detail-card__order-no {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.detail-card__create-time {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #8b7d6b;
+}
+
+.detail-card__section {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.detail-card__label {
+  font-size: 24rpx;
+  color: #8b7d6b;
+}
+
+.detail-card__value {
+  font-size: 28rpx;
+  color: #2a221c;
+  word-break: break-all;
+}

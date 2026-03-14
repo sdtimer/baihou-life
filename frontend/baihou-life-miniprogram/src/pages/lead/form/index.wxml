@@ -1,0 +1,20 @@
+<bh-shell title="留下你的空间需求" subtitle="表单设计以低负担和高完成率为优先。">
+  <view class="form-card bh-card">
+    <view wx:if="{{form.product_name}}" class="form-card__context">当前咨询：{{form.product_name}}</view>
+    <view class="form-row">
+      <view class="form-label">你的称呼</view>
+      <input class="form-card__input" placeholder="姓名" data-field="name" bindinput="bindField" value="{{form.name}}" />
+    </view>
+    <view class="form-row">
+      <view class="form-label">联系方式</view>
+      <input class="form-card__input" placeholder="手机号" type="number" maxlength="11" data-field="phone" bindinput="bindField" value="{{form.phone}}" />
+    </view>
+    <view class="form-row">
+      <view class="form-label">空间需求</view>
+      <textarea class="form-card__textarea" placeholder="想了解的空间、风格或预算" data-field="intention" bindinput="bindField" value="{{form.intention}}" />
+    </view>
+    <view class="form-submit-row">
+      <button class="bh-button-primary" loading="{{submitting}}" bindtap="submit">{{submitting ? '提交中' : '提交留资'}}</button>
+    </view>
+  </view>
+</bh-shell>

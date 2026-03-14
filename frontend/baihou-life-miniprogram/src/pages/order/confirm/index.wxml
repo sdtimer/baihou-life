@@ -1,0 +1,19 @@
+<bh-shell title="确认订单" subtitle="订单页强调状态清晰和支付动作的确定性。">
+  <bh-empty wx:if="{{loading}}" title="订单信息加载中" subtitle="正在同步商品与区域信息。" />
+  <view wx:elif="{{product}}" class="order-confirm bh-card">
+    <image class="order-confirm__image" src="{{product.cover_image}}" mode="aspectFill" />
+    <view class="order-confirm__body">
+      <view class="order-confirm__name">{{product.name}}</view>
+      <view class="order-confirm__meta">{{product.brand}} · {{product.category_name}}</view>
+      <view class="order-confirm__price-section bh-price">
+        <text class="bh-price__main">¥{{product.guide_price}}</text>
+        <text class="bh-meta">{{product.price_unit}}</text>
+      </view>
+      <view class="order-confirm__action">
+        <button class="bh-button-primary" loading="{{submitting}}" bindtap="submitOrder">{{submitting ? '支付处理中' : '创建订单并支付'}}</button>
+      </view>
+      <view class="order-confirm__note">订单创建后 30 分钟内完成支付，逾期自动关闭</view>
+    </view>
+  </view>
+  <bh-empty wx:else title="商品不可下单" subtitle="请返回商品页重新确认当前区域可售状态。" />
+</bh-shell>

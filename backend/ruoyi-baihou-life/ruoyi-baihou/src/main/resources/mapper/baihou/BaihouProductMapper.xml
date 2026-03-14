@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.baihou.mapper.BaihouProductMapper">
+
+    <resultMap id="BaihouProductResult" type="com.ruoyi.baihou.domain.BaihouProduct">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="skuCode" column="sku_code"/>
+        <result property="brand" column="brand"/>
+        <result property="model" column="model"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="guidePrice" column="guide_price"/>
+        <result property="priceUnit" column="price_unit"/>
+        <result property="designerDiscount" column="designer_discount"/>
+        <result property="regions" column="regions"/>
+        <result property="spaceTags" column="space_tags"/>
+        <result property="sceneTags" column="scene_tags"/>
+        <result property="specParams" column="spec_params"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <resultMap id="BaihouMediaResult" type="com.ruoyi.baihou.domain.BaihouMedia">
+        <id property="mediaId" column="media_id"/>
+        <result property="type" column="type"/>
+        <result property="url" column="url"/>
+        <result property="thumbnailUrl" column="thumbnail_url"/>
+        <result property="fileFormat" column="file_format"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="fileName" column="file_name"/>
+    </resultMap>
+
+    <sql id="selectProductColumns">
+        select id, name, sku_code, brand, model, category_id, guide_price, price_unit,
+               designer_discount, regions, space_tags, scene_tags, spec_params, description,
+               status, sort_order, del_flag, create_by, create_time, update_by, update_time
+        from bh_product
+    </sql>
+
+    <select id="selectProductList" parameterType="com.ruoyi.baihou.domain.BaihouProduct" resultMap="BaihouProductResult">
+        <include refid="selectProductColumns"/>
+        where del_flag = '0'
+        <if test="keyword != null and keyword != ''">
+            and (name like concat('%', #{keyword}, '%') or sku_code like concat('%', #{keyword}, '%'))
+        </if>
+        <if test="categoryId != null">
+            and category_id = #{categoryId}
+        </if>
+        <if test="regionId != null and regionId != ''">
+            and (json_contains(regions, json_quote(#{regionId})) or json_contains(regions, json_quote('ALL')))
+        </if>
+        <if test="spaceTags != null and spaceTags != ''">
+            and json_contains(space_tags, json_quote(#{spaceTags}))
+        </if>
+        <if test="sceneTags != null and sceneTags != ''">
+            and json_contains(scene_tags, json_quote(#{sceneTags}))
+        </if>
+        <if test="status != null and status != ''">
+            and status = #{status}
+        </if>
+        order by
+        <choose>
+            <when test="sortBy == 'price_asc'">guide_price asc, id desc</when>
+            <when test="sortBy == 'price_desc'">guide_price desc, id desc</when>
+            <when test="sortBy == 'newest'">create_time desc, id desc</when>
+            <otherwise>sort_order desc, create_time desc, id desc</otherwise>
+        </choose>
+        <if test="pageNum != null and pageSize != null and pageNum &gt; 0 and pageSize &gt; 0">
+            limit #{pageSize} offset ${(pageNum - 1) * pageSize}
+        </if>
+    </select>
+
+    <select id="selectProductById" resultMap="BaihouProductResult">
+        <include refid="selectProductColumns"/>
+        where id = #{id}
+          and del_flag = '0'
+    </select>
+
+    <insert id="insertProduct" parameterType="com.ruoyi.baihou.domain.BaihouProduct" useGeneratedKeys="true" keyProperty="id">
+        insert into bh_product (
+            name, sku_code, brand, model, category_id, guide_price, price_unit,
+            designer_discount, regions, space_tags, scene_tags, spec_params, description,
+            status, sort_order, del_flag, create_by, create_time, update_by, update_time
+        ) values (
+            #{name}, #{skuCode}, #{brand}, #{model}, #{categoryId}, #{guidePrice}, #{priceUnit},
+            #{designerDiscount}, #{regions}, #{spaceTags}, #{sceneTags}, #{specParams}, #{description},
+            #{status}, #{sortOrder}, #{delFlag}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime}
+        )
+    </insert>
+
+    <update id="updateProduct" parameterType="com.ruoyi.baihou.domain.BaihouProduct">
+        update bh_product
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="skuCode != null">sku_code = #{skuCode},</if>
+            brand = #{brand},
+            model = #{model},
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            guide_price = #{guidePrice},
+            price_unit = #{priceUnit},
+            designer_discount = #{designerDiscount},
+            regions = #{regions},
+            space_tags = #{spaceTags},
+            scene_tags = #{sceneTags},
+            spec_params = #{specParams},
+            description = #{description},
+            <if test="status != null">status = #{status},</if>
+            <if test="sortOrder != null">sort_order = #{sortOrder},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            update_time = #{updateTime}
+        </set>
+        where id = #{id}
+          and del_flag = '0'
+    </update>
+
+    <update id="updateProductStatus">
+        update bh_product
+        set status = #{status},
+            update_time = now()
+        where id = #{id}
+          and del_flag = '0'
+    </update>
+
+    <update id="archiveProduct">
+        update bh_product
+        set status = 'archived',
+            del_flag = '1',
+            update_time = now()
+        where id = #{id}
+          and del_flag = '0'
+    </update>
+
+    <update id="batchUpdateProductStatus">
+        update bh_product
+        set status = #{status},
+            update_time = now()
+        where del_flag = '0'
+          and id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="batchArchiveProducts">
+        update bh_product
+        set status = 'archived',
+            del_flag = '1',
+            update_time = now()
+        where del_flag = '0'
+          and id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="countProductMedia" resultType="int">
+        select count(1)
+        from bh_media
+        where product_id = #{productId}
+    </select>
+
+    <select id="selectProductMediaList" resultMap="BaihouMediaResult">
+        select media_id, type, url, thumbnail_url, file_format, file_size, file_name
+        from bh_media
+        where product_id = #{productId}
+        order by sort_order asc, media_id asc
+    </select>
+
+</mapper>

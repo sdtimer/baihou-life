@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "bh-shell": "/components/bh-shell/index",
+    "bh-empty": "/components/bh-empty/index"
+  }
+}
