@@ -1,0 +1,7 @@
+<view class="bh-empty bh-card">
+  <view class="bh-empty__ring">
+    <view class="bh-empty__icon">{{icon || 'B'}}</view>
+  </view>
+  <view class="bh-empty__title">{{title}}</view>
+  <view class="bh-empty__subtitle">{{subtitle}}</view>
+</view>

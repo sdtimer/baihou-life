@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "bh-shell": "/components/bh-shell/index"
+  }
+}

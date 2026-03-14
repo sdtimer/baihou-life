@@ -1,0 +1,3 @@
+<view class="bh-status-chip bh-status-chip--{{tone}}">
+  {{text}}
+</view>

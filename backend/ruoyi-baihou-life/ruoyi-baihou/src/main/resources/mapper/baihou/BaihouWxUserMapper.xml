@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.baihou.mapper.BaihouWxUserMapper">
+
+    <select id="selectUserIdByPhoneHash" resultType="long">
+        select uid
+        from bh_wx_user
+        where phone_hash = #{phoneHash}
+        limit 1
+    </select>
+
+    <update id="updateUserRole">
+        update bh_wx_user
+        set role = #{role},
+            update_time = now()
+        where uid = #{userId}
+    </update>
+
+    <update id="updateUserStatus">
+        update bh_wx_user
+        set status = #{status},
+            update_time = now()
+        where uid = #{userId}
+    </update>
+
+    <resultMap id="BaihouWxUserResultMap" type="com.ruoyi.baihou.domain.BaihouWxUser">
+        <id property="uid" column="uid"/>
+        <result property="openid" column="openid"/>
+        <result property="unionid" column="unionid"/>
+        <result property="phone" column="phone"/>
+        <result property="phoneHash" column="phone_hash"/>
+        <result property="nickname" column="nickname"/>
+        <result property="avatarUrl" column="avatar_url"/>
+        <result property="role" column="role"/>
+        <result property="regionId" column="region_id"/>
+        <result property="status" column="status"/>
+        <result property="lastLoginTime" column="last_login_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="selectByOpenid" resultMap="BaihouWxUserResultMap">
+        select uid, openid, unionid, phone, phone_hash, nickname, avatar_url,
+               role, region_id, status, last_login_time, create_time, update_time
+        from bh_wx_user
+        where openid = #{openid}
+        limit 1
+    </select>
+
+    <insert id="insertUser" parameterType="com.ruoyi.baihou.domain.BaihouWxUser" useGeneratedKeys="true" keyProperty="uid">
+        insert into bh_wx_user (openid, nickname, role, status, last_login_time, create_time, update_time)
+        values (#{openid}, #{nickname}, #{role}, #{status}, now(), now(), now())
+    </insert>
+
+</mapper>

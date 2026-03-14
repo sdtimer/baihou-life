@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.baihou.mapper.BaihouRegionMapper">
+
+    <resultMap id="BaihouRegionResult" type="com.ruoyi.baihou.domain.BaihouRegion">
+        <id property="regionId" column="region_id"/>
+        <result property="regionName" column="region_name"/>
+        <result property="province" column="province"/>
+        <result property="centerLat" column="center_lat"/>
+        <result property="centerLng" column="center_lng"/>
+        <result property="isActive" column="is_active"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectRegionColumns">
+        select region_id, region_name, province, center_lat, center_lng, is_active, sort_order,
+               create_by, create_time, update_by, update_time, remark
+        from bh_region
+    </sql>
+
+    <select id="selectRegionList" resultMap="BaihouRegionResult">
+        <include refid="selectRegionColumns"/>
+        order by sort_order asc, region_id asc
+    </select>
+
+    <select id="selectRegionById" resultMap="BaihouRegionResult">
+        <include refid="selectRegionColumns"/>
+        where region_id = #{regionId}
+    </select>
+
+    <insert id="insertRegion" parameterType="com.ruoyi.baihou.domain.BaihouRegion">
+        insert into bh_region (
+            region_id, region_name, province, center_lat, center_lng, is_active, sort_order,
+            create_by, create_time, update_by, update_time, remark
+        ) values (
+            #{regionId}, #{regionName}, #{province}, #{centerLat}, #{centerLng}, #{isActive}, #{sortOrder},
+            #{createBy}, #{createTime}, #{updateBy}, #{updateTime}, #{remark}
+        )
+    </insert>
+
+    <update id="updateRegion" parameterType="com.ruoyi.baihou.domain.BaihouRegion">
+        update bh_region
+        <set>
+            <if test="regionName != null">region_name = #{regionName},</if>
+            <if test="province != null">province = #{province},</if>
+            center_lat = #{centerLat},
+            center_lng = #{centerLng},
+            <if test="isActive != null">is_active = #{isActive},</if>
+            <if test="sortOrder != null">sort_order = #{sortOrder},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            update_time = #{updateTime},
+            remark = #{remark}
+        </set>
+        where region_id = #{regionId}
+    </update>
+
+    <update id="updateRegionStatus">
+        update bh_region
+        set is_active = #{isActive}
+        where region_id = #{regionId}
+    </update>
+
+</mapper>

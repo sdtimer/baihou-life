@@ -1,0 +1,131 @@
+/* ── Hero 卡片 ──────────────────────────────────── */
+.home-hero {
+  padding: 30rpx;
+  overflow: hidden;
+  position: relative;
+  background:
+    radial-gradient(ellipse at 5% 95%, rgba(125, 138, 99, 0.14), transparent 50%),
+    radial-gradient(ellipse at 95% 5%, rgba(201, 169, 110, 0.12), transparent 45%),
+    rgba(255, 255, 255, 0.94);
+}
+
+/* 右上角装饰圆 */
+.home-hero::before {
+  content: '';
+  position: absolute;
+  top: -50rpx;
+  right: -50rpx;
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 50%;
+  border: 2rpx solid rgba(201, 169, 110, 0.15);
+  pointer-events: none;
+}
+
+.home-hero__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.home-hero__eyebrow {
+  display: block;
+  font-size: 21rpx;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #b0a89e;
+  text-transform: uppercase;
+}
+
+.home-hero__region {
+  display: inline-flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-top: 10rpx;
+  padding: 12rpx 20rpx;
+  border-radius: 999rpx;
+  background: rgba(247, 244, 239, 0.92);
+  border: 1.5rpx solid rgba(221, 213, 204, 0.70);
+  color: #2f2a26;
+  font-size: 28rpx;
+  font-weight: 700;
+  box-shadow: 0 2rpx 8rpx rgba(64, 45, 25, 0.06);
+}
+
+.home-hero__region-meta {
+  font-size: 21rpx;
+  font-weight: 400;
+  color: #9b938b;
+}
+
+/* 身份角色按钮 */
+.home-hero__role {
+  min-height: 62rpx;
+  padding: 0 20rpx;
+  border-radius: 999rpx;
+  background: rgba(243, 237, 229, 0.90);
+  border: 1.5rpx solid rgba(221, 213, 204, 0.60);
+  color: #6f5a45;
+  font-size: 22rpx;
+  font-weight: 600;
+  box-shadow: 0 2rpx 8rpx rgba(111, 90, 69, 0.08);
+}
+
+.home-hero__role--designer {
+  background: linear-gradient(135deg, rgba(238, 241, 232, 0.95), rgba(230, 236, 220, 0.90));
+  border-color: rgba(125, 138, 99, 0.30);
+  color: #5d6e4a;
+}
+
+/* 文案区 */
+.home-hero__copy {
+  margin-top: 32rpx;
+}
+
+.home-hero__headline {
+  display: block;
+  font-size: 44rpx;
+  line-height: 1.28;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: #2f2a26;
+}
+
+.home-hero__desc {
+  display: block;
+  margin-top: 16rpx;
+  font-size: 25rpx;
+  line-height: 1.65;
+  color: #7c746d;
+}
+
+/* 操作按钮 */
+.home-hero__actions {
+  margin-top: 30rpx;
+  width: 100%;
+}
+
+.home-hero__actions .bh-button-primary {
+  width: 100%;
+}
+
+/* ── 场景胶囊 ─────────────────────────────────── */
+.home-scenes {
+  white-space: nowrap;
+  margin: -4rpx -2rpx;
+  padding: 4rpx 2rpx;
+}
+
+.home-scenes__track {
+  display: inline-flex;
+  gap: 12rpx;
+  padding-bottom: 4rpx;
+}
+
+/* ── 产品网格 ─────────────────────────────────── */
+.home-products {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16rpx;
+}

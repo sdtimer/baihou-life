@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.baihou.mapper.BaihouBannerMapper">
+
+    <resultMap id="BaihouBannerResult" type="com.ruoyi.baihou.domain.BaihouBanner">
+        <id property="bannerId" column="banner_id"/>
+        <result property="title" column="title"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="linkType" column="link_type"/>
+        <result property="linkValue" column="link_value"/>
+        <result property="regions" column="regions"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="isActive" column="is_active"/>
+    </resultMap>
+
+    <sql id="selectBannerColumns">
+        select banner_id, title, image_url, link_type, link_value, regions,
+               start_time, end_time, sort_order, is_active
+        from bh_banner
+    </sql>
+
+    <select id="selectBannerList" resultMap="BaihouBannerResult">
+        <include refid="selectBannerColumns"/>
+        order by sort_order desc, banner_id desc
+    </select>
+
+    <insert id="insertBanner" parameterType="com.ruoyi.baihou.domain.BaihouBanner" useGeneratedKeys="true" keyProperty="bannerId">
+        insert into bh_banner (
+            title, image_url, link_type, link_value, regions,
+            start_time, end_time, sort_order, is_active, create_time, update_time
+        ) values (
+            #{title}, #{imageUrl}, #{linkType}, #{linkValue}, #{regions},
+            #{startTime}, #{endTime}, #{sortOrder}, #{isActive}, now(), now()
+        )
+    </insert>
+
+    <update id="updateBanner" parameterType="com.ruoyi.baihou.domain.BaihouBanner">
+        update bh_banner
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="imageUrl != null">image_url = #{imageUrl},</if>
+            <if test="linkType != null">link_type = #{linkType},</if>
+            link_value = #{linkValue},
+            regions = #{regions},
+            start_time = #{startTime},
+            end_time = #{endTime},
+            <if test="sortOrder != null">sort_order = #{sortOrder},</if>
+            <if test="isActive != null">is_active = #{isActive},</if>
+            update_time = now()
+        </set>
+        where banner_id = #{bannerId}
+    </update>
+
+    <delete id="deleteBanner">
+        delete from bh_banner
+        where banner_id = #{bannerId}
+    </delete>
+
+</mapper>

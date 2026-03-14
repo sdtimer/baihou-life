@@ -1,0 +1,21 @@
+.DS_Store
+
+# Editor and AI tool state
+.claude/
+.opencode/
+.windsurf/
+
+# Node dependencies
+node_modules/
+frontend/**/node_modules/
+
+# Java/Maven caches and build outputs
+backend/.m2/
+backend/**/target/
+
+# WeChat local-only config
+frontend/**/project.private.config.json
+
+# Generated artifacts and runtime data
+docs/outputs/
+uploadPath/

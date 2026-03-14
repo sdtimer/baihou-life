@@ -1,0 +1,69 @@
+/* ── 登录卡片 ────────────────────────────────────── */
+.auth-card {
+  padding: 40rpx 32rpx 36rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 装饰渐变 */
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: -30rpx;
+  right: -30rpx;
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(125, 138, 99, 0.12), transparent 70%);
+  pointer-events: none;
+}
+
+.auth-card__title {
+  font-size: 38rpx;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #2f2a26;
+}
+
+.auth-card__subtitle {
+  margin-top: 14rpx;
+  font-size: 25rpx;
+  line-height: 1.65;
+  color: #7c746d;
+}
+
+/* 权益列表 */
+.auth-card__list {
+  display: grid;
+  gap: 16rpx;
+  margin-top: 32rpx;
+  padding: 24rpx 22rpx;
+  background: linear-gradient(135deg, rgba(238, 241, 232, 0.60), rgba(247, 244, 239, 0.40));
+  border-radius: 20rpx;
+  border: 1rpx solid rgba(221, 213, 204, 0.50);
+}
+
+.auth-card__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14rpx;
+  font-size: 26rpx;
+  line-height: 1.55;
+  color: #3a3530;
+}
+
+.auth-card__dot {
+  width: 20rpx;
+  height: 20rpx;
+  margin-top: 10rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7d8a63, #5d6e4a);
+  flex-shrink: 0;
+  box-shadow: 0 2rpx 6rpx rgba(93, 110, 74, 0.25);
+}
+
+/* 登录按钮 */
+.auth-card__button {
+  margin-top: 32rpx;
+  width: 100%;
+}

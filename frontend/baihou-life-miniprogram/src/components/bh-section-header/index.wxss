@@ -1,0 +1,51 @@
+.bh-section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.bh-section-header__left {
+  display: flex;
+  align-items: flex-start;
+  gap: 14rpx;
+}
+
+/* 左侧装饰条 */
+.bh-section-header__bar {
+  width: 6rpx;
+  height: 42rpx;
+  border-radius: 999rpx;
+  background: linear-gradient(180deg, #7d8a63, #c9a96e);
+  flex-shrink: 0;
+  margin-top: 4rpx;
+}
+
+.bh-section-header__text {
+  flex: 1;
+}
+
+.bh-section-header__title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #2f2a26;
+  letter-spacing: -0.01em;
+}
+
+.bh-section-header__subtitle {
+  margin-top: 6rpx;
+  font-size: 23rpx;
+  color: #9b938b;
+  font-weight: 400;
+}
+
+.bh-section-header__action {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+  color: #6f5a45;
+  flex-shrink: 0;
+}

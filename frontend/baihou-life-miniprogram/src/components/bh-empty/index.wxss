@@ -1,0 +1,44 @@
+.bh-empty {
+  padding: 52rpx 36rpx;
+  text-align: center;
+}
+
+/* 外圈 */
+.bh-empty__ring {
+  width: 120rpx;
+  height: 120rpx;
+  margin: 0 auto 22rpx;
+  border-radius: 50%;
+  padding: 8rpx;
+  background: linear-gradient(135deg, rgba(125, 138, 99, 0.14), rgba(201, 169, 110, 0.10));
+  border: 1.5rpx solid rgba(221, 213, 204, 0.60);
+}
+
+/* 内圈 icon */
+.bh-empty__icon {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(111, 90, 69, 0.12), rgba(125, 138, 99, 0.10));
+  color: #6f5a45;
+  font-size: 44rpx;
+  font-weight: 700;
+}
+
+.bh-empty__title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #2f2a26;
+  letter-spacing: -0.01em;
+}
+
+.bh-empty__subtitle {
+  margin-top: 12rpx;
+  font-size: 25rpx;
+  line-height: 1.65;
+  color: #9b938b;
+  padding: 0 12rpx;
+}

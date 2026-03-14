@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.baihou.mapper.BaihouDesignerGroupMapper">
+
+    <resultMap id="BaihouDesignerGroupResult" type="com.ruoyi.baihou.domain.BaihouDesignerGroup">
+        <id property="groupId" column="group_id"/>
+        <result property="groupName" column="group_name"/>
+        <result property="defaultDiscount" column="default_discount"/>
+    </resultMap>
+
+    <select id="selectGroupList" resultMap="BaihouDesignerGroupResult">
+        select group_id, group_name, default_discount
+        from bh_designer_group
+        order by group_id desc
+    </select>
+
+    <insert id="insertGroup" parameterType="com.ruoyi.baihou.domain.BaihouDesignerGroup" useGeneratedKeys="true" keyProperty="groupId">
+        insert into bh_designer_group (group_name, default_discount, create_time, update_time)
+        values (#{groupName}, #{defaultDiscount}, now(), now())
+    </insert>
+
+    <update id="updateGroup" parameterType="com.ruoyi.baihou.domain.BaihouDesignerGroup">
+        update bh_designer_group
+        set group_name = #{groupName},
+            default_discount = #{defaultDiscount},
+            update_time = now()
+        where group_id = #{groupId}
+    </update>
+
+</mapper>

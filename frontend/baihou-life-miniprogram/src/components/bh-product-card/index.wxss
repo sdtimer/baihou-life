@@ -1,0 +1,94 @@
+.bh-product-card {
+  overflow: hidden;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+/* 图片容器 */
+.bh-product-card__image-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.bh-product-card__image {
+  width: 100%;
+  height: 340rpx;
+  display: block;
+  transition: transform 300ms ease;
+}
+
+/* 图片底部渐变遮罩 */
+.bh-product-card__image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80rpx;
+  background: linear-gradient(180deg, transparent, rgba(47, 42, 38, 0.12));
+  pointer-events: none;
+}
+
+/* 品类标签（图片右上角） */
+.bh-product-card__category-badge {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.90);
+  border: 1rpx solid rgba(221, 213, 204, 0.70);
+  color: #6c655e;
+  font-size: 20rpx;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(8rpx);
+  box-shadow: 0 2rpx 8rpx rgba(64, 45, 25, 0.08);
+}
+
+/* 信息区 */
+.bh-product-card__body {
+  padding: 22rpx 24rpx 24rpx;
+}
+
+.bh-product-card__brand {
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #9b938b;
+  letter-spacing: 0.03em;
+}
+
+.bh-product-card__name {
+  margin-top: 10rpx;
+  font-size: 30rpx;
+  line-height: 1.35;
+  font-weight: 700;
+  color: #2f2a26;
+  letter-spacing: -0.01em;
+}
+
+/* 小标签 */
+.bh-product-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+  margin: 14rpx 0 16rpx;
+}
+
+.bh-product-card__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx 14rpx;
+  border-radius: 999rpx;
+  background: rgba(247, 244, 239, 0.90);
+  border: 1rpx solid rgba(221, 213, 204, 0.60);
+  color: #9b938b;
+  font-size: 20rpx;
+  font-weight: 500;
+}
+
+/* 价格行 */
+.bh-product-card__footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8rpx;
+}

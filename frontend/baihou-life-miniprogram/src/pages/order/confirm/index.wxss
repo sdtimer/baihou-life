@@ -1,0 +1,66 @@
+/* ── 订单确认卡片 ──────────────────────────────── */
+.order-confirm {
+  overflow: hidden;
+}
+
+/* 产品封面 */
+.order-confirm__image {
+  width: 100%;
+  height: 380rpx;
+  display: block;
+}
+
+/* 信息区 */
+.order-confirm__body {
+  padding: 28rpx;
+  display: grid;
+  gap: 0;
+}
+
+.order-confirm__name {
+  font-size: 36rpx;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #2f2a26;
+  line-height: 1.3;
+}
+
+.order-confirm__meta {
+  margin-top: 10rpx;
+  font-size: 23rpx;
+  color: #9b938b;
+}
+
+/* 价格区 */
+.order-confirm__price-section {
+  margin-top: 22rpx;
+  padding: 22rpx 24rpx;
+  background: linear-gradient(135deg, rgba(111, 90, 69, 0.06), rgba(125, 138, 99, 0.04));
+  border-radius: 20rpx;
+  border: 1rpx solid rgba(221, 213, 204, 0.45);
+  display: flex;
+  align-items: baseline;
+  gap: 10rpx;
+}
+
+.order-confirm__price-section .bh-price__main {
+  font-size: 44rpx;
+}
+
+/* 提交按钮 */
+.order-confirm__action {
+  margin-top: 24rpx;
+}
+
+.order-confirm__action .bh-button-primary {
+  width: 100%;
+}
+
+/* 说明文字 */
+.order-confirm__note {
+  margin-top: 16rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: #c0b8b0;
+  line-height: 1.5;
+}

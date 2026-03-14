@@ -1,0 +1,67 @@
+.order-list {
+  display: grid;
+  gap: 16rpx;
+}
+
+.order-item {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* 彩色状态左边框 */
+.order-item__status-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6rpx;
+}
+
+.order-item__body {
+  padding: 24rpx 26rpx;
+  position: relative;
+}
+
+/* 状态边框颜色 - 通过 class 控制 */
+.order-item--pending_pay .order-item__status-bar { background: linear-gradient(180deg, #b9852b, #e8a83a); }
+.order-item--paid .order-item__status-bar { background: linear-gradient(180deg, #4e6a7d, #6a8fa6); }
+.order-item--processing .order-item__status-bar { background: linear-gradient(180deg, #6f5a45, #9a7a60); }
+.order-item--shipped .order-item__status-bar { background: linear-gradient(180deg, #3e7b57, #5ca574); }
+.order-item--completed .order-item__status-bar { background: linear-gradient(180deg, #7d8a63, #a0b080); }
+.order-item--closed .order-item__status-bar { background: linear-gradient(180deg, #c0b8b0, #d4ccc4); }
+
+.order-item__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14rpx;
+}
+
+.order-item__no {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #2f2a26;
+  letter-spacing: -0.01em;
+}
+
+.order-item__meta {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #a09890;
+}
+
+.order-item__name {
+  margin-top: 16rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #3a3530;
+  line-height: 1.35;
+}
+
+.order-item__amount {
+  margin-top: 14rpx;
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #6f5a45;
+  letter-spacing: -0.01em;
+}

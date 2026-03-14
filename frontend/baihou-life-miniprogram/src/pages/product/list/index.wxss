@@ -1,0 +1,74 @@
+/* ── 搜索栏 ─────────────────────────────────────── */
+.product-search {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  padding: 16rpx 20rpx;
+  box-shadow: var(--bh-shadow-card);
+}
+
+.product-search input {
+  flex: 1;
+  height: 84rpx;
+  padding: 0 26rpx;
+  border-radius: 999rpx;
+  background: #f7f4ef;
+  border: 1.5rpx solid rgba(221, 213, 204, 0.70);
+  font-size: 27rpx;
+  color: #2f2a26;
+}
+
+.product-search .bh-button-secondary {
+  min-height: 84rpx;
+  padding: 0 28rpx;
+  font-size: 26rpx;
+}
+
+/* ── 筛选区 ─────────────────────────────────────── */
+.filter-section {
+  background: rgba(255, 255, 255, 0.90);
+  border: 1rpx solid rgba(221, 213, 204, 0.65);
+  border-radius: var(--bh-radius-card);
+  padding: 20rpx 22rpx;
+  margin-top: 20rpx;
+  box-shadow: var(--bh-shadow-soft);
+}
+
+.filter-label {
+  font-size: 21rpx;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #b0a89e;
+  margin-bottom: 12rpx;
+}
+
+.filter-row {
+  white-space: nowrap;
+  margin-bottom: 14rpx;
+}
+
+.filter-row:last-child {
+  margin-bottom: 0;
+}
+
+.filter-row__track {
+  display: inline-flex;
+  gap: 10rpx;
+}
+
+/* ── 产品网格 ─────────────────────────────────── */
+.product-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+
+.product-list--single {
+  grid-template-columns: 1fr;
+}
+
+.product-skeleton {
+  height: 500rpx;
+  border-radius: var(--bh-radius-card);
+}

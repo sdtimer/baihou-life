@@ -1,0 +1,71 @@
+/* ── 详情卡片 ────────────────────────────────────── */
+.detail-card {
+  padding: 30rpx 28rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 顶部行：订单号 + 状态 */
+.detail-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14rpx;
+  padding-bottom: 22rpx;
+  border-bottom: 1.5rpx solid rgba(221, 213, 204, 0.55);
+}
+
+.detail-card__order-no {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #2f2a26;
+  letter-spacing: -0.01em;
+}
+
+.detail-card__create-time {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #a09890;
+}
+
+/* 信息行 */
+.detail-card__section {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid rgba(221, 213, 204, 0.42);
+}
+
+.detail-card__section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.detail-card__label {
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #b0a89e;
+  letter-spacing: 0.03em;
+  margin-bottom: 8rpx;
+}
+
+.detail-card__value {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #2f2a26;
+  line-height: 1.4;
+}
+
+/* 金额行 - 突出显示 */
+.detail-card__amount-section {
+  margin-top: 4rpx;
+  padding: 20rpx 22rpx;
+  background: linear-gradient(135deg, rgba(111, 90, 69, 0.06), rgba(125, 138, 99, 0.04));
+  border-radius: 18rpx;
+  border: 1rpx solid rgba(221, 213, 204, 0.45);
+}
+
+.detail-card__amount {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #6f5a45;
+  letter-spacing: -0.02em;
+}

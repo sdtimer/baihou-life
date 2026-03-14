@@ -1,0 +1,12 @@
+<view class="bh-section-header">
+  <view class="bh-section-header__left">
+    <view class="bh-section-header__bar"></view>
+    <view class="bh-section-header__text">
+      <view class="bh-section-header__title">{{title}}</view>
+      <view wx:if="{{subtitle}}" class="bh-section-header__subtitle">{{subtitle}}</view>
+    </view>
+  </view>
+  <view wx:if="{{actionText}}" class="bh-section-header__action" bindtap="handleAction">
+    {{actionText}} ›
+  </view>
+</view>

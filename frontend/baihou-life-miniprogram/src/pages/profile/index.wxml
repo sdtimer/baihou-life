@@ -1,0 +1,50 @@
+<bh-shell title="我的" subtitle="身份、区域和关键服务入口集中在一个轻量页面里。">
+  <!-- 身份卡片 -->
+  <view class="profile-hero bh-card">
+    <view class="profile-hero__top">
+      <view class="profile-hero__identity">
+        <view class="profile-hero__avatar-ring">
+          <view class="profile-hero__avatar">{{avatarText}}</view>
+        </view>
+        <view class="profile-hero__info">
+          <view class="profile-hero__name">{{displayName}}</view>
+          <view class="profile-hero__meta">
+            <text class="profile-hero__region-tag">{{region.region_name}}</text>
+            <text class="profile-hero__dot">·</text>
+            <text class="profile-hero__role-tag {{isDesigner ? 'profile-hero__role-tag--designer' : ''}}">{{roleText}}</text>
+          </view>
+        </view>
+      </view>
+      <button class="profile-hero__btn bh-button-secondary" bindtap="goAuth">{{authButtonText}}</button>
+    </view>
+  </view>
+
+  <!-- 功能入口 -->
+  <view class="profile-grid bh-section">
+    <view class="profile-entry bh-card" bindtap="openAppointments">
+      <view class="profile-entry__icon profile-entry__icon--brown">◷</view>
+      <view class="profile-entry__content">
+        <view class="profile-entry__title">我的预约</view>
+        <view class="profile-entry__desc">查看预约状态与服务安排</view>
+      </view>
+      <text class="profile-entry__arrow">›</text>
+    </view>
+    <view class="profile-entry bh-card" bindtap="openOrders">
+      <view class="profile-entry__icon profile-entry__icon--gold">◻</view>
+      <view class="profile-entry__content">
+        <view class="profile-entry__title">我的订单</view>
+        <view class="profile-entry__desc">追踪支付、发货与完成进度</view>
+      </view>
+      <text class="profile-entry__arrow">›</text>
+    </view>
+    <view class="profile-entry bh-card" wx:if="{{isDesigner}}" bindtap="openAssets">
+      <view class="profile-entry__icon profile-entry__icon--green">◈</view>
+      <view class="profile-entry__content">
+        <view class="profile-entry__title">设计师素材</view>
+        <view class="profile-entry__desc">查看专属原文件与节点图</view>
+      </view>
+      <text class="profile-entry__arrow">›</text>
+    </view>
+  </view>
+  <bh-dock-nav current="profile" />
+</bh-shell>

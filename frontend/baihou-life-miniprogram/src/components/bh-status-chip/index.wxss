@@ -1,0 +1,35 @@
+.bh-status-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 50rpx;
+  padding: 0 18rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.bh-status-chip--warning {
+  background: linear-gradient(135deg, #fbf3e4, #fdf0d8);
+  color: #b9852b;
+  border: 1rpx solid rgba(185, 133, 43, 0.18);
+}
+
+.bh-status-chip--info {
+  background: linear-gradient(135deg, #eaf0f4, #e3ecf2);
+  color: #4e6a7d;
+  border: 1rpx solid rgba(78, 106, 125, 0.16);
+}
+
+.bh-status-chip--success {
+  background: linear-gradient(135deg, #eaf5ee, #e0f0e5);
+  color: #3e7b57;
+  border: 1rpx solid rgba(62, 123, 87, 0.16);
+}
+
+.bh-status-chip--error {
+  background: linear-gradient(135deg, #f9ecea, #f7e5e3);
+  color: #b74d45;
+  border: 1rpx solid rgba(183, 77, 69, 0.16);
+}

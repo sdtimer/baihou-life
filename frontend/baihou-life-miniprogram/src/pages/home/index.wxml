@@ -1,0 +1,49 @@
+<bh-shell title="空间里的日常美学" subtitle="用区域化选品与场景化内容，把家的决策变得轻一些。">
+  <view class="home-hero bh-card">
+    <view class="home-hero__top">
+      <view>
+        <text class="home-hero__eyebrow">当前服务区域</text>
+        <view class="home-hero__region" bindtap="handleRegionTap">
+          <text>{{currentRegion.region_name}}</text>
+          <text class="home-hero__region-meta">{{currentRegion.province}}</text>
+        </view>
+      </view>
+      <button class="{{isDesigner ? 'home-hero__role home-hero__role--designer' : 'home-hero__role'}}" bindtap="goAuth">
+        {{isDesigner ? '设计师身份已启用' : '登录查看专属价'}}
+      </button>
+    </view>
+    <view class="home-hero__copy">
+      <text class="home-hero__headline">卖空间，卖场景，卖全案，也卖交付体验。</text>
+      <text class="home-hero__desc">首页优先展示区域化推荐和空间气质，不做促销式堆叠。</text>
+    </view>
+    <view class="home-hero__actions">
+      <button class="bh-button-primary" bindtap="goProductList">进入选品中心</button>
+    </view>
+  </view>
+
+  <view class="bh-section">
+    <bh-section-header title="场景灵感" subtitle="先选情绪，再选产品。" />
+    <scroll-view scroll-x class="home-scenes">
+      <view class="home-scenes__track">
+        <view
+          wx:for="{{sceneTabs}}"
+          wx:key="value"
+          class="bh-pill {{activeScene === item.value ? 'bh-pill--active' : ''}}"
+          data-scene="{{item.value}}"
+          bindtap="changeScene"
+        >
+          {{item.label}}
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="bh-section">
+    <bh-section-header title="区域精选" subtitle="跟随当前城市配置与场景推荐。" actionText="查看全部" bind:action="goProductList" />
+    <bh-empty wx:if="{{errorMessage}}" title="首页加载失败" subtitle="{{errorMessage}}" />
+    <view wx:else class="home-products">
+      <bh-product-card wx:for="{{heroProducts}}" wx:key="id" item="{{item}}" showDesigner="{{isDesigner}}" bind:tap="openDetail" />
+    </view>
+  </view>
+  <bh-dock-nav current="home" />
+</bh-shell>

@@ -1,0 +1,79 @@
+/* ── 素材卡片 ────────────────────────────────────── */
+.assets-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* 顶部信息头 */
+.assets-card__header {
+  padding: 26rpx 28rpx 22rpx;
+  border-bottom: 1rpx solid rgba(221, 213, 204, 0.45);
+  background: linear-gradient(135deg, rgba(125, 138, 99, 0.06), transparent);
+}
+
+.assets-card__name {
+  font-size: 34rpx;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #2f2a26;
+}
+
+.assets-card__desc {
+  margin-top: 10rpx;
+  font-size: 23rpx;
+  line-height: 1.6;
+  color: #9b938b;
+}
+
+/* 素材列表 */
+.assets-list {
+  display: grid;
+  gap: 0;
+}
+
+.assets-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  padding: 20rpx 28rpx;
+  border-bottom: 1rpx solid rgba(221, 213, 204, 0.40);
+}
+
+.assets-item:last-child {
+  border-bottom: none;
+}
+
+.assets-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.assets-item__title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #2f2a26;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.assets-item__meta {
+  margin-top: 6rpx;
+  display: inline-flex;
+  align-items: center;
+  padding: 3rpx 12rpx;
+  border-radius: 999rpx;
+  background: rgba(125, 138, 99, 0.10);
+  border: 1rpx solid rgba(125, 138, 99, 0.18);
+  font-size: 20rpx;
+  color: #5d6e4a;
+  font-weight: 500;
+}
+
+.assets-item .bh-button-secondary {
+  min-height: 68rpx;
+  padding: 0 22rpx;
+  font-size: 24rpx;
+  flex-shrink: 0;
+}
