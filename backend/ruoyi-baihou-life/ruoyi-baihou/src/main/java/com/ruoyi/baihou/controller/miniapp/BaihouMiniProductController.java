@@ -71,7 +71,8 @@ public class BaihouMiniProductController
         // 静态空间/场景标签（与小程序 mock 数据一致）
         List<Map<String, Object>> spaces = Arrays.asList(
                 label("客厅", "living_room"),
-                label("厨卫", "kitchen_bath"),
+                label("厨房", "kitchen"),
+                label("卫浴", "bathroom"),
                 label("卧室", "bedroom")
         );
         List<Map<String, Object>> scenes = Arrays.asList(
@@ -103,8 +104,8 @@ public class BaihouMiniProductController
             HttpServletRequest request,
             @RequestParam(required = false) String keyword,
             @RequestParam(name = "category_id", required = false) Long categoryId,
-            @RequestParam(required = false) String space,
-            @RequestParam(required = false) String scene,
+            @RequestParam(name = "space", required = false) String space,
+            @RequestParam(name = "scene", required = false) String scene,
             @RequestParam(name = "sort_by", required = false) String sortBy,
             @RequestParam(name = "pageNum", required = false) Integer pageNum,
             @RequestParam(name = "pageSize", required = false) Integer pageSize,
@@ -129,11 +130,11 @@ public class BaihouMiniProductController
         Integer role = BaihouMiniContext.getRole();
         String serverBaseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
 
-        // 为列表中每个产品绑定封面图（取第一张 scene 图）
         List<MiniProductVO> rows = products.stream()
                 .map(p -> {
-                    productService.bindCoverImage(p);
-                    return MiniProductVO.from(p, role, serverBaseUrl);
+                    BaihouProduct detail = productService.selectProductById(p.getId());
+                    BaihouProduct target = detail != null ? detail : p;
+                    return MiniProductVO.from(target, role, serverBaseUrl);
                 })
                 .collect(Collectors.toList());
 

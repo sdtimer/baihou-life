@@ -1,69 +1,96 @@
-/* ── 登录卡片 ────────────────────────────────────── */
-.auth-card {
-  padding: 40rpx 32rpx 36rpx;
+.auth-hero {
   position: relative;
+  height: 360rpx;
+  border-radius: 32rpx;
   overflow: hidden;
+  margin-bottom: 24rpx;
 }
 
-/* 装饰渐变 */
-.auth-card::before {
-  content: '';
+.auth-hero__bg {
   position: absolute;
-  top: -30rpx;
-  right: -30rpx;
-  width: 160rpx;
-  height: 160rpx;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(125, 138, 99, 0.12), transparent 70%);
-  pointer-events: none;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.10), transparent 45%),
+    linear-gradient(135deg, #6f5a45 0%, #7d8a63 100%);
+}
+
+.auth-hero__content {
+  position: relative;
+  z-index: 1;
+  padding: 44rpx 32rpx;
+}
+
+.auth-hero__brand {
+  font-size: 24rpx;
+  letter-spacing: 8rpx;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.auth-hero__headline {
+  margin-top: 28rpx;
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.auth-hero__desc {
+  margin-top: 16rpx;
+  font-size: 26rpx;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.auth-card {
+  padding: 34rpx 28rpx;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 28rpx;
+  box-shadow: var(--bh-shadow-soft);
 }
 
 .auth-card__title {
-  font-size: 38rpx;
+  font-size: 34rpx;
   font-weight: 700;
-  letter-spacing: -0.02em;
   color: #2f2a26;
 }
 
-.auth-card__subtitle {
-  margin-top: 14rpx;
-  font-size: 25rpx;
-  line-height: 1.65;
-  color: #7c746d;
-}
-
-/* 权益列表 */
 .auth-card__list {
   display: grid;
-  gap: 16rpx;
-  margin-top: 32rpx;
-  padding: 24rpx 22rpx;
+  gap: 18rpx;
+  margin-top: 28rpx;
+  padding: 22rpx 20rpx;
   background: linear-gradient(135deg, rgba(238, 241, 232, 0.60), rgba(247, 244, 239, 0.40));
   border-radius: 20rpx;
-  border: 1rpx solid rgba(221, 213, 204, 0.50);
+  border: 1rpx solid rgba(221, 213, 204, 0.5);
 }
 
 .auth-card__item {
   display: flex;
   align-items: flex-start;
   gap: 14rpx;
-  font-size: 26rpx;
-  line-height: 1.55;
-  color: #3a3530;
 }
 
 .auth-card__dot {
-  width: 20rpx;
-  height: 20rpx;
+  width: 18rpx;
+  height: 18rpx;
   margin-top: 10rpx;
   border-radius: 50%;
   background: linear-gradient(135deg, #7d8a63, #5d6e4a);
   flex-shrink: 0;
-  box-shadow: 0 2rpx 6rpx rgba(93, 110, 74, 0.25);
 }
 
-/* 登录按钮 */
+.auth-card__text {
+  font-size: 26rpx;
+  line-height: 1.6;
+  color: #3a3530;
+}
+
 .auth-card__button {
   margin-top: 32rpx;
   width: 100%;
+  height: 88rpx;
+  border-radius: 999rpx;
+  background: #6f5a45;
+  color: #ffffff;
+  font-size: 28rpx;
+  font-weight: 600;
 }

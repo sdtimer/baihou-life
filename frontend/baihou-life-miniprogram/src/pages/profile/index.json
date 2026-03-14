@@ -1,7 +1,6 @@
 {
   "usingComponents": {
     "bh-shell": "/components/bh-shell/index",
-    "bh-section-header": "/components/bh-section-header/index",
-    "bh-dock-nav": "/components/bh-dock-nav/index"
+    "bh-section-header": "/components/bh-section-header/index"
   }
 }

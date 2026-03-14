@@ -1,13 +1,21 @@
-<bh-shell title="登录后继续你的选品进程" subtitle="游客、客户、设计师会自动切换不同价格和权限能力。">
-  <view class="auth-card bh-card">
-    <view class="auth-card__title">微信一键登录</view>
-    <view class="auth-card__subtitle">按一期方案，角色与价格展示完全由登录态统一控制。</view>
+<bh-shell title="登录后继续" subtitle="游客、客户、设计师会自动切换价格、权限与服务能力。">
+  <view class="auth-hero">
+    <view class="auth-hero__bg"></view>
+    <view class="auth-hero__content">
+      <view class="auth-hero__brand">柏厚生活</view>
+      <view class="auth-hero__headline">微信一键登录</view>
+      <view class="auth-hero__desc">登录后自动保留当前区域、浏览链路与角色能力，无需重复选择。</view>
+    </view>
+  </view>
+
+  <view class="auth-card">
+    <view class="auth-card__title">你将获得</view>
     <view class="auth-card__list">
       <view wx:for="{{benefits}}" wx:key="*this" class="auth-card__item">
         <text class="auth-card__dot"></text>
-        <text>{{item}}</text>
+        <text class="auth-card__text">{{item}}</text>
       </view>
     </view>
-    <button class="bh-button-primary auth-card__button" loading="{{loading}}" bindtap="login">授权登录</button>
+    <button class="auth-card__button" loading="{{loading}}" bindtap="login">授权登录</button>
   </view>
 </bh-shell>

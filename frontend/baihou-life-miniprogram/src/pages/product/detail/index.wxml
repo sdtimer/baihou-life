@@ -1,41 +1,71 @@
-<bh-shell title="产品详情" subtitle="大图、规格、价格层级和动作区统一按设计系统组织。">
+<view class="page">
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-back" bindtap="goBack">
+      <view class="nav-back-icon"></view>
+    </view>
+  </view>
+
   <bh-empty wx:if="{{loading}}" title="商品加载中" subtitle="正在同步当前区域可售状态。" />
   <bh-empty wx:elif="{{unavailable}}" title="当前区域暂不可售" subtitle="{{errorMessage || '该商品可能已下架，或当前区域暂不支持。'}}" />
+
   <block wx:else>
-    <swiper class="detail-swiper bh-card" indicator-dots autoplay circular>
+    <swiper class="goods-swiper" indicator-dots autoplay circular>
       <swiper-item wx:for="{{product.gallery}}" wx:key="*this">
-        <image class="detail-swiper__image" src="{{item}}" mode="aspectFill" />
+        <image class="goods-swiper__image" src="{{item}}" mode="aspectFill" />
       </swiper-item>
     </swiper>
 
-    <view class="detail-summary bh-card">
-      <view class="detail-summary__brand">{{product.brand}} · {{product.category_name}}</view>
-      <view class="detail-summary__name">{{product.name}}</view>
-      <view class="detail-summary__desc">{{product.description}}</view>
-      <view class="bh-price detail-summary__price">
+    <view class="goods-info">
+      <view class="goods-price-row">
         <block wx:if="{{showGuidePrice}}">
-          <text wx:if="{{showDesignerPrice}}" class="bh-price__secondary">¥{{product.guide_price}}</text>
-          <text class="bh-price__main">¥{{showDesignerPrice ? product.designer_price : product.guide_price}}</text>
-          <text class="bh-meta">{{product.price_unit}}</text>
+          <view class="goods-price">
+            <text class="price-symbol">¥</text>
+            <text class="price-value">{{showDesignerPrice ? product.designer_price : product.guide_price}}</text>
+          </view>
+          <view class="price-original" wx:if="{{showDesignerPrice}}">¥{{product.guide_price}}</view>
+          <view class="price-unit">{{product.price_unit}}</view>
         </block>
-        <text wx:else class="bh-meta">登录后查看价格与交付方案</text>
+        <view wx:else class="login-price-hint">登录后查看价格与交付方案</view>
       </view>
-      <view wx:if="{{!isLoggedIn}}" class="detail-summary__hint">登录后可查看指导价、提交留资、预约与下单。</view>
-      <view wx:elif="{{!isDesigner}}" class="detail-summary__hint">设计师登录后可查看专属折扣价与素材下载入口。</view>
-    </view>
-
-    <view class="detail-specs bh-card">
-      <view class="detail-specs__title">规格参数</view>
-      <view wx:for="{{product.specs}}" wx:key="label" class="detail-specs__row">
-        <text class="detail-specs__label">{{item.label}}</text>
-        <text class="detail-specs__value">{{item.value}}</text>
+      <view class="goods-name">{{product.name}}</view>
+      <view class="goods-desc">{{product.description}}</view>
+      <view class="goods-tags">
+        <view class="tag tag-success" wx:if="{{showDesignerPrice}}">设计师专属价</view>
+        <view class="tag">{{product.category_name}}</view>
+        <view class="tag">{{currentRegion.region_name}}</view>
       </view>
     </view>
 
-    <view class="detail-actions">
-      <button class="bh-button-secondary" bindtap="goLead">留资咨询</button>
-      <button class="bh-button-secondary" bindtap="goAssets" wx:if="{{isDesigner}}">设计师素材</button>
-      <button class="bh-button-primary" bindtap="goOrder">{{isLoggedIn ? '立即下单' : '登录后下单'}}</button>
+    <view class="section">
+      <view class="section-title">规格参数</view>
+      <view class="spec-list">
+        <view class="spec-item" wx:for="{{product.specs}}" wx:key="label">
+          <view class="spec-label">{{item.label}}</view>
+          <view class="spec-value">{{item.value}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">商品详情</view>
+      <view class="detail-content">
+        <view class="detail-text">{{product.description}}</view>
+      </view>
+    </view>
+
+    <view class="detail-hint" wx:if="{{!isLoggedIn}}">
+      登录后可查看指导价、提交留资、预约与下单。
+    </view>
+    <view class="detail-hint detail-hint--designer" wx:elif="{{!isDesigner}}">
+      设计师登录后可查看专属折扣价与素材下载入口。
+    </view>
+
+    <view class="bottom-bar">
+      <view class="bottom-buttons">
+        <button class="btn btn-secondary" bindtap="goLead">留资咨询</button>
+        <button class="btn btn-secondary" bindtap="goAssets" wx:if="{{isDesigner}}">设计师素材</button>
+        <button class="btn btn-primary" bindtap="goOrder">{{isLoggedIn ? '立即下单' : '登录后下单'}}</button>
+      </view>
     </view>
   </block>
-</bh-shell>
+</view>

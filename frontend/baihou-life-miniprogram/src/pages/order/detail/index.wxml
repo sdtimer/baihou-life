@@ -1,38 +1,56 @@
-<bh-shell title="订单详情" subtitle="状态、金额、时间信息按优先级分层，不混淆主动作。">
-  <bh-empty wx:if="{{loading}}" title="订单详情加载中" subtitle="正在同步订单状态。" />
-  <bh-empty wx:elif="{{!detail}}" title="订单不存在" subtitle="请返回订单列表重新进入。" />
-  <view wx:else class="detail-card bh-card">
-    <!-- 头部：订单号 + 状态 -->
-    <view class="detail-card__header">
-      <view>
-        <view class="detail-card__order-no">{{detail.order_no}}</view>
-        <view class="detail-card__create-time">{{detail.created_at}}</view>
+<view class="page">
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-bar-content">
+      <view class="nav-back" bindtap="goBack">
+        <view class="back-icon"></view>
       </view>
-      <bh-status-chip status="{{detail.status}}" text="{{detail.status_text}}" />
-    </view>
-
-    <!-- 产品 -->
-    <view class="detail-card__section">
-      <view class="detail-card__label">产品</view>
-      <view class="detail-card__value">{{detail.product_name}}</view>
-    </view>
-
-    <!-- 区域 -->
-    <view class="detail-card__section">
-      <view class="detail-card__label">区域</view>
-      <view class="detail-card__value">{{detail.region_name}}</view>
-    </view>
-
-    <!-- 金额 -->
-    <view class="detail-card__section">
-      <view class="detail-card__label">实付金额</view>
-      <view class="detail-card__amount-section">
-        <text class="detail-card__amount">¥{{detail.pay_amount}}</text>
-      </view>
-    </view>
-
-    <view wx:if="{{detail.status === 'pending_pay'}}" class="detail-card__section">
-      <button class="bh-button-primary" loading="{{paying}}" bindtap="payNow">{{paying ? '支付处理中' : '立即支付'}}</button>
+      <view class="nav-title">订单详情</view>
+      <view class="nav-placeholder"></view>
     </view>
   </view>
-</bh-shell>
+
+  <bh-empty wx:if="{{loading}}" title="订单详情加载中" subtitle="正在同步订单状态。" />
+  <bh-empty wx:elif="{{!detail}}" title="订单不存在" subtitle="请返回订单列表重新进入。" />
+
+  <view wx:else class="page-body">
+    <view class="status-card status-card--{{detail.status}}">
+      <view class="status-icon"></view>
+      <view class="status-text">{{detail.status_text}}</view>
+      <view class="status-desc">{{detail.created_at}}</view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">订单信息</view>
+      <view class="info-list">
+        <view class="info-item">
+          <view class="info-label">订单编号</view>
+          <view class="info-value">{{detail.order_no}}</view>
+        </view>
+        <view class="info-item">
+          <view class="info-label">商品名称</view>
+          <view class="info-value">{{detail.product_name}}</view>
+        </view>
+        <view class="info-item">
+          <view class="info-label">服务区域</view>
+          <view class="info-value">{{detail.region_name}}</view>
+        </view>
+        <view class="info-item">
+          <view class="info-label">下单时间</view>
+          <view class="info-value">{{detail.created_at}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">费用明细</view>
+      <view class="amount-card">
+        <view class="amount-label">实付金额</view>
+        <view class="amount-value">¥{{detail.pay_amount}}</view>
+      </view>
+    </view>
+
+    <view class="footer-bar" wx:if="{{detail.status === 'pending_pay'}}">
+      <button class="btn-primary" loading="{{paying}}" bindtap="payNow">{{paying ? '支付处理中' : '立即支付'}}</button>
+    </view>
+  </view>
+</view>

@@ -3,7 +3,6 @@
     "bh-shell": "/components/bh-shell/index",
     "bh-section-header": "/components/bh-section-header/index",
     "bh-product-card": "/components/bh-product-card/index",
-    "bh-empty": "/components/bh-empty/index",
-    "bh-dock-nav": "/components/bh-dock-nav/index"
+    "bh-empty": "/components/bh-empty/index"
   }
 }

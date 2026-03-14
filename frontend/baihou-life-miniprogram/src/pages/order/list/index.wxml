@@ -1,27 +1,39 @@
-<bh-shell title="我的订单" subtitle="按状态理解当前进度，而不是被复杂流程打断。">
-  <bh-empty wx:if="{{loading}}" title="订单加载中" subtitle="正在同步支付与履约状态。" />
-  <view wx:elif="{{rows.length}}" class="order-list">
+<bh-shell title="我的订单" subtitle="按状态查看履约进度，保持简单清晰。">
+  <view class="nav-tabs">
     <view
-      wx:for="{{rows}}"
+      wx:for="{{tabList}}"
+      wx:key="value"
+      class="nav-tab {{currentTab === item.value ? 'active' : ''}}"
+      bindtap="onTabChange"
+      data-value="{{item.value}}"
+    >
+      {{item.label}}
+    </view>
+  </view>
+
+  <bh-empty wx:if="{{loading}}" title="订单加载中" subtitle="正在同步支付与履约状态。" />
+
+  <view wx:elif="{{filteredRows.length}}" class="order-list">
+    <view
+      wx:for="{{filteredRows}}"
       wx:key="order_id"
-      class="order-item bh-card order-item--{{item.status}}"
+      class="order-card order-card--{{item.status}}"
       data-id="{{item.order_id}}"
       bindtap="openDetail"
     >
-      <view class="order-item__status-bar"></view>
-      <view class="order-item__body">
-        <view class="order-item__top">
-          <view>
-            <view class="order-item__no">{{item.order_no}}</view>
-            <view class="order-item__meta">{{item.created_at}} · {{item.region_name}}</view>
-          </view>
-          <bh-status-chip status="{{item.status}}" text="{{item.status_text}}" />
-        </view>
-        <view class="order-item__name">{{item.product_name}}</view>
-        <view class="order-item__amount">¥{{item.pay_amount}}</view>
+      <view class="order-header">
+        <view class="order-no">订单号：{{item.order_no}}</view>
+        <view class="order-status">{{item.status_text}}</view>
+      </view>
+
+      <view class="order-body">
+        <view class="order-name">{{item.product_name}}</view>
+        <view class="order-meta">{{item.created_at}} · {{item.region_name}}</view>
+        <view class="order-amount">¥{{item.pay_amount}}</view>
       </view>
     </view>
   </view>
+
   <bh-empty wx:else title="暂无订单" subtitle="完成下单后，这里会展示支付、发货和完成状态。" />
-  <bh-dock-nav current="order" />
+
 </bh-shell>

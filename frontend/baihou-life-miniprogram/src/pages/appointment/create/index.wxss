@@ -1,84 +1,311 @@
-/* ── 表单卡片 ────────────────────────────────────── */
-.form-card {
-  display: grid;
-  gap: 0;
-  padding: 0;
+.header {
+  position: relative;
+  padding: 32rpx 0 120rpx;
   overflow: hidden;
 }
 
-/* 表单行 */
-.form-row {
-  padding: 22rpx 28rpx;
-  border-bottom: 1rpx solid rgba(221, 213, 204, 0.45);
-  position: relative;
+.header-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 32rpx;
+  background: linear-gradient(135deg, #6f5a45 0%, #7d8a63 100%);
 }
 
-.form-row:last-child {
-  border-bottom: none;
+.header-content {
+  position: relative;
+  z-index: 1;
+  padding: 0 28rpx;
+}
+
+.header-title {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 12rpx;
+}
+
+.header-desc {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.86);
+  line-height: 1.6;
+}
+
+.form-card {
+  margin: -52rpx 24rpx 24rpx;
+  padding: 32rpx;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 28rpx;
+  box-shadow: var(--bh-shadow-soft);
+  position: relative;
+  z-index: 2;
+}
+
+.form-item {
+  margin-bottom: 34rpx;
+}
+
+.form-item:last-child {
+  margin-bottom: 0;
 }
 
 .form-label {
-  font-size: 22rpx;
+  font-size: 28rpx;
   font-weight: 600;
-  letter-spacing: 0.03em;
-  color: #b0a89e;
-  margin-bottom: 10rpx;
+  color: #2f2a26;
+  margin-bottom: 16rpx;
 }
 
-/* 输入框 */
-.form-card__input {
+.required {
+  color: #c77a4d;
+  margin-right: 4rpx;
+}
+
+.input {
   width: 100%;
-  height: 72rpx;
-  padding: 0 4rpx;
-  background: transparent;
+  height: 88rpx;
+  padding: 0 24rpx;
+  border: 1rpx solid rgba(221, 213, 204, 0.8);
+  border-radius: 20rpx;
   font-size: 28rpx;
   color: #2f2a26;
-  border: none;
+  background: rgba(255, 255, 255, 0.92);
+  box-sizing: border-box;
 }
 
-/* 服务类型选择 */
-.form-card__group {
+.input-suffix {
+  position: relative;
+}
+
+.input-suffix .input {
+  padding-right: 84rpx;
+}
+
+.suffix-text {
+  position: absolute;
+  right: 24rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 28rpx;
+  color: #9b938b;
+}
+
+.tag-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 12rpx;
+  gap: 16rpx;
 }
 
-/* 日期选择器 */
-.form-picker {
-  height: 72rpx;
+.tag-select {
+  padding: 16rpx 28rpx;
+  border: 1rpx solid rgba(221, 213, 204, 0.8);
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  color: #7c746d;
+  background: #ffffff;
+}
+
+.tag-select.active {
+  border-color: #6f5a45;
+  color: #ffffff;
+  background: #6f5a45;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 200rpx;
+  padding: 24rpx;
+  border: 1rpx solid rgba(221, 213, 204, 0.8);
+  border-radius: 20rpx;
+  font-size: 28rpx;
+  color: #2f2a26;
+  background: rgba(255, 255, 255, 0.92);
+  box-sizing: border-box;
+  line-height: 1.6;
+}
+
+.submit-bar {
+  margin: 0 24rpx 16rpx;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+}
+
+.agreement {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 18rpx;
+}
+
+.checkbox {
+  width: 36rpx;
+  height: 36rpx;
+  border: 2rpx solid rgba(221, 213, 204, 0.9);
+  border-radius: 8rpx;
+  margin-right: 12rpx;
+  margin-top: 4rpx;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.checkbox.active {
+  background: #6f5a45;
+  border-color: #6f5a45;
+}
+
+.checkbox.active::after {
+  content: '';
+  position: absolute;
+  left: 12rpx;
+  top: 6rpx;
+  width: 10rpx;
+  height: 18rpx;
+  border: 3rpx solid #ffffff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+.agreement-text {
+  font-size: 24rpx;
+  color: #9b938b;
+  line-height: 1.5;
+}
+
+.link {
+  color: #6f5a45;
+}
+
+.submit-button {
+  width: 100%;
+  height: 88rpx;
+  border-radius: 999rpx;
+  background: #6f5a45;
+  color: #ffffff;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.picker-trigger {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-height: 88rpx;
+  padding: 0 24rpx;
+  border: 1rpx solid rgba(221, 213, 204, 0.8);
+  border-radius: 20rpx;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.picker-value {
+  flex: 1;
   font-size: 28rpx;
   color: #2f2a26;
 }
 
-.form-picker--placeholder {
-  color: #c8c0b8;
+.picker-placeholder {
+  color: #9b938b;
 }
 
-.form-picker__arrow {
-  font-size: 26rpx;
-  color: #c8c0b8;
+.picker-arrow {
+  width: 16rpx;
+  height: 16rpx;
+  border-right: 3rpx solid #9b938b;
+  border-bottom: 3rpx solid #9b938b;
+  transform: rotate(45deg);
 }
 
-/* 文本域 */
-.form-card__textarea {
-  width: 100%;
-  min-height: 200rpx;
-  padding: 0 4rpx;
-  background: transparent;
-  font-size: 27rpx;
+.picker-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  visibility: hidden;
+}
+
+.picker-popup--visible {
+  visibility: visible;
+}
+
+.picker-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.picker-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ffffff;
+  border-radius: 28rpx 28rpx 0 0;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 32rpx;
+  border-bottom: 1rpx solid rgba(221, 213, 204, 0.6);
+}
+
+.picker-title {
+  font-size: 32rpx;
+  font-weight: 600;
   color: #2f2a26;
-  line-height: 1.6;
-  border: none;
 }
 
-/* 提交按钮行 */
-.form-submit-row {
-  padding: 24rpx 28rpx;
+.picker-cancel,
+.picker-confirm {
+  font-size: 28rpx;
+  padding: 8rpx 12rpx;
 }
 
-.form-submit-row .bh-button-primary {
-  width: 100%;
+.picker-cancel {
+  color: #7c746d;
+}
+
+.picker-confirm {
+  color: #6f5a45;
+  font-weight: 600;
+}
+
+.picker-body {
+  flex: 1;
+}
+
+.picker-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx;
+  border-bottom: 1rpx solid rgba(221, 213, 204, 0.4);
+}
+
+.picker-option--active {
+  background: rgba(111, 90, 69, 0.08);
+}
+
+.picker-option__text {
+  font-size: 30rpx;
+  color: #2f2a26;
+}
+
+.picker-option__check {
+  width: 36rpx;
+  height: 36rpx;
+  position: relative;
+}
+
+.picker-option__check::before {
+  content: '';
+  position: absolute;
+  left: 10rpx;
+  top: 4rpx;
+  width: 12rpx;
+  height: 22rpx;
+  border: 4rpx solid #6f5a45;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
 }

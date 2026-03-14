@@ -20,11 +20,16 @@ Page({
     errorMessage: "",
     unavailable: false,
     product: null,
+    statusBarHeight: 20,
     ...buildViewData()
   },
 
   async onLoad(options) {
     this.productId = options.id;
+    const { statusBarHeight } = wx.getSystemInfoSync();
+    this.setData({
+      statusBarHeight: statusBarHeight || 20
+    });
     this.lastRegionId = regionStore.getState().current.region_id;
     await this.loadProduct();
   },
@@ -88,5 +93,13 @@ Page({
       return;
     }
     wx.navigateTo({ url: `/pages/designer/assets/index?id=${product.id}` });
+  },
+
+  goBack() {
+    wx.navigateBack({
+      fail: () => {
+        wx.reLaunch({ url: "/pages/product/list/index" });
+      }
+    });
   }
 });

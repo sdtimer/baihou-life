@@ -2,7 +2,6 @@
   "usingComponents": {
     "bh-shell": "/components/bh-shell/index",
     "bh-empty": "/components/bh-empty/index",
-    "bh-status-chip": "/components/bh-status-chip/index",
-    "bh-dock-nav": "/components/bh-dock-nav/index"
+    "bh-status-chip": "/components/bh-status-chip/index"
   }
 }

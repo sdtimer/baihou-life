@@ -4,6 +4,19 @@ const mock = require("../utils/mock");
 
 const DEFAULT_PAGE_SIZE = 10;
 
+function toAbsoluteUrl(url) {
+  if (!url) {
+    return "";
+  }
+  if (/^https?:\/\//i.test(url)) {
+    return url;
+  }
+  if (url.startsWith("/")) {
+    return `${env.baseURL}${url}`;
+  }
+  return `${env.baseURL}/${url}`;
+}
+
 function parseArray(value) {
   if (Array.isArray(value)) {
     return value;
@@ -48,7 +61,8 @@ function normalizeMediaList(list = []) {
     media_id: item.media_id || item.mediaId,
     name: item.name || item.file_name || item.fileName || "素材文件",
     access_level: item.access_level || "designer",
-    url: item.url || "",
+    url: toAbsoluteUrl(item.url || ""),
+    thumbnail_url: toAbsoluteUrl(item.thumbnail_url || item.thumbnailUrl || item.url || ""),
     file_format: item.file_format || item.fileFormat || "",
     file_size: item.file_size || item.fileSize || 0
   }));
@@ -57,10 +71,17 @@ function normalizeMediaList(list = []) {
 function normalizeProduct(product = {}) {
   const sceneImages = normalizeMediaList(product.scene_images || product.gallery || []);
   const specImages = normalizeMediaList(product.spec_images || []);
+  const elementImages = normalizeMediaList(product.element_images || []);
   const sourceFiles = normalizeMediaList(product.source_files || []);
-  const coverImage = product.cover_image || (sceneImages[0] ? sceneImages[0].url : "");
+  const coverImage = toAbsoluteUrl(
+    product.cover_image
+      || product.coverImage
+      || (sceneImages[0] ? (sceneImages[0].thumbnail_url || sceneImages[0].url) : "")
+      || (elementImages[0] ? (elementImages[0].thumbnail_url || elementImages[0].url) : "")
+      || (specImages[0] ? (specImages[0].thumbnail_url || specImages[0].url) : "")
+  );
   const gallery = Array.isArray(product.gallery) && product.gallery.length
-    ? product.gallery
+    ? product.gallery.map((item) => toAbsoluteUrl(item))
     : sceneImages.map((item) => item.url).filter(Boolean);
 
   return {
@@ -83,6 +104,7 @@ function normalizeProduct(product = {}) {
     specs: parseSpecs(product),
     regions: parseArray(product.regions),
     scene_images: sceneImages,
+    element_images: elementImages,
     spec_images: specImages,
     source_files: sourceFiles
   };

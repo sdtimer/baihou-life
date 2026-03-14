@@ -3,7 +3,6 @@
 # Editor and AI tool state
 .claude/
 .opencode/
-.windsurf/
 
 # Node dependencies
 node_modules/

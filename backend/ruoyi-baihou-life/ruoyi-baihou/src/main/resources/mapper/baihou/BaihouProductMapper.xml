@@ -74,9 +74,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <when test="sortBy == 'newest'">create_time desc, id desc</when>
             <otherwise>sort_order desc, create_time desc, id desc</otherwise>
         </choose>
-        <if test="pageNum != null and pageSize != null and pageNum &gt; 0 and pageSize &gt; 0">
-            limit #{pageSize} offset ${(pageNum - 1) * pageSize}
-        </if>
     </select>
 
     <select id="selectProductById" resultMap="BaihouProductResult">

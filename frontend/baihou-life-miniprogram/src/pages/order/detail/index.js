@@ -14,11 +14,16 @@ Page({
   data: {
     loading: true,
     paying: false,
-    detail: null
+    detail: null,
+    statusBarHeight: 20
   },
 
   async onLoad(options) {
     this.orderId = options.id;
+    const { statusBarHeight } = wx.getSystemInfoSync();
+    this.setData({
+      statusBarHeight: statusBarHeight || 20
+    });
     if (!auth.requireLogin({ redirect: `/pages/order/detail/index?id=${this.orderId}` })) {
       return;
     }
@@ -65,5 +70,13 @@ Page({
     } finally {
       this.setData({ paying: false });
     }
+  },
+
+  goBack() {
+    wx.navigateBack({
+      fail: () => {
+        wx.reLaunch({ url: "/pages/order/list/index" });
+      }
+    });
   }
 });

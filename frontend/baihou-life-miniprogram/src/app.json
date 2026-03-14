@@ -21,6 +21,34 @@
     "backgroundColorTop": "#F7F4EF",
     "backgroundColorBottom": "#F7F4EF"
   },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#6f5a45",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/product/list/index",
+        "text": "选品"
+      },
+      {
+        "pagePath": "pages/appointment/list/index",
+        "text": "预约"
+      },
+      {
+        "pagePath": "pages/order/list/index",
+        "text": "订单"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的"
+      }
+    ]
+  },
   "style": "v2",
   "sitemapLocation": "sitemap.json"
 }
