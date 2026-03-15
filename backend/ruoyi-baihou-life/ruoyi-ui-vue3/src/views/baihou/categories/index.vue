@@ -4,7 +4,7 @@
       <section class="baihou-hero">
         <div class="baihou-hero__eyebrow">Baihou Life / Category</div>
         <h1 class="baihou-hero__title">品类树管理</h1>
-        <p class="baihou-hero__desc">维护首页导航、商品归类和运营排序。当前页面按设计系统使用暖中性色、轻卡片和高可读表格，保持若依后台的操作效率。</p>
+        <p class="baihou-hero__desc">维护首页导航、商品归类和运营排序。当前页面按设计系统使用暖中性色、轻卡片和高可读表格，兼顾品牌一致性与后台操作效率。</p>
       </section>
 
       <section class="baihou-stats">

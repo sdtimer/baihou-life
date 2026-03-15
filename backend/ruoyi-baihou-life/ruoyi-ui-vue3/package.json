@@ -1,8 +1,8 @@
 {
-  "name": "ruoyi",
+  "name": "baihou-life-admin",
   "version": "3.9.1",
-  "description": "若依管理系统",
-  "author": "若依",
+  "description": "柏厚生活产品展示系统管理后台",
+  "author": "柏厚生活",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/y_project/RuoYi-Vue.git"
+    "url": "https://repo.baihou.life/product-display-admin.git"
   },
   "dependencies": {
     "@element-plus/icons-vue": "2.3.2",

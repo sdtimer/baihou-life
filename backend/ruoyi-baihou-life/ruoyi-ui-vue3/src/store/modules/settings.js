@@ -5,7 +5,7 @@ import { useDynamicTitle } from '@/utils/dynamicTitle'
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
 
-const { sideTheme, showSettings, navType, tagsView, tagsIcon, fixedHeader, sidebarLogo, dynamicTitle, footerVisible, footerContent } = defaultSettings
+const { theme: defaultTheme, sideTheme, showSettings, navType, tagsView, tagsIcon, fixedHeader, sidebarLogo, dynamicTitle, footerVisible, footerContent } = defaultSettings
 
 const storageSetting = JSON.parse(localStorage.getItem('layout-setting')) || ''
 
@@ -14,7 +14,7 @@ const useSettingsStore = defineStore(
   {
     state: () => ({
       title: '',
-      theme: storageSetting.theme || '#409EFF',
+      theme: storageSetting.theme || defaultTheme,
       sideTheme: storageSetting.sideTheme || sideTheme,
       showSettings: showSettings,
       navType: storageSetting.navType === undefined ? navType : storageSetting.navType,

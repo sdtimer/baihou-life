@@ -5,6 +5,11 @@ export default {
   title: import.meta.env.VITE_APP_TITLE,
 
   /**
+   * 主题颜色
+   */
+  theme: '#6F5A45',
+
+  /**
    * 侧边栏主题 深色主题theme-dark，浅色主题theme-light
    */
   sideTheme: 'theme-dark',
@@ -52,6 +57,6 @@ export default {
   /**
    * 底部版权文本内容
    */
-  footerContent: 'Copyright © 2018-2026 RuoYi. All Rights Reserved.'
+  footerContent: 'Copyright © 2026 柏厚生活 Baihou Life. All Rights Reserved.'
 }
 

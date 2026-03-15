@@ -9,16 +9,12 @@
     </template>
 
     <div class="right-menu">
+      <div class="brand-pill">
+        <span class="brand-pill__label">柏厚生活</span>
+        <span class="brand-pill__text">产品展示系统管理后台</span>
+      </div>
       <template v-if="appStore.device !== 'mobile'">
         <header-search id="header-search" class="right-menu-item" />
-
-        <el-tooltip content="源码地址" effect="dark" placement="bottom">
-          <ruo-yi-git id="ruoyi-git" class="right-menu-item hover-effect" />
-        </el-tooltip>
-
-        <el-tooltip content="文档地址" effect="dark" placement="bottom">
-          <ruo-yi-doc id="ruoyi-doc" class="right-menu-item hover-effect" />
-        </el-tooltip>
 
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
 
@@ -67,8 +63,6 @@ import Hamburger from '@/components/Hamburger'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import HeaderSearch from '@/components/HeaderSearch'
-import RuoYiGit from '@/components/RuoYi/Git'
-import RuoYiDoc from '@/components/RuoYi/Doc'
 import useAppStore from '@/store/modules/app'
 import useUserStore from '@/store/modules/user'
 import useSettingsStore from '@/store/modules/settings'
@@ -164,7 +158,9 @@ async function toggleTheme(event) {
   overflow: hidden;
   position: relative;
   background: var(--navbar-bg);
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  border-bottom: 1px solid rgba(221, 213, 204, 0.7);
+  box-shadow: 0 12px 30px rgba(47, 42, 38, 0.06);
+  backdrop-filter: blur(14px);
   display: flex;
   align-items: center;
   // padding: 0 8px;
@@ -182,7 +178,7 @@ async function toggleTheme(event) {
     margin-right: 8px;
 
     &:hover {
-      background: rgba(0, 0, 0, 0.025);
+      background: rgba(111, 90, 69, 0.06);
     }
   }
 
@@ -214,28 +210,29 @@ async function toggleTheme(event) {
     line-height: 50px;
     display: flex;
     align-items: center;
+    gap: 6px;
     margin-left: auto;
 
     &:focus {
       outline: none;
     }
 
-    .right-menu-item {
-      display: inline-block;
-      padding: 0 8px;
-      height: 100%;
-      font-size: 18px;
-      color: #5a5e66;
-      vertical-align: text-bottom;
+      .right-menu-item {
+        display: inline-block;
+        padding: 0 8px;
+        height: 100%;
+        font-size: 18px;
+        color: #6c655e;
+        vertical-align: text-bottom;
 
-      &.hover-effect {
-        cursor: pointer;
-        transition: background 0.3s;
+        &.hover-effect {
+          cursor: pointer;
+          transition: background 0.3s;
 
-        &:hover {
-          background: rgba(0, 0, 0, 0.025);
+          &:hover {
+            background: rgba(111, 90, 69, 0.06);
+          }
         }
-      }
 
       &.theme-switch-wrapper {
         display: flex;
@@ -285,6 +282,37 @@ async function toggleTheme(event) {
         }
       }
     }
+  }
+}
+
+.brand-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  margin-left: auto;
+  margin-right: 10px;
+  height: 34px;
+  border: 1px solid rgba(189, 175, 159, 0.56);
+  border-radius: 999px;
+  background: rgba(255, 250, 245, 0.82);
+  color: #6c655e;
+
+  &__label {
+    color: #6f5a45;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  &__text {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .brand-pill {
+    display: none;
   }
 }
 </style>

@@ -73,6 +73,9 @@
 }
 .el-dialog:not(.is-fullscreen) {
   margin-top: 6vh !important;
+  border: 1px solid rgba(189, 175, 159, 0.45);
+  border-radius: 20px;
+  box-shadow: 0 18px 48px rgba(47, 42, 38, 0.16);
 }
 
 .el-dialog.scrollbar .el-dialog__body {
@@ -86,10 +89,11 @@
   .el-table__header-wrapper, .el-table__fixed-header-wrapper {
     th {
       word-break: break-word;
-      background-color: #f8f8f9 !important;
-      color: #515a6e;
-      height: 40px !important;
+      background-color: #f7f1ea !important;
+      color: #6c655e;
+      height: 44px !important;
       font-size: 13px;
+      font-weight: 600;
     }
   }
   .el-table__body-wrapper {
@@ -102,8 +106,8 @@
 /** 表单布局 **/
 .form-header {
   font-size:15px;
-  color:#6379bb;
-  border-bottom:1px solid #ddd;
+  color:#6f5a45;
+  border-bottom:1px solid #ddd5cc;
   margin:8px 10px 25px 10px;
   padding-bottom:5px
 }
@@ -144,9 +148,9 @@
 /* tree border */
 .tree-border {
   margin-top: 5px;
-  border: 1px solid var(--el-border-color-light, #e5e6e7);
+  border: 1px solid rgba(189, 175, 159, 0.42);
   background: var(--el-bg-color, #FFFFFF) none;
-  border-radius:4px;
+  border-radius: 14px;
   width: 100%;
 }
 
@@ -169,7 +173,7 @@
 /** 表格更多操作下拉样式 */
 .el-table .el-dropdown-link {
   cursor: pointer;
-  color: #409EFF;
+  color: #6F5A45;
   margin-left: 10px;
 }
 
@@ -195,8 +199,8 @@
 }
 
 .list-group-item {
-  border-bottom: 1px solid #e7eaec;
-  border-top: 1px solid #e7eaec;
+  border-bottom: 1px solid #ece4db;
+  border-top: 1px solid #ece4db;
   margin-bottom: -1px;
   padding: 11px 0px;
   font-size: 13px;

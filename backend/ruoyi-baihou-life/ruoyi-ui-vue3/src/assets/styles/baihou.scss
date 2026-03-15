@@ -19,6 +19,141 @@
   --bh-shadow: 0 10px 28px rgba(47, 42, 38, 0.08);
 }
 
+body {
+  background:
+    radial-gradient(circle at top left, rgba(125, 138, 99, 0.08), transparent 18%),
+    linear-gradient(180deg, #faf7f2, #f5f1ea 45%, #f7f4ef 100%);
+}
+
+#app {
+  color: var(--bh-text);
+}
+
+.app-main {
+  background: transparent;
+}
+
+.app-container:not(.home) {
+  min-height: calc(100vh - 84px);
+  border-radius: 24px 24px 0 0;
+}
+
+.app-container {
+  position: relative;
+}
+
+.app-container::before {
+  content: "";
+  position: absolute;
+  inset: 12px 12px auto 12px;
+  height: 160px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(125, 138, 99, 0.16), transparent 38%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(243, 238, 232, 0.94));
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+.el-card,
+.el-dialog,
+.el-drawer,
+.el-popover.el-popper {
+  border-radius: 18px;
+}
+
+.el-card {
+  border: 1px solid rgba(189, 175, 159, 0.34);
+  box-shadow: 0 10px 24px rgba(47, 42, 38, 0.05);
+}
+
+.el-card__header {
+  border-bottom: 1px solid rgba(221, 213, 204, 0.8);
+}
+
+.el-form-item__label,
+.el-descriptions__label,
+.el-dialog__title,
+.el-drawer__title {
+  color: var(--bh-text) !important;
+}
+
+.el-input__wrapper,
+.el-textarea__inner,
+.el-select__wrapper,
+.el-date-editor.el-input__wrapper,
+.el-cascader .el-input__wrapper {
+  border-radius: 14px;
+  box-shadow: 0 0 0 1px rgba(221, 213, 204, 0.9) inset !important;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.el-input__wrapper.is-focus,
+.el-select__wrapper.is-focused,
+.el-textarea__inner:focus {
+  box-shadow: 0 0 0 1px rgba(111, 90, 69, 0.9) inset, 0 0 0 4px rgba(111, 90, 69, 0.08) !important;
+}
+
+.el-button {
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.el-button--default {
+  border-color: rgba(189, 175, 159, 0.72);
+  color: var(--bh-text);
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.el-button--default:hover,
+.el-button--default:focus {
+  color: var(--bh-primary);
+  border-color: rgba(111, 90, 69, 0.7);
+  background: #fffaf5;
+}
+
+.el-button--primary.is-plain {
+  color: var(--bh-primary);
+  background: rgba(243, 238, 232, 0.82);
+  border-color: rgba(111, 90, 69, 0.22);
+}
+
+.el-tag {
+  border-radius: 999px;
+}
+
+.pagination-container .el-pagination {
+  --el-pagination-button-bg-color: rgba(255, 255, 255, 0.92);
+  --el-pagination-hover-color: var(--bh-primary);
+}
+
+.el-table {
+  border-radius: 16px;
+  overflow: hidden;
+  --el-table-row-hover-bg-color: #fcf9f4;
+  --el-table-border-color: rgba(221, 213, 204, 0.9);
+}
+
+.el-table .cell {
+  color: var(--bh-text);
+}
+
+.el-dialog__header,
+.el-drawer__header {
+  margin-right: 0;
+  padding: 20px 24px 12px;
+}
+
+.el-dialog__body,
+.el-drawer__body {
+  padding: 12px 24px 24px;
+}
+
 .baihou-page {
   min-height: calc(100vh - 84px);
   padding: 24px;
@@ -241,6 +376,16 @@
 }
 
 @media (max-width: 768px) {
+  .app-container {
+    padding: 16px;
+  }
+
+  .app-container::before {
+    inset: 8px 8px auto 8px;
+    height: 120px;
+    border-radius: 18px;
+  }
+
   .baihou-page {
     padding: 16px;
   }
