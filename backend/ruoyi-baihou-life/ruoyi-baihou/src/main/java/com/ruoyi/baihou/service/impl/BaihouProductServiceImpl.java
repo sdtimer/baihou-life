@@ -5,6 +5,7 @@ import java.util.List;
 import com.ruoyi.baihou.domain.BaihouMedia;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.baihou.domain.BaihouProduct;
 import com.ruoyi.baihou.mapper.BaihouProductMapper;
 import com.ruoyi.baihou.service.IBaihouProductService;
@@ -15,6 +16,7 @@ import com.ruoyi.common.utils.StringUtils;
  * Baihou product service implementation.
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class BaihouProductServiceImpl implements IBaihouProductService
 {
     @Autowired

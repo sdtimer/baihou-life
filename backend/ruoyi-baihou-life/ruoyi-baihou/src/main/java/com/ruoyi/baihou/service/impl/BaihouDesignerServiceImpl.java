@@ -3,6 +3,7 @@ package com.ruoyi.baihou.service.impl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.baihou.domain.BaihouDesigner;
 import com.ruoyi.baihou.mapper.BaihouDesignerMapper;
 import com.ruoyi.baihou.mapper.BaihouWxUserMapper;
@@ -12,6 +13,7 @@ import com.ruoyi.baihou.service.IBaihouDesignerService;
  * Baihou designer service implementation.
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class BaihouDesignerServiceImpl implements IBaihouDesignerService
 {
     @Autowired

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.baihou.domain.BaihouRegion;
 import com.ruoyi.baihou.mapper.BaihouRegionMapper;
 import com.ruoyi.baihou.service.IBaihouRegionService;
@@ -12,6 +13,7 @@ import com.ruoyi.baihou.service.IBaihouRegionService;
  * Baihou region service implementation.
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class BaihouRegionServiceImpl implements IBaihouRegionService
 {
     @Autowired

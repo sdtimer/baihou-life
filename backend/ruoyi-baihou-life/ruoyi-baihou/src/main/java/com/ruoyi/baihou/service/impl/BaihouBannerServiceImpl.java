@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.baihou.domain.BaihouBanner;
 import com.ruoyi.baihou.mapper.BaihouBannerMapper;
 import com.ruoyi.baihou.service.IBaihouBannerService;
@@ -13,6 +14,7 @@ import com.ruoyi.common.exception.ServiceException;
  * Baihou banner service implementation.
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class BaihouBannerServiceImpl implements IBaihouBannerService
 {
     @Autowired
