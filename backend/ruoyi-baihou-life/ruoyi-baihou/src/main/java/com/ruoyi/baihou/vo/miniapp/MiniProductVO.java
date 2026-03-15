@@ -73,6 +73,9 @@ public class MiniProductVO
     @JsonProperty("source_files")
     private List<BaihouMedia> sourceFiles;
 
+    @JsonProperty("download_images")
+    private List<BaihouMedia> downloadImages;
+
     /**
      * 从 BaihouProduct 转换，role=2（设计师）时显示折扣价
      */
@@ -99,11 +102,24 @@ public class MiniProductVO
         vo.elementImages = p.getElementImages();
         vo.specImages = p.getSpecImages();
         vo.sourceFiles = Integer.valueOf(2).equals(role) ? p.getSourceFiles() : null;
+        vo.downloadImages = Integer.valueOf(2).equals(role) ? p.getDownloadImages() : null;
 
-        // 计算 cover_image：取第一张 scene 图，相对路径自动拼完整 URL
-        if (p.getSceneImages() != null && !p.getSceneImages().isEmpty())
+        BaihouMedia coverMedia = null;
+        if (p.getSceneImages() != null)
         {
-            String rawUrl = p.getSceneImages().get(0).getUrl();
+            coverMedia = p.getSceneImages().stream()
+                    .filter(item -> Integer.valueOf(1).equals(item.getIsCover()))
+                    .findFirst()
+                    .orElse(null);
+            if (coverMedia == null && !p.getSceneImages().isEmpty())
+            {
+                coverMedia = p.getSceneImages().get(0);
+            }
+        }
+
+        if (coverMedia != null)
+        {
+            String rawUrl = StringUtils.isNotEmpty(coverMedia.getThumbnailUrl()) ? coverMedia.getThumbnailUrl() : coverMedia.getUrl();
             if (StringUtils.isNotEmpty(rawUrl) && rawUrl.startsWith("/") && StringUtils.isNotEmpty(serverBaseUrl))
             {
                 vo.coverImage = serverBaseUrl + rawUrl;
@@ -148,4 +164,5 @@ public class MiniProductVO
     public List<BaihouMedia> getElementImages() { return elementImages; }
     public List<BaihouMedia> getSpecImages() { return specImages; }
     public List<BaihouMedia> getSourceFiles() { return sourceFiles; }
+    public List<BaihouMedia> getDownloadImages() { return downloadImages; }
 }

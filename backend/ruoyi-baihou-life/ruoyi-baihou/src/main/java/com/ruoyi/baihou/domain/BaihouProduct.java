@@ -70,6 +70,8 @@ public class BaihouProduct extends BaseEntity
 
     private List<BaihouMedia> sourceFiles;
 
+    private List<BaihouMedia> downloadImages;
+
     public BaihouProduct()
     {
     }
@@ -344,5 +346,15 @@ public class BaihouProduct extends BaseEntity
     public void setSourceFiles(List<BaihouMedia> sourceFiles)
     {
         this.sourceFiles = sourceFiles;
+    }
+
+    public List<BaihouMedia> getDownloadImages()
+    {
+        return downloadImages;
+    }
+
+    public void setDownloadImages(List<BaihouMedia> downloadImages)
+    {
+        this.downloadImages = downloadImages;
     }
 }

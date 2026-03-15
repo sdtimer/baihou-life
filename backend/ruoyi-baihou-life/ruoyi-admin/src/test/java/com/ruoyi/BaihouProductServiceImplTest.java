@@ -59,7 +59,7 @@ class BaihouProductServiceImplTest
         product.setCategoryId(4L);
         product.setRegions("[\"chengdu\"]");
         Mockito.when(productMapper.selectProductById(1001L)).thenReturn(product);
-        Mockito.when(productMapper.countProductMedia(1001L)).thenReturn(1);
+        Mockito.when(productMapper.countProductDisplayMedia(1001L)).thenReturn(1);
         Mockito.when(productMapper.updateProductStatus(1001L, "on_shelf")).thenReturn(1);
 
         BaihouProductServiceImpl service = new BaihouProductServiceImpl();
@@ -171,7 +171,7 @@ class BaihouProductServiceImplTest
         product.setCategoryId(4L);
         product.setRegions("[\"chengdu\"]");
         Mockito.when(productMapper.selectProductById(1001L)).thenReturn(product);
-        Mockito.when(productMapper.countProductMedia(1001L)).thenReturn(0);
+        Mockito.when(productMapper.countProductDisplayMedia(1001L)).thenReturn(0);
 
         BaihouProductServiceImpl service = new BaihouProductServiceImpl();
         ReflectionTestUtils.setField(service, "productMapper", productMapper);
@@ -187,7 +187,7 @@ class BaihouProductServiceImplTest
         product.setCategoryId(4L);
         product.setRegions("[\"chengdu\"]");
         Mockito.when(productMapper.selectProductById(1001L)).thenReturn(product);
-        Mockito.when(productMapper.countProductMedia(1001L)).thenReturn(2);
+        Mockito.when(productMapper.countProductDisplayMedia(1001L)).thenReturn(2);
         Mockito.when(productMapper.updateProductStatus(1001L, "on_shelf")).thenReturn(1);
 
         BaihouProductServiceImpl service = new BaihouProductServiceImpl();

@@ -60,11 +60,16 @@ function normalizeMediaList(list = []) {
   return (list || []).map((item) => ({
     media_id: item.media_id || item.mediaId,
     name: item.name || item.file_name || item.fileName || "素材文件",
-    access_level: item.access_level || "designer",
+    access_level: item.access_level || item.accessLevel || "designer",
+    asset_role: item.asset_role || item.assetRole || "display",
+    is_cover: item.is_cover ?? item.isCover ?? 0,
     url: toAbsoluteUrl(item.url || ""),
     thumbnail_url: toAbsoluteUrl(item.thumbnail_url || item.thumbnailUrl || item.url || ""),
+    original_url: toAbsoluteUrl(item.original_url || item.originalUrl || item.url || ""),
     file_format: item.file_format || item.fileFormat || "",
-    file_size: item.file_size || item.fileSize || 0
+    file_size: item.file_size || item.fileSize || 0,
+    width: item.width || 0,
+    height: item.height || 0
   }));
 }
 
@@ -73,10 +78,12 @@ function normalizeProduct(product = {}) {
   const specImages = normalizeMediaList(product.spec_images || []);
   const elementImages = normalizeMediaList(product.element_images || []);
   const sourceFiles = normalizeMediaList(product.source_files || []);
+  const downloadImages = normalizeMediaList(product.download_images || []);
+  const coverMedia = sceneImages.find((item) => Number(item.is_cover) === 1) || sceneImages[0];
   const coverImage = toAbsoluteUrl(
     product.cover_image
       || product.coverImage
-      || (sceneImages[0] ? (sceneImages[0].thumbnail_url || sceneImages[0].url) : "")
+      || (coverMedia ? (coverMedia.thumbnail_url || coverMedia.url) : "")
       || (elementImages[0] ? (elementImages[0].thumbnail_url || elementImages[0].url) : "")
       || (specImages[0] ? (specImages[0].thumbnail_url || specImages[0].url) : "")
   );
@@ -106,7 +113,8 @@ function normalizeProduct(product = {}) {
     scene_images: sceneImages,
     element_images: elementImages,
     spec_images: specImages,
-    source_files: sourceFiles
+    source_files: sourceFiles,
+    download_images: downloadImages
   };
 }
 

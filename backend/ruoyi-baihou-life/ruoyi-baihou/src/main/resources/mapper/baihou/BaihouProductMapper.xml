@@ -31,12 +31,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap id="BaihouMediaResult" type="com.ruoyi.baihou.domain.BaihouMedia">
         <id property="mediaId" column="media_id"/>
+        <result property="productId" column="product_id"/>
         <result property="type" column="type"/>
         <result property="url" column="url"/>
         <result property="thumbnailUrl" column="thumbnail_url"/>
+        <result property="originalUrl" column="original_url"/>
         <result property="fileFormat" column="file_format"/>
         <result property="fileSize" column="file_size"/>
         <result property="fileName" column="file_name"/>
+        <result property="accessLevel" column="access_level"/>
+        <result property="assetRole" column="asset_role"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="isCover" column="is_cover"/>
+        <result property="width" column="width"/>
+        <result property="height" column="height"/>
     </resultMap>
 
     <sql id="selectProductColumns">
@@ -159,17 +167,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </update>
 
-    <select id="countProductMedia" resultType="int">
+    <select id="countProductDisplayMedia" resultType="int">
         select count(1)
         from bh_media
         where product_id = #{productId}
+          and asset_role = 'display'
+          and url is not null
     </select>
 
     <select id="selectProductMediaList" resultMap="BaihouMediaResult">
-        select media_id, type, url, thumbnail_url, file_format, file_size, file_name
+        select media_id, product_id, type, url, thumbnail_url, original_url, file_format, file_size, file_name,
+               access_level, asset_role, sort_order, is_cover, width, height
         from bh_media
         where product_id = #{productId}
-        order by sort_order asc, media_id asc
+        order by asset_role asc, sort_order asc, media_id asc
     </select>
+
+    <delete id="deleteProductMedia">
+        delete from bh_media where product_id = #{productId}
+    </delete>
+
+    <insert id="insertProductMediaBatch">
+        insert into bh_media (
+            product_id, type, url, thumbnail_url, original_url, file_format, file_size, file_name,
+            access_level, asset_role, sort_order, is_cover, width, height, create_time
+        )
+        values
+        <foreach collection="mediaList" item="item" separator=",">
+            (
+                #{productId}, #{item.type}, #{item.url}, #{item.thumbnailUrl}, #{item.originalUrl}, #{item.fileFormat}, #{item.fileSize}, #{item.fileName},
+                #{item.accessLevel}, #{item.assetRole}, #{item.sortOrder}, #{item.isCover}, #{item.width}, #{item.height}, now()
+            )
+        </foreach>
+    </insert>
 
 </mapper>

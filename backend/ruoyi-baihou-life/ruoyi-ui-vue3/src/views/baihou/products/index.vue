@@ -170,6 +170,28 @@
         <el-form-item label="商品描述">
           <el-input v-model="form.description" type="textarea" :rows="4" />
         </el-form-item>
+        <el-divider content-position="left">图片与下载资源</el-divider>
+        <el-form-item label="场景图" prop="sceneImageUrls">
+          <div class="baihou-media-panel">
+            <ImageUpload v-model="form.sceneImageUrls" :limit="8" />
+            <div v-if="sceneImageList.length" class="baihou-cover-grid">
+              <div v-for="item in sceneImageList" :key="item" class="baihou-cover-item">
+                <img :src="previewUrl(item)" class="baihou-cover-item__image" />
+                <el-radio v-model="form.coverImageUrl" :label="item">设为主图</el-radio>
+              </div>
+            </div>
+            <div v-else class="baihou-form-tip">请至少上传一张场景图，并选择主图。</div>
+          </div>
+        </el-form-item>
+        <el-form-item label="元素图">
+          <ImageUpload v-model="form.elementImageUrls" :limit="8" />
+        </el-form-item>
+        <el-form-item label="规格图">
+          <ImageUpload v-model="form.specImageUrls" :limit="8" />
+        </el-form-item>
+        <el-form-item label="高清下载图">
+          <ImageUpload v-model="form.downloadImageUrls" :limit="8" />
+        </el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="open = false">取消</el-button>
@@ -205,7 +227,8 @@
           <div class="baihou-drawer-card__label">素材分组</div>
           <div class="baihou-drawer-card__value">
             场景图 {{ detailData.sceneImages?.length || 0 }} / 元素图 {{ detailData.elementImages?.length || 0 }} /
-            规格图 {{ detailData.specImages?.length || 0 }} / 源文件 {{ detailData.sourceFiles?.length || 0 }}
+            规格图 {{ detailData.specImages?.length || 0 }} / 高清图 {{ detailData.downloadImages?.length || 0 }} /
+            源文件 {{ detailData.sourceFiles?.length || 0 }}
           </div>
         </div>
       </div>
@@ -261,7 +284,12 @@ const form = reactive({
   specParams: "",
   description: "",
   status: "draft",
-  sortOrder: 10
+  sortOrder: 10,
+  sceneImageUrls: "",
+  elementImageUrls: "",
+  specImageUrls: "",
+  downloadImageUrls: "",
+  coverImageUrl: ""
 })
 
 const rules = {
@@ -323,9 +351,14 @@ function resetFormState() {
     spaceTags: "",
     sceneTags: "",
     specParams: "",
-    description: "",
-    status: "draft",
-    sortOrder: 10
+  description: "",
+  status: "draft",
+  sortOrder: 10,
+  sceneImageUrls: "",
+  elementImageUrls: "",
+  specImageUrls: "",
+  downloadImageUrls: "",
+  coverImageUrl: ""
   })
   spaceTagsArr.value = []
   sceneTagsArr.value = []
@@ -358,6 +391,11 @@ async function handleEdit(row) {
   try { spaceTagsArr.value = JSON.parse(detail.spaceTags || "[]") } catch (e) { spaceTagsArr.value = [] }
   try { sceneTagsArr.value = JSON.parse(detail.sceneTags || "[]") } catch (e) { sceneTagsArr.value = [] }
   try { specParamsObj.value = JSON.parse(detail.specParams || "{}") } catch (e) { specParamsObj.value = {} }
+  form.sceneImageUrls = mediaUrlsToString(detail.sceneImages)
+  form.elementImageUrls = mediaUrlsToString(detail.elementImages)
+  form.specImageUrls = mediaUrlsToString(detail.specImages)
+  form.downloadImageUrls = mediaUrlsToString(detail.downloadImages)
+  form.coverImageUrl = detail.sceneImages?.find((item) => Number(item.isCover) === 1)?.url || firstMediaUrl(detail.sceneImages)
   if (detail.categoryId) {
     loadSpecDefs(detail.categoryId)
   } else {
@@ -436,13 +474,44 @@ function submitForm() {
     if (!valid) {
       return
     }
+    if (!sceneImageList.value.length) {
+      proxy.$modal.msgError("请至少上传一张场景图")
+      return
+    }
     const payload = {
       ...form,
       regions: JSON.stringify(form.regions),
       spaceTags: JSON.stringify(spaceTagsArr.value),
       sceneTags: JSON.stringify(sceneTagsArr.value),
-      specParams: JSON.stringify(specParamsObj.value)
+      specParams: JSON.stringify(specParamsObj.value),
+      sceneImages: buildMediaPayload(sceneImageList.value, {
+        type: "scene",
+        accessLevel: "public",
+        assetRole: "display",
+        coverUrl: form.coverImageUrl
+      }),
+      elementImages: buildMediaPayload(parseMediaList(form.elementImageUrls), {
+        type: "element",
+        accessLevel: "public",
+        assetRole: "display"
+      }),
+      specImages: buildMediaPayload(parseMediaList(form.specImageUrls), {
+        type: "spec",
+        accessLevel: "public",
+        assetRole: "display"
+      }),
+      sourceFiles: [],
+      downloadImages: buildMediaPayload(parseMediaList(form.downloadImageUrls), {
+        type: "scene",
+        accessLevel: "designer",
+        assetRole: "download"
+      })
     }
+    delete payload.sceneImageUrls
+    delete payload.elementImageUrls
+    delete payload.specImageUrls
+    delete payload.downloadImageUrls
+    delete payload.coverImageUrl
     const request = form.id ? updateProduct(form.id, payload) : addProduct(payload)
     request.then(() => {
       proxy.$modal.msgSuccess("保存成功")
@@ -457,6 +526,46 @@ function showDetail(row) {
     detailData.value = res.data
     detailOpen.value = true
   })
+}
+
+function mediaUrlsToString(list = []) {
+  return (list || []).map((item) => item.url).filter(Boolean).join(",")
+}
+
+function parseMediaList(value) {
+  return (value || "").split(",").map((item) => item.trim()).filter(Boolean)
+}
+
+function firstMediaUrl(list = []) {
+  return (list || []).find((item) => item?.url)?.url || ""
+}
+
+function buildMediaPayload(urls, options = {}) {
+  return urls.map((url, index) => {
+    const cleanUrl = url.replace(import.meta.env.VITE_APP_BASE_API, "")
+    return {
+      type: options.type,
+      url: cleanUrl,
+      thumbnailUrl: cleanUrl,
+      originalUrl: options.assetRole === "download" ? cleanUrl : cleanUrl,
+      fileName: cleanUrl.split("/").pop(),
+      fileFormat: cleanUrl.split(".").pop() || "",
+      accessLevel: options.accessLevel,
+      assetRole: options.assetRole,
+      isCover: options.coverUrl && cleanUrl === options.coverUrl.replace(import.meta.env.VITE_APP_BASE_API, "") ? 1 : 0,
+      sortOrder: (index + 1) * 10
+    }
+  })
+}
+
+function previewUrl(url) {
+  if (!url) {
+    return ""
+  }
+  if (/^https?:\/\//.test(url)) {
+    return url
+  }
+  return `${import.meta.env.VITE_APP_BASE_API}${url}`
 }
 
 function statusLabel(status) {
@@ -477,4 +586,51 @@ onMounted(() => {
   loadOptions()
   getList()
 })
+
+const sceneImageList = computed(() => parseMediaList(form.sceneImageUrls))
+
+watch(sceneImageList, (list) => {
+  if (!list.length) {
+    form.coverImageUrl = ""
+    return
+  }
+  if (!list.includes(form.coverImageUrl)) {
+    form.coverImageUrl = list[0]
+  }
+}, { immediate: true })
 </script>
+
+<style scoped lang="scss">
+.baihou-media-panel {
+  width: 100%;
+}
+
+.baihou-cover-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.baihou-cover-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(111, 90, 69, 0.12);
+  border-radius: 16px;
+  background: #fffaf4;
+}
+
+.baihou-cover-item__image {
+  width: 100%;
+  height: 92px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.baihou-form-tip {
+  color: #8f7a66;
+  font-size: 13px;
+}
+</style>

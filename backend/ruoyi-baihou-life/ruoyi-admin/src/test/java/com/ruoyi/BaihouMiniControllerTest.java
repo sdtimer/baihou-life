@@ -113,11 +113,25 @@ class BaihouMiniControllerTest
     @Test
     void miniDesignerAssetTokenShouldReturnUrl()
     {
+        IBaihouProductService productService = Mockito.mock(IBaihouProductService.class);
+        BaihouMedia media = new BaihouMedia(5001L, "scene", "/profile/products/demo_hd.jpg");
+        media.setAccessLevel("designer");
+        media.setAssetRole("download");
+        media.setOriginalUrl("/profile/products/demo_hd.jpg");
+        BaihouProduct product = new BaihouProduct(1001L, "测试商品", "BH-001", "on_shelf");
+        product.setDownloadImages(List.of(media));
+        Mockito.when(productService.selectProductById(1001L)).thenReturn(product);
+
         BaihouMiniContext.set(10001L, 2, "openid");
 
         BaihouMiniDesignerController controller = new BaihouMiniDesignerController();
+        ReflectionTestUtils.setField(controller, "productService", productService);
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/v1/designer/asset-token");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8080);
         @SuppressWarnings("unchecked")
-        Map<String, Object> data = (Map<String, Object>) controller.assetToken(1001L, 5001L).get("data");
+        Map<String, Object> data = (Map<String, Object>) controller.assetToken(request, 1001L, 5001L).get("data");
 
         assertNotNull(data.get("url"));
         assertEquals(300, data.get("expires_in"));

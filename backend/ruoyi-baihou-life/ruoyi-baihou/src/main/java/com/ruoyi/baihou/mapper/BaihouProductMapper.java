@@ -26,7 +26,11 @@ public interface BaihouProductMapper
 
     int batchArchiveProducts(List<Long> ids);
 
-    int countProductMedia(Long productId);
+    int countProductDisplayMedia(Long productId);
 
     List<BaihouMedia> selectProductMediaList(Long productId);
+
+    int deleteProductMedia(Long productId);
+
+    int insertProductMediaBatch(@Param("productId") Long productId, @Param("mediaList") List<BaihouMedia> mediaList);
 }

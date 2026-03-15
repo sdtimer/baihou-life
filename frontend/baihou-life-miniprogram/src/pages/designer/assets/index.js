@@ -37,7 +37,7 @@ Page({
       this.setData({
         loading: false,
         product,
-        errorMessage: product && product.source_files.length ? "" : "当前商品暂无可下载素材"
+        errorMessage: product && product.download_images.length ? "" : "当前商品暂无可下载高清图"
       });
     } catch (error) {
       this.setData({
@@ -85,7 +85,7 @@ Page({
     } catch (error) {
       wx.hideLoading();
       wx.showToast({
-        title: error.message || "素材链接已失效，请重新获取",
+        title: error.message || "下载链接已失效，请重新获取",
         icon: "none"
       });
     }
