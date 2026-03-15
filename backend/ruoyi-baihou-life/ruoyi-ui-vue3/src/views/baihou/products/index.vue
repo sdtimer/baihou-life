@@ -341,15 +341,27 @@ function handleAdd() {
   open.value = true
 }
 
-function handleEdit(row) {
+async function handleEdit(row) {
   resetFormState()
-  Object.assign(form, row)
-  try { form.regions = JSON.parse(row.regions || "[]") } catch (e) { form.regions = [] }
-  try { spaceTagsArr.value = JSON.parse(row.spaceTags || "[]") } catch (e) { spaceTagsArr.value = [] }
-  try { sceneTagsArr.value = JSON.parse(row.sceneTags || "[]") } catch (e) { sceneTagsArr.value = [] }
-  if (row.categoryId) {
-    loadSpecDefs(row.categoryId)
-    try { specParamsObj.value = JSON.parse(row.specParams || "{}") } catch (e) { specParamsObj.value = {} }
+  const productId = row?.id ?? row?.productId ?? row?.product_id
+  if (!productId) {
+    proxy.$modal.msgError("商品ID缺失，无法编辑")
+    return
+  }
+  const detail = await getProduct(productId).then((res) => res.data)
+  if (!detail) {
+    proxy.$modal.msgError("商品详情不存在或已被删除")
+    return
+  }
+  Object.assign(form, detail)
+  try { form.regions = JSON.parse(detail.regions || "[]") } catch (e) { form.regions = [] }
+  try { spaceTagsArr.value = JSON.parse(detail.spaceTags || "[]") } catch (e) { spaceTagsArr.value = [] }
+  try { sceneTagsArr.value = JSON.parse(detail.sceneTags || "[]") } catch (e) { sceneTagsArr.value = [] }
+  try { specParamsObj.value = JSON.parse(detail.specParams || "{}") } catch (e) { specParamsObj.value = {} }
+  if (detail.categoryId) {
+    loadSpecDefs(detail.categoryId)
+  } else {
+    specDefs.value = []
   }
   title.value = "编辑商品"
   open.value = true
@@ -392,6 +404,11 @@ async function handleBatchAction(action) {
 }
 
 function loadSpecDefs(categoryId) {
+  if (!categoryId) {
+    specDefs.value = []
+    specParamsObj.value = {}
+    return
+  }
   listSpecDefs(categoryId).then((res) => {
     specDefs.value = res.data || []
     const newObj = {}

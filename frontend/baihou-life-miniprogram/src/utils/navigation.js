@@ -1,9 +1,9 @@
-const appConfig = require("../app.json");
+const tabBarPagesConfig = require("../config/tab-bar-pages");
 const storage = require("./storage");
 
 const TAB_REDIRECT_STATE_KEY = "tab_redirect_state";
 const tabBarPages = new Set(
-  ((appConfig.tabBar && appConfig.tabBar.list) || []).map((item) => normalizePath(item.pagePath))
+  (tabBarPagesConfig || []).map((item) => normalizePath(item))
 );
 
 function normalizePath(path = "") {
