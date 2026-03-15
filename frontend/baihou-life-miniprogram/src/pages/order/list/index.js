@@ -1,5 +1,6 @@
 const orderService = require("../../../services/order");
 const auth = require("../../../utils/auth");
+const navigation = require("../../../utils/navigation");
 
 const statusText = {
   pending_pay: "待支付",
@@ -32,6 +33,11 @@ Page({
   },
 
   async onShow() {
+    const redirectState = navigation.consumeTabRedirectState("/pages/order/list/index");
+    const nextTab = redirectState && redirectState.status ? redirectState.status : this.data.currentTab;
+    if (nextTab !== this.data.currentTab) {
+      this.setData({ currentTab: nextTab });
+    }
     if (!auth.requireLogin({ redirect: "/pages/order/list/index" })) {
       return;
     }
@@ -42,7 +48,7 @@ Page({
       this.setData({
         loading: false,
         rows: normalizedRows,
-        filteredRows: this.filterRowsByTab(normalizedRows, this.data.currentTab)
+        filteredRows: this.filterRowsByTab(normalizedRows, nextTab)
       });
     } catch (error) {
       this.setData({

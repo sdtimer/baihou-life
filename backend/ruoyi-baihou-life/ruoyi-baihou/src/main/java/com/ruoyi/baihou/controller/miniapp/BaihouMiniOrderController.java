@@ -57,6 +57,11 @@ public class BaihouMiniOrderController
         {
             return AjaxResult.error(401, "请先登录");
         }
+        AjaxResult access = ensureOrderAccess(orderId);
+        if (access != null)
+        {
+            return access;
+        }
         return AjaxResult.success(orderService.buildMiniPrepay(BaihouMiniContext.getUid(), orderId));
     }
 
@@ -66,6 +71,11 @@ public class BaihouMiniOrderController
         if (!BaihouMiniContext.isLoggedIn())
         {
             return AjaxResult.error(401, "请先登录");
+        }
+        AjaxResult access = ensureOrderAccess(orderId);
+        if (access != null)
+        {
+            return access;
         }
         return orderService.markMiniOrderPaid(BaihouMiniContext.getUid(), orderId) > 0
                 ? AjaxResult.success()
@@ -93,10 +103,28 @@ public class BaihouMiniOrderController
             return AjaxResult.error(401, "请先登录");
         }
         BaihouOrder order = orderService.selectOrderById(orderId);
-        if (order == null || order.getUserId() == null || !order.getUserId().equals(BaihouMiniContext.getUid()))
+        if (order == null)
         {
-            return AjaxResult.error("订单不存在");
+            return AjaxResult.error(404, "订单不存在");
+        }
+        if (order.getUserId() == null || !order.getUserId().equals(BaihouMiniContext.getUid()))
+        {
+            return AjaxResult.error(403, "无权访问该订单");
         }
         return AjaxResult.success(MiniOrderVO.from(order));
+    }
+
+    private AjaxResult ensureOrderAccess(Long orderId)
+    {
+        BaihouOrder order = orderService.selectOrderById(orderId);
+        if (order == null)
+        {
+            return AjaxResult.error(404, "订单不存在");
+        }
+        if (order.getUserId() == null || !order.getUserId().equals(BaihouMiniContext.getUid()))
+        {
+            return AjaxResult.error(403, "无权访问该订单");
+        }
+        return null;
     }
 }

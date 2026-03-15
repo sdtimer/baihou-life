@@ -19,6 +19,15 @@ public class MiniOrderVO
     @JsonProperty("region_id")
     private String regionId;
 
+    @JsonProperty("product_id")
+    private Long productId;
+
+    @JsonProperty("product_name")
+    private String productName;
+
+    @JsonProperty("unit_price")
+    private BigDecimal unitPrice;
+
     @JsonProperty("total_amount")
     private BigDecimal totalAmount;
 
@@ -39,6 +48,9 @@ public class MiniOrderVO
         vo.orderId = o.getOrderId();
         vo.orderNo = o.getOrderNo();
         vo.regionId = o.getRegionId();
+        vo.productId = o.getProductId();
+        vo.productName = o.getProductName();
+        vo.unitPrice = o.getUnitPrice();
         vo.totalAmount = o.getTotalAmount();
         vo.payAmount = o.getPayAmount();
         vo.status = o.getStatus();
@@ -50,6 +62,9 @@ public class MiniOrderVO
     public Long getOrderId() { return orderId; }
     public String getOrderNo() { return orderNo; }
     public String getRegionId() { return regionId; }
+    public Long getProductId() { return productId; }
+    public String getProductName() { return productName; }
+    public BigDecimal getUnitPrice() { return unitPrice; }
     public BigDecimal getTotalAmount() { return totalAmount; }
     public BigDecimal getPayAmount() { return payAmount; }
     public String getStatus() { return status; }

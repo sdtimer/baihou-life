@@ -129,8 +129,8 @@
           <el-form-item label="设计师折扣">
             <el-input-number v-model="form.designerDiscount" :precision="2" :min="0" :max="1" :step="0.01" style="width: 100%" />
           </el-form-item>
-          <el-form-item label="区域" prop="regionsArr">
-            <el-select v-model="regionsArr" multiple placeholder="请选择区域" style="width: 100%" @change="handleRegionsChange">
+          <el-form-item label="区域" prop="regions">
+            <el-select v-model="form.regions" multiple placeholder="请选择区域" style="width: 100%">
               <el-option v-for="item in regionSelectOptions" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
@@ -232,7 +232,6 @@ const categoryOptions = ref([])
 const regionSelectOptions = ref([])
 const detailData = ref()
 const selectionIds = ref([])
-const regionsArr = ref([])
 const spaceTagsArr = ref([])
 const sceneTagsArr = ref([])
 const specDefs = ref([])
@@ -256,7 +255,7 @@ const form = reactive({
   guidePrice: 0,
   priceUnit: "元/套",
   designerDiscount: 0.9,
-  regions: "",
+  regions: [],
   spaceTags: "",
   sceneTags: "",
   specParams: "",
@@ -269,7 +268,7 @@ const rules = {
   name: [{ required: true, message: "请输入商品名称", trigger: "blur" }],
   skuCode: [{ required: true, message: "请输入 SKU", trigger: "blur" }],
   categoryId: [{ required: true, message: "请选择品类", trigger: "change" }],
-  regionsArr: [{ required: true, message: "请选择区域", trigger: "change" }]
+  regions: [{ required: true, message: "请选择区域", trigger: "change" }]
 }
 
 const statusOptions = [
@@ -320,7 +319,7 @@ function resetFormState() {
     guidePrice: 0,
     priceUnit: "元/套",
     designerDiscount: 0.9,
-    regions: "",
+    regions: [],
     spaceTags: "",
     sceneTags: "",
     specParams: "",
@@ -328,7 +327,6 @@ function resetFormState() {
     status: "draft",
     sortOrder: 10
   })
-  regionsArr.value = []
   spaceTagsArr.value = []
   sceneTagsArr.value = []
   specDefs.value = []
@@ -346,7 +344,7 @@ function handleAdd() {
 function handleEdit(row) {
   resetFormState()
   Object.assign(form, row)
-  try { regionsArr.value = JSON.parse(row.regions || "[]") } catch (e) { regionsArr.value = [] }
+  try { form.regions = JSON.parse(row.regions || "[]") } catch (e) { form.regions = [] }
   try { spaceTagsArr.value = JSON.parse(row.spaceTags || "[]") } catch (e) { spaceTagsArr.value = [] }
   try { sceneTagsArr.value = JSON.parse(row.sceneTags || "[]") } catch (e) { sceneTagsArr.value = [] }
   if (row.categoryId) {
@@ -393,10 +391,6 @@ async function handleBatchAction(action) {
   })
 }
 
-function handleRegionsChange() {
-  // no-op, validation handled by form rule
-}
-
 function loadSpecDefs(categoryId) {
   listSpecDefs(categoryId).then((res) => {
     specDefs.value = res.data || []
@@ -427,7 +421,7 @@ function submitForm() {
     }
     const payload = {
       ...form,
-      regions: JSON.stringify(regionsArr.value),
+      regions: JSON.stringify(form.regions),
       spaceTags: JSON.stringify(spaceTagsArr.value),
       sceneTags: JSON.stringify(sceneTagsArr.value),
       specParams: JSON.stringify(specParamsObj.value)

@@ -127,6 +127,8 @@ class BaihouMiniControllerTest
     void miniOrderPrepayShouldValidateOwnerAndPendingPayStatus()
     {
         IBaihouOrderService orderService = Mockito.mock(IBaihouOrderService.class);
+        BaihouOrder order = new BaihouOrder(2001L, "ORD202603140001", "pending_pay");
+        order.setUserId(10001L);
         @SuppressWarnings("unchecked")
         Map<String, Object> payment = Map.of("mode", "mock");
         @SuppressWarnings("unchecked")
@@ -134,6 +136,7 @@ class BaihouMiniControllerTest
                 "order_id", 2001L,
                 "order_no", "ORD202603140001",
                 "payment", payment);
+        Mockito.when(orderService.selectOrderById(2001L)).thenReturn(order);
         Mockito.when(orderService.buildMiniPrepay(10001L, 2001L)).thenReturn(prepay);
 
         BaihouMiniOrderController controller = new BaihouMiniOrderController();
@@ -165,9 +168,39 @@ class BaihouMiniControllerTest
     }
 
     @Test
+    void miniOrderDetailShouldReturn403WhenOrderBelongsToOtherUser()
+    {
+        IBaihouOrderService orderService = Mockito.mock(IBaihouOrderService.class);
+        BaihouOrder order = new BaihouOrder(2001L, "ORD202603140001", "paid");
+        order.setUserId(20002L);
+        Mockito.when(orderService.selectOrderById(2001L)).thenReturn(order);
+
+        BaihouMiniOrderController controller = new BaihouMiniOrderController();
+        ReflectionTestUtils.setField(controller, "orderService", orderService);
+
+        BaihouMiniContext.set(10001L, 1, "openid");
+        assertEquals(403, controller.detail(2001L).get("code"));
+    }
+
+    @Test
+    void miniOrderDetailShouldReturn404WhenOrderDoesNotExist()
+    {
+        IBaihouOrderService orderService = Mockito.mock(IBaihouOrderService.class);
+        Mockito.when(orderService.selectOrderById(2001L)).thenReturn(null);
+
+        BaihouMiniOrderController controller = new BaihouMiniOrderController();
+        ReflectionTestUtils.setField(controller, "orderService", orderService);
+
+        BaihouMiniContext.set(10001L, 1, "openid");
+        assertEquals(404, controller.detail(2001L).get("code"));
+    }
+
+    @Test
     void miniPaymentControllerShouldDelegateToOrderService()
     {
         IBaihouOrderService orderService = Mockito.mock(IBaihouOrderService.class);
+        BaihouOrder order = new BaihouOrder(2001L, "ORD202603140001", "pending_pay");
+        order.setUserId(10001L);
         @SuppressWarnings("unchecked")
         Map<String, Object> payment = Map.of("mode", "mock");
         @SuppressWarnings("unchecked")
@@ -175,6 +208,7 @@ class BaihouMiniControllerTest
                 "order_id", 2001L,
                 "order_no", "ORD202603140001",
                 "payment", payment);
+        Mockito.when(orderService.selectOrderById(2001L)).thenReturn(order);
         Mockito.when(orderService.buildMiniPrepay(10001L, 2001L)).thenReturn(prepay);
         Mockito.when(orderService.markMiniOrderPaid(10001L, 2001L)).thenReturn(1);
 
@@ -187,6 +221,21 @@ class BaihouMiniControllerTest
 
         assertEquals("ORD202603140001", data.get("order_no"));
         assertEquals(200, controller.paySuccess(Map.of("order_id", 2001L)).get("code"));
+    }
+
+    @Test
+    void miniPaymentControllerShouldReturn403WhenOrderBelongsToOtherUser()
+    {
+        IBaihouOrderService orderService = Mockito.mock(IBaihouOrderService.class);
+        BaihouOrder order = new BaihouOrder(2001L, "ORD202603140001", "pending_pay");
+        order.setUserId(20002L);
+        Mockito.when(orderService.selectOrderById(2001L)).thenReturn(order);
+
+        BaihouMiniPaymentController controller = new BaihouMiniPaymentController();
+        ReflectionTestUtils.setField(controller, "orderService", orderService);
+
+        BaihouMiniContext.set(10001L, 1, "openid");
+        assertEquals(403, controller.prepay(Map.of("order_id", 2001L)).get("code"));
     }
 
     private com.ruoyi.baihou.dto.miniapp.MiniLoginRequest request(String code)

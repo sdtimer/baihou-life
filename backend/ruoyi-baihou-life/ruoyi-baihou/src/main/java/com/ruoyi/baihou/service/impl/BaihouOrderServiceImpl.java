@@ -1,6 +1,7 @@
 package com.ruoyi.baihou.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import com.ruoyi.baihou.mapper.BaihouProductMapper;
 import com.ruoyi.baihou.service.IBaihouOrderService;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.context.BaihouMiniContext;
 
 /**
  * Baihou order service implementation.
@@ -93,13 +95,16 @@ public class BaihouOrderServiceImpl implements IBaihouOrderService
             throw new ServiceException("当前区域不可售");
         }
 
-        BigDecimal price = product.getGuidePrice() != null ? product.getGuidePrice() : BigDecimal.ZERO;
+        BigDecimal price = resolveMiniOrderPrice(product, BaihouMiniContext.getRole());
         String orderNo = "ORD" + System.currentTimeMillis();
 
         BaihouOrder order = new BaihouOrder();
         order.setOrderNo(orderNo);
         order.setUserId(uid);
         order.setRegionId(request.getRegionId());
+        order.setProductId(product.getId());
+        order.setProductName(product.getName());
+        order.setUnitPrice(price);
         order.setTotalAmount(price);
         order.setPayAmount(price);
         order.setStatus("pending_pay");
@@ -166,6 +171,16 @@ public class BaihouOrderServiceImpl implements IBaihouOrderService
         {
             throw new ServiceException("发货必须填写物流单号");
         }
+    }
+
+    private BigDecimal resolveMiniOrderPrice(BaihouProduct product, Integer role)
+    {
+        BigDecimal guidePrice = product.getGuidePrice() != null ? product.getGuidePrice() : BigDecimal.ZERO;
+        if (Integer.valueOf(2).equals(role) && product.getDesignerDiscount() != null)
+        {
+            return guidePrice.multiply(product.getDesignerDiscount()).setScale(2, RoundingMode.HALF_UP);
+        }
+        return guidePrice.setScale(2, RoundingMode.HALF_UP);
     }
 
     private boolean regionMatches(String regions, String regionId)

@@ -3,6 +3,7 @@ package com.ruoyi;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.math.RoundingMode;
 import com.ruoyi.baihou.domain.BaihouAppointment;
 import com.ruoyi.baihou.domain.BaihouLead;
 import com.ruoyi.baihou.domain.BaihouOrder;
@@ -18,8 +19,10 @@ import com.ruoyi.baihou.service.impl.BaihouLeadServiceImpl;
 import com.ruoyi.baihou.service.impl.BaihouOrderServiceImpl;
 import com.ruoyi.common.exception.ServiceException;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
+import com.ruoyi.common.context.BaihouMiniContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -95,6 +98,67 @@ class BaihouMiniServiceGapTest
         request.setRegionId("foshan");
 
         assertThrows(ServiceException.class, () -> service.createMiniOrder(10001L, request));
+    }
+
+    @Test
+    void createMiniOrderShouldPersistProductSnapshotForCustomer()
+    {
+        BaihouOrderMapper orderMapper = Mockito.mock(BaihouOrderMapper.class);
+        BaihouProductMapper productMapper = Mockito.mock(BaihouProductMapper.class);
+        BaihouProduct product = new BaihouProduct(1001L, "测试商品", "BH-001", "on_shelf");
+        product.setGuidePrice(new BigDecimal("1280.00"));
+        product.setDesignerDiscount(new BigDecimal("0.85"));
+        product.setRegions("[\"foshan\"]");
+        Mockito.when(productMapper.selectProductById(1001L)).thenReturn(product);
+
+        BaihouOrderServiceImpl service = new BaihouOrderServiceImpl();
+        ReflectionTestUtils.setField(service, "orderMapper", orderMapper);
+        ReflectionTestUtils.setField(service, "productMapper", productMapper);
+
+        com.ruoyi.baihou.dto.miniapp.MiniOrderCreateRequest request = new com.ruoyi.baihou.dto.miniapp.MiniOrderCreateRequest();
+        request.setProductId(1001L);
+        request.setRegionId("foshan");
+
+        BaihouMiniContext.set(10001L, 1, "openid");
+        service.createMiniOrder(10001L, request);
+
+        ArgumentCaptor<BaihouOrder> captor = ArgumentCaptor.forClass(BaihouOrder.class);
+        Mockito.verify(orderMapper).insertOrder(captor.capture());
+        BaihouOrder created = captor.getValue();
+        assertEquals(1001L, created.getProductId());
+        assertEquals("测试商品", created.getProductName());
+        assertEquals(new BigDecimal("1280.00"), created.getUnitPrice());
+        BaihouMiniContext.clear();
+    }
+
+    @Test
+    void createMiniOrderShouldApplyDesignerDiscountToUnitPrice()
+    {
+        BaihouOrderMapper orderMapper = Mockito.mock(BaihouOrderMapper.class);
+        BaihouProductMapper productMapper = Mockito.mock(BaihouProductMapper.class);
+        BaihouProduct product = new BaihouProduct(1001L, "测试商品", "BH-001", "on_shelf");
+        product.setGuidePrice(new BigDecimal("1280.00"));
+        product.setDesignerDiscount(new BigDecimal("0.85"));
+        product.setRegions("[\"foshan\"]");
+        Mockito.when(productMapper.selectProductById(1001L)).thenReturn(product);
+
+        BaihouOrderServiceImpl service = new BaihouOrderServiceImpl();
+        ReflectionTestUtils.setField(service, "orderMapper", orderMapper);
+        ReflectionTestUtils.setField(service, "productMapper", productMapper);
+
+        com.ruoyi.baihou.dto.miniapp.MiniOrderCreateRequest request = new com.ruoyi.baihou.dto.miniapp.MiniOrderCreateRequest();
+        request.setProductId(1001L);
+        request.setRegionId("foshan");
+
+        BaihouMiniContext.set(10001L, 2, "openid");
+        service.createMiniOrder(10001L, request);
+
+        ArgumentCaptor<BaihouOrder> captor = ArgumentCaptor.forClass(BaihouOrder.class);
+        Mockito.verify(orderMapper).insertOrder(captor.capture());
+        BaihouOrder created = captor.getValue();
+        assertEquals(new BigDecimal("1280.00").multiply(new BigDecimal("0.85")).setScale(2, RoundingMode.HALF_UP), created.getUnitPrice());
+        assertEquals(created.getUnitPrice(), created.getPayAmount());
+        BaihouMiniContext.clear();
     }
 
     @Test

@@ -1,4 +1,5 @@
 const userStore = require("../store/user");
+const navigation = require("./navigation");
 
 function getToken() {
   return userStore.getState().token;
@@ -16,8 +17,14 @@ function requireLogin(options = {}) {
   if (userStore.isLoggedIn()) {
     return true;
   }
-  wx.navigateTo({
-    url: `/pages/auth/index?redirect=${encodeURIComponent(buildRedirect(options))}`
+  const redirect = buildRedirect(options);
+  if (redirect && navigation.isTabBarPage(redirect) && options.redirectParams) {
+    navigation.setTabRedirectState(redirect, options.redirectParams);
+  }
+  navigation.navigate("/pages/auth/index", {
+    params: {
+      redirect
+    }
   });
   return false;
 }

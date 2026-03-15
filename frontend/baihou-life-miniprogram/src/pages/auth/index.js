@@ -1,6 +1,7 @@
 const authService = require("../../services/auth");
 const userStore = require("../../store/user");
 const regionStore = require("../../store/region");
+const navigation = require("../../utils/navigation");
 
 Page({
   data: {
@@ -37,7 +38,7 @@ Page({
       wx.showToast({ title: "登录成功", icon: "success" });
       setTimeout(() => {
         if (this.data.redirect) {
-          wx.redirectTo({ url: this.data.redirect });
+          navigation.navigate(this.data.redirect, { mode: "replace" });
           return;
         }
         const pages = getCurrentPages();

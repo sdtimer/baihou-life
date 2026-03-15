@@ -26,7 +26,9 @@ function normalizeOrder(item = {}) {
   return {
     order_id: item.order_id || item.orderId,
     order_no: item.order_no || item.orderNo || "",
+    product_id: item.product_id || item.productId || null,
     product_name: item.product_name || item.productName || "精选产品",
+    unit_price: item.unit_price || item.unitPrice || 0,
     region_id: item.region_id || item.regionId || "",
     region_name: item.region_name || item.regionName || REGION_NAMES[item.region_id || item.regionId] || "",
     total_amount: item.total_amount || item.totalAmount || 0,
@@ -62,7 +64,10 @@ async function createOrder(payload) {
   if (env.useMock) {
     return mock.delay({
       order_id: Date.now(),
-      order_no: `ORD${Date.now()}`
+      order_no: `ORD${Date.now()}`,
+      product_id: payload.product_id,
+      product_name: "精选产品",
+      unit_price: 1280
     });
   }
   const response = await request({

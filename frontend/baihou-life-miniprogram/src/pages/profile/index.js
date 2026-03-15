@@ -1,6 +1,7 @@
 const userStore = require("../../store/user");
 const regionStore = require("../../store/region");
 const auth = require("../../utils/auth");
+const navigation = require("../../utils/navigation");
 const orderService = require("../../services/order");
 
  function buildViewData() {
@@ -77,29 +78,34 @@ Page({
   },
 
   goAuth() {
-    wx.navigateTo({ url: "/pages/auth/index" });
+    navigation.navigate("/pages/auth/index");
   },
 
   openAppointments() {
     if (!auth.requireLogin({ redirect: "/pages/appointment/list/index" })) {
       return;
     }
-    wx.navigateTo({ url: "/pages/appointment/list/index" });
+    navigation.navigate("/pages/appointment/list/index");
   },
 
   openOrders() {
     if (!auth.requireLogin({ redirect: "/pages/order/list/index" })) {
       return;
     }
-    wx.navigateTo({ url: "/pages/order/list/index" });
+    navigation.navigate("/pages/order/list/index");
   },
 
   openOrdersByStatus(event) {
-    if (!auth.requireLogin({ redirect: "/pages/order/list/index" })) {
+    const { status } = event.currentTarget.dataset;
+    if (!auth.requireLogin({
+      redirect: "/pages/order/list/index",
+      redirectParams: { status }
+    })) {
       return;
     }
-    const { status } = event.currentTarget.dataset;
-    wx.navigateTo({ url: `/pages/order/list/index${status ? `?status=${status}` : ""}` });
+    navigation.navigate("/pages/order/list/index", {
+      params: { status }
+    });
   },
 
   openAssets() {
@@ -113,6 +119,6 @@ Page({
       title: "请先进入具体商品查看素材",
       icon: "none"
     });
-    wx.navigateTo({ url: "/pages/product/list/index" });
+    navigation.navigate("/pages/product/list/index");
   }
 });

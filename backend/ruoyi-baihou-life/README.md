@@ -36,6 +36,12 @@ English version: [README-BAIHOU.md](./README-BAIHOU.md)
 - Quartz 订单超时关闭、自动收货任务
 - 控制器、服务、权限契约等自动化测试
 
+当前订单实现说明：
+
+- 当前一期代码采用“单商品订单”简化模型
+- 小程序创建订单时直接关联单个 `product_id`，并在 `bh_order` 中保留商品名称与成交单价快照
+- 暂未引入多商品购物车与独立 `order_item` 结构，后续扩展时再补充
+
 ## 目录结构
 
 ```text

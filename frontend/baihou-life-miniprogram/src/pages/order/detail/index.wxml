@@ -44,6 +44,10 @@
     <view class="section">
       <view class="section-title">费用明细</view>
       <view class="amount-card">
+        <view class="info-item">
+          <view class="info-label">成交单价</view>
+          <view class="info-value">¥{{detail.unit_price}}</view>
+        </view>
         <view class="amount-label">实付金额</view>
         <view class="amount-value">¥{{detail.pay_amount}}</view>
       </view>
