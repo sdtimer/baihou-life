@@ -127,7 +127,7 @@ Page({
     } catch (error) {
       this.setData({
         loading: false,
-        errorMessage: error.msg || "当前区域产品加载失败，请稍后重试。"
+        errorMessage: error.message || "当前区域产品加载失败，请稍后重试。"
       });
     }
   },
@@ -163,7 +163,7 @@ Page({
       this.setData({
         loading: false,
         loadingMore: false,
-        errorMessage: error.msg || "筛选结果加载失败，请稍后重试。"
+        errorMessage: error.message || "筛选结果加载失败，请稍后重试。"
       });
     }
   },

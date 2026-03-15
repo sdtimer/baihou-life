@@ -63,7 +63,7 @@ Page({
       this.setData({
         loading: false,
         unavailable: true,
-        errorMessage: error.msg || "该商品当前区域暂不可售"
+        errorMessage: error.message || "该商品当前区域暂不可售"
       });
     }
   },

@@ -57,7 +57,7 @@ Page({
       setTimeout(() => wx.navigateBack(), 500);
     } catch (error) {
       wx.showToast({
-        title: error.msg || "提交失败，请稍后重试",
+        title: error.message || "提交失败，请稍后重试",
         icon: "none"
       });
     } finally {

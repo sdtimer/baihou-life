@@ -180,7 +180,7 @@ Page({
       setTimeout(() => wx.navigateBack(), 500);
     } catch (error) {
       wx.showToast({
-        title: error.msg || "预约提交失败",
+        title: error.message || "预约提交失败",
         icon: "none"
       });
     } finally {

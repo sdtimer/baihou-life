@@ -43,7 +43,7 @@ Page({
         detail: null
       });
       wx.showToast({
-        title: error.msg || "订单详情加载失败",
+        title: error.message || "订单详情加载失败",
         icon: "none"
       });
     }
@@ -64,7 +64,7 @@ Page({
       wx.showToast({
         title: error.code === "PAY_CANCELLED"
           ? "已取消支付，订单仍待支付"
-          : (error.code === "PAY_FAILED" ? "支付失败，请稍后重试" : (error.msg || "支付失败")),
+          : (error.code === "PAY_FAILED" ? "支付失败，请稍后重试" : (error.message || "支付失败")),
         icon: "none"
       });
     } finally {

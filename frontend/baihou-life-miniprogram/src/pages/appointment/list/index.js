@@ -32,7 +32,7 @@ Page({
         rows: []
       });
       wx.showToast({
-        title: error.msg || "预约记录加载失败",
+        title: error.message || "预约记录加载失败",
         icon: "none"
       });
     }

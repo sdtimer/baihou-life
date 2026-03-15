@@ -27,15 +27,24 @@ function request({ url, method = "GET", data = {}, header = {} }) {
               resolve(response);
               return;
             }
-            reject(response);
+            const bizError = new Error(response.msg || '操作失败');
+            bizError.code = response.code;
+            bizError.data = response.data;
+            reject(bizError);
             return;
           }
           resolve(response);
           return;
         }
-        reject(response || { code: statusCode, msg: "请求失败" });
+        const httpError = new Error((response && response.msg) || `请求失败（${statusCode}）`);
+        httpError.code = statusCode;
+        reject(httpError);
       },
-      fail: reject
+      fail: (err) => {
+        const netError = new Error(err.errMsg || '网络错误');
+        netError.code = 'NETWORK_ERROR';
+        reject(netError);
+      }
     });
   });
 }

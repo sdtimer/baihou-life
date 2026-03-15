@@ -51,7 +51,7 @@ Page({
         filteredRows: []
       });
       wx.showToast({
-        title: error.msg || "订单加载失败",
+        title: error.message || "订单加载失败",
         icon: "none"
       });
     }

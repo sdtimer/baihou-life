@@ -39,7 +39,7 @@ Page({
         detail: null
       });
       wx.showToast({
-        title: error.msg || "预约详情加载失败",
+        title: error.message || "预约详情加载失败",
         icon: "none"
       });
     }

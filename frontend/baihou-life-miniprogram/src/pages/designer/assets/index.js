@@ -42,7 +42,7 @@ Page({
     } catch (error) {
       this.setData({
         loading: false,
-        errorMessage: error.msg || "素材加载失败，请稍后重试"
+        errorMessage: error.message || "素材加载失败，请稍后重试"
       });
     }
   },
@@ -85,7 +85,7 @@ Page({
     } catch (error) {
       wx.hideLoading();
       wx.showToast({
-        title: error.msg || "素材链接已失效，请重新获取",
+        title: error.message || "素材链接已失效，请重新获取",
         icon: "none"
       });
     }

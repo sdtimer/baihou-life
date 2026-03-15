@@ -31,7 +31,7 @@ Page({
         product: null
       });
       wx.showToast({
-        title: error.msg || "商品加载失败",
+        title: error.message || "商品加载失败",
         icon: "none"
       });
     }
@@ -60,7 +60,7 @@ Page({
     } catch (error) {
       const message = error.code === "PAY_CANCELLED"
         ? "已取消支付，订单保留待支付状态"
-        : (error.code === "PAY_FAILED" ? "支付失败，请稍后重试" : (error.msg || "下单失败，请稍后重试"));
+        : (error.code === "PAY_FAILED" ? "支付失败，请稍后重试" : (error.message || "下单失败，请稍后重试"));
       wx.showToast({
         title: message,
         icon: "none"

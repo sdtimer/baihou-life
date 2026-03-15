@@ -49,7 +49,7 @@ Page({
       }, 400);
     } catch (error) {
       wx.showToast({
-        title: error.msg || "登录失败，请稍后重试",
+        title: error.message || "登录失败，请稍后重试",
         icon: "none"
       });
     } finally {
