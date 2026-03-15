@@ -28,6 +28,19 @@ CREATE TABLE IF NOT EXISTS bh_order (
     KEY idx_bh_order_create_time (create_time)
 );
 
+CREATE TABLE IF NOT EXISTS bh_order_item (
+    item_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    order_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    product_name VARCHAR(128) NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+    unit_price DECIMAL(10,2) NOT NULL,
+    line_amount DECIMAL(10,2) NOT NULL,
+    create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    KEY idx_bh_order_item_order_id (order_id),
+    KEY idx_bh_order_item_product_id (product_id)
+);
+
 INSERT INTO bh_order (
     order_id, order_no, user_id, region_id, product_id, product_name, unit_price, total_amount, pay_amount, status,
     payment_method, transaction_id, remark, admin_note, tracking_no, paid_at, shipped_at, completed_at, closed_at, expires_at
@@ -42,3 +55,14 @@ ON DUPLICATE KEY UPDATE
     admin_note = VALUES(admin_note),
     tracking_no = VALUES(tracking_no),
     update_time = CURRENT_TIMESTAMP;
+
+INSERT INTO bh_order_item (
+    item_id, order_id, product_id, product_name, quantity, unit_price, line_amount
+) VALUES
+    (1, 1, 10001, '客厅套装', 1, 1280.00, 1280.00),
+    (2, 2, 10002, '餐厅单品', 1, 860.00, 860.00)
+ON DUPLICATE KEY UPDATE
+    product_name = VALUES(product_name),
+    quantity = VALUES(quantity),
+    unit_price = VALUES(unit_price),
+    line_amount = VALUES(line_amount);

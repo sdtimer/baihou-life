@@ -27,7 +27,7 @@
       </view>
 
       <view class="order-body">
-        <view class="order-name">{{item.product_name}}</view>
+        <view class="order-name">{{item.product_summary}}</view>
         <view class="order-meta">{{item.created_at}} · {{item.region_name}}</view>
         <view class="order-amount">¥{{item.pay_amount}}</view>
       </view>

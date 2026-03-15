@@ -1,5 +1,6 @@
 package com.ruoyi.baihou.dto.miniapp;
 
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -7,21 +8,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class MiniOrderCreateRequest
 {
-    @JsonProperty("product_id")
-    private Long productId;
-
     @JsonProperty("region_id")
     private String regionId;
 
-    public Long getProductId()
-    {
-        return productId;
-    }
+    private List<MiniOrderItemCreateRequest> items;
 
-    public void setProductId(Long productId)
-    {
-        this.productId = productId;
-    }
+    private String remark;
 
     public String getRegionId()
     {
@@ -31,5 +23,25 @@ public class MiniOrderCreateRequest
     public void setRegionId(String regionId)
     {
         this.regionId = regionId;
+    }
+
+    public List<MiniOrderItemCreateRequest> getItems()
+    {
+        return items;
+    }
+
+    public void setItems(List<MiniOrderItemCreateRequest> items)
+    {
+        this.items = items;
+    }
+
+    public String getRemark()
+    {
+        return remark;
+    }
+
+    public void setRemark(String remark)
+    {
+        this.remark = remark;
     }
 }

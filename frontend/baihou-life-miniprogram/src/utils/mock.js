@@ -101,8 +101,35 @@ const appointments = [
 ];
 
 const orders = [
-  { order_id: 1, order_no: "ORD202603100001", product_name: "TOTO 浴室柜 800mm", pay_amount: 1280, status: "pending_pay", region_name: "佛山", created_at: "2026-03-10 10:00" },
-  { order_id: 2, order_no: "ORD202603100002", product_name: "岩板岛台组合", pay_amount: 16800, status: "processing", region_name: "成都", created_at: "2026-03-10 12:00" }
+  {
+    order_id: 1,
+    order_no: "ORD202603100001",
+    product_summary: "TOTO 浴室柜 800mm",
+    item_count: 1,
+    pay_amount: 1280,
+    total_amount: 1280,
+    status: "pending_pay",
+    region_name: "佛山",
+    created_at: "2026-03-10 10:00",
+    items: [
+      { item_id: 11, product_id: 10001, product_name: "TOTO 浴室柜 800mm", quantity: 1, unit_price: 1280, line_amount: 1280 }
+    ]
+  },
+  {
+    order_id: 2,
+    order_no: "ORD202603100002",
+    product_summary: "岩板岛台组合 等2件",
+    item_count: 3,
+    pay_amount: 17660,
+    total_amount: 17660,
+    status: "processing",
+    region_name: "成都",
+    created_at: "2026-03-10 12:00",
+    items: [
+      { item_id: 21, product_id: 10002, product_name: "岩板岛台组合", quantity: 2, unit_price: 8600, line_amount: 17200 },
+      { item_id: 22, product_id: 10001, product_name: "TOTO 浴室柜 800mm", quantity: 1, unit_price: 460, line_amount: 460 }
+    ]
+  }
 ];
 
 function delay(data) {

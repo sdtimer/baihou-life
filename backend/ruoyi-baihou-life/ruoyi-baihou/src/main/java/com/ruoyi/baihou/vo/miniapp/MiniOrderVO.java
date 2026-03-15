@@ -2,6 +2,9 @@ package com.ruoyi.baihou.vo.miniapp;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ruoyi.baihou.domain.BaihouOrder;
 
@@ -28,6 +31,12 @@ public class MiniOrderVO
     @JsonProperty("unit_price")
     private BigDecimal unitPrice;
 
+    @JsonProperty("product_summary")
+    private String productSummary;
+
+    @JsonProperty("item_count")
+    private Integer itemCount;
+
     @JsonProperty("total_amount")
     private BigDecimal totalAmount;
 
@@ -42,6 +51,8 @@ public class MiniOrderVO
     @JsonProperty("create_time")
     private Date createTime;
 
+    private List<MiniOrderItemVO> items;
+
     public static MiniOrderVO from(BaihouOrder o)
     {
         MiniOrderVO vo = new MiniOrderVO();
@@ -51,11 +62,16 @@ public class MiniOrderVO
         vo.productId = o.getProductId();
         vo.productName = o.getProductName();
         vo.unitPrice = o.getUnitPrice();
+        vo.productSummary = o.getProductSummary();
+        vo.itemCount = o.getItemCount();
         vo.totalAmount = o.getTotalAmount();
         vo.payAmount = o.getPayAmount();
         vo.status = o.getStatus();
         vo.expiresAt = o.getExpiresAt();
         vo.createTime = o.getCreateTime();
+        vo.items = o.getItems() == null
+                ? Collections.emptyList()
+                : o.getItems().stream().map(MiniOrderItemVO::from).collect(Collectors.toList());
         return vo;
     }
 
@@ -65,9 +81,12 @@ public class MiniOrderVO
     public Long getProductId() { return productId; }
     public String getProductName() { return productName; }
     public BigDecimal getUnitPrice() { return unitPrice; }
+    public String getProductSummary() { return productSummary; }
+    public Integer getItemCount() { return itemCount; }
     public BigDecimal getTotalAmount() { return totalAmount; }
     public BigDecimal getPayAmount() { return payAmount; }
     public String getStatus() { return status; }
     public Date getExpiresAt() { return expiresAt; }
     public Date getCreateTime() { return createTime; }
+    public List<MiniOrderItemVO> getItems() { return items; }
 }

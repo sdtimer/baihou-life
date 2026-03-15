@@ -140,11 +140,11 @@
     <insert id="insertOrder" parameterType="com.ruoyi.baihou.domain.BaihouOrder" useGeneratedKeys="true" keyProperty="orderId">
         insert into bh_order (
             order_no, user_id, region_id, product_id, product_name, unit_price,
-            total_amount, pay_amount, status, expires_at, create_time, update_time
+            total_amount, pay_amount, status, remark, expires_at, create_time, update_time
         )
         values (
             #{orderNo}, #{userId}, #{regionId}, #{productId}, #{productName}, #{unitPrice},
-            #{totalAmount}, #{payAmount}, #{status}, #{expiresAt}, now(), now()
+            #{totalAmount}, #{payAmount}, #{status}, #{remark}, #{expiresAt}, now(), now()
         )
     </insert>
 

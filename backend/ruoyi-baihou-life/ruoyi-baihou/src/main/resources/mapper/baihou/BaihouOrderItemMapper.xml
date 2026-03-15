@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.baihou.mapper.BaihouOrderItemMapper">
+
+    <resultMap id="BaihouOrderItemResultMap" type="com.ruoyi.baihou.domain.BaihouOrderItem">
+        <id property="itemId" column="item_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="lineAmount" column="line_amount"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <insert id="batchInsertOrderItems">
+        insert into bh_order_item (
+            order_id, product_id, product_name, quantity, unit_price, line_amount, create_time
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+                #{item.orderId}, #{item.productId}, #{item.productName}, #{item.quantity},
+                #{item.unitPrice}, #{item.lineAmount}, now()
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectOrderItemsByOrderId" resultMap="BaihouOrderItemResultMap">
+        select item_id,
+               order_id,
+               product_id,
+               product_name,
+               quantity,
+               unit_price,
+               line_amount,
+               create_time
+        from bh_order_item
+        where order_id = #{orderId}
+        order by item_id asc
+    </select>
+</mapper>

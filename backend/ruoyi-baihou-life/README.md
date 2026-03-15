@@ -38,9 +38,11 @@ English version: [README-BAIHOU.md](./README-BAIHOU.md)
 
 当前订单实现说明：
 
-- 当前一期代码采用“单商品订单”简化模型
-- 小程序创建订单时直接关联单个 `product_id`，并在 `bh_order` 中保留商品名称与成交单价快照
-- 暂未引入多商品购物车与独立 `order_item` 结构，后续扩展时再补充
+- 当前一期代码已切换到“订单头 + 订单项”模型
+- 小程序创建订单使用 `items[]` 协议，订单项写入 `bh_order_item`
+- `bh_order` 仍暂时保留 `product_id/product_name/unit_price` 兼容列，便于迁移与回滚
+- 当前仍未实现购物车页面，现阶段由单商品下单页按 `items[]` 协议提交
+- 当前仍未接真实微信支付回调，支付链路保持测试态实现
 
 ## 目录结构
 
@@ -125,6 +127,7 @@ src/main/java/com/ruoyi/baihou/
 - `06_b7_appointment_schema.sql`
 - `07_b8_order_schema.sql`
 - `08_admin_menu_init.sql`
+- `13_add_order_item_schema.sql`
 
 建议初始化顺序：
 

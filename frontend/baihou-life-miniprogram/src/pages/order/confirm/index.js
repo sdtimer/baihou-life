@@ -47,8 +47,13 @@ Page({
     let createdOrder = null;
     try {
       createdOrder = await orderService.createOrder({
-        product_id: product.id,
-        region_id: regionStore.getState().current.region_id
+        region_id: regionStore.getState().current.region_id,
+        items: [
+          {
+            product_id: product.id,
+            quantity: 1
+          }
+        ]
       });
       const prepay = await orderService.prepayOrder(createdOrder.order_id);
       await orderService.requestPayment(prepay.payment);

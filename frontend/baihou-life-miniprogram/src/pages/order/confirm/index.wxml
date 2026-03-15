@@ -9,6 +9,7 @@
         <text class="bh-price__main">¥{{product.guide_price}}</text>
         <text class="bh-meta">{{product.price_unit}}</text>
       </view>
+      <view class="order-confirm__meta">数量：1</view>
       <view class="order-confirm__action">
         <button class="bh-button-primary" loading="{{submitting}}" bindtap="submitOrder">{{submitting ? '支付处理中' : '创建订单并支付'}}</button>
       </view>

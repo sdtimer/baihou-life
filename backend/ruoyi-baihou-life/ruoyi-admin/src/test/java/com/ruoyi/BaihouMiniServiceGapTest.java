@@ -3,16 +3,18 @@ package com.ruoyi;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.math.RoundingMode;
 import com.ruoyi.baihou.domain.BaihouAppointment;
 import com.ruoyi.baihou.domain.BaihouLead;
 import com.ruoyi.baihou.domain.BaihouOrder;
+import com.ruoyi.baihou.domain.BaihouOrderItem;
 import com.ruoyi.baihou.domain.BaihouProduct;
 import com.ruoyi.baihou.dto.miniapp.MiniAppointmentCreateRequest;
 import com.ruoyi.baihou.dto.miniapp.MiniLeadRequest;
+import com.ruoyi.baihou.dto.miniapp.MiniOrderItemCreateRequest;
 import com.ruoyi.baihou.mapper.BaihouAppointmentMapper;
 import com.ruoyi.baihou.mapper.BaihouLeadMapper;
 import com.ruoyi.baihou.mapper.BaihouOrderMapper;
+import com.ruoyi.baihou.mapper.BaihouOrderItemMapper;
 import com.ruoyi.baihou.mapper.BaihouProductMapper;
 import com.ruoyi.baihou.service.impl.BaihouAppointmentServiceImpl;
 import com.ruoyi.baihou.service.impl.BaihouLeadServiceImpl;
@@ -83,6 +85,7 @@ class BaihouMiniServiceGapTest
     void createMiniOrderShouldRejectCrossRegionProduct()
     {
         BaihouOrderMapper orderMapper = Mockito.mock(BaihouOrderMapper.class);
+        BaihouOrderItemMapper orderItemMapper = Mockito.mock(BaihouOrderItemMapper.class);
         BaihouProductMapper productMapper = Mockito.mock(BaihouProductMapper.class);
         BaihouProduct product = new BaihouProduct(1001L, "测试商品", "BH-001", "on_shelf");
         product.setGuidePrice(new BigDecimal("1280.00"));
@@ -91,73 +94,110 @@ class BaihouMiniServiceGapTest
 
         BaihouOrderServiceImpl service = new BaihouOrderServiceImpl();
         ReflectionTestUtils.setField(service, "orderMapper", orderMapper);
+        ReflectionTestUtils.setField(service, "orderItemMapper", orderItemMapper);
         ReflectionTestUtils.setField(service, "productMapper", productMapper);
 
         com.ruoyi.baihou.dto.miniapp.MiniOrderCreateRequest request = new com.ruoyi.baihou.dto.miniapp.MiniOrderCreateRequest();
-        request.setProductId(1001L);
         request.setRegionId("foshan");
+        request.setItems(List.of(item(1001L, 1)));
 
         assertThrows(ServiceException.class, () -> service.createMiniOrder(10001L, request));
     }
 
     @Test
-    void createMiniOrderShouldPersistProductSnapshotForCustomer()
+    void createMiniOrderShouldPersistOrderItemsAndSummaryForCustomer()
     {
         BaihouOrderMapper orderMapper = Mockito.mock(BaihouOrderMapper.class);
+        BaihouOrderItemMapper orderItemMapper = Mockito.mock(BaihouOrderItemMapper.class);
         BaihouProductMapper productMapper = Mockito.mock(BaihouProductMapper.class);
-        BaihouProduct product = new BaihouProduct(1001L, "测试商品", "BH-001", "on_shelf");
-        product.setGuidePrice(new BigDecimal("1280.00"));
-        product.setDesignerDiscount(new BigDecimal("0.85"));
-        product.setRegions("[\"foshan\"]");
-        Mockito.when(productMapper.selectProductById(1001L)).thenReturn(product);
+        BaihouProduct productA = new BaihouProduct(1001L, "测试商品A", "BH-001", "on_shelf");
+        productA.setGuidePrice(new BigDecimal("1280.00"));
+        productA.setDesignerDiscount(new BigDecimal("0.85"));
+        productA.setRegions("[\"foshan\"]");
+        BaihouProduct productB = new BaihouProduct(1002L, "测试商品B", "BH-002", "on_shelf");
+        productB.setGuidePrice(new BigDecimal("860.00"));
+        productB.setDesignerDiscount(new BigDecimal("0.80"));
+        productB.setRegions("[\"foshan\"]");
+        Mockito.when(productMapper.selectProductById(1001L)).thenReturn(productA);
+        Mockito.when(productMapper.selectProductById(1002L)).thenReturn(productB);
 
         BaihouOrderServiceImpl service = new BaihouOrderServiceImpl();
         ReflectionTestUtils.setField(service, "orderMapper", orderMapper);
+        ReflectionTestUtils.setField(service, "orderItemMapper", orderItemMapper);
         ReflectionTestUtils.setField(service, "productMapper", productMapper);
 
         com.ruoyi.baihou.dto.miniapp.MiniOrderCreateRequest request = new com.ruoyi.baihou.dto.miniapp.MiniOrderCreateRequest();
-        request.setProductId(1001L);
         request.setRegionId("foshan");
+        request.setItems(List.of(item(1001L, 1), item(1002L, 2)));
+        request.setRemark("测试多商品订单");
 
         BaihouMiniContext.set(10001L, 1, "openid");
         service.createMiniOrder(10001L, request);
 
-        ArgumentCaptor<BaihouOrder> captor = ArgumentCaptor.forClass(BaihouOrder.class);
-        Mockito.verify(orderMapper).insertOrder(captor.capture());
-        BaihouOrder created = captor.getValue();
-        assertEquals(1001L, created.getProductId());
-        assertEquals("测试商品", created.getProductName());
-        assertEquals(new BigDecimal("1280.00"), created.getUnitPrice());
+        ArgumentCaptor<BaihouOrder> orderCaptor = ArgumentCaptor.forClass(BaihouOrder.class);
+        Mockito.verify(orderMapper).insertOrder(orderCaptor.capture());
+        BaihouOrder created = orderCaptor.getValue();
+        assertEquals("测试商品A 等2件", created.getProductSummary());
+        assertEquals(3, created.getItemCount());
+        assertEquals(new BigDecimal("3000.00"), created.getPayAmount());
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<BaihouOrderItem>> itemCaptor = ArgumentCaptor.forClass(List.class);
+        Mockito.verify(orderItemMapper).batchInsertOrderItems(itemCaptor.capture());
+        List<BaihouOrderItem> createdItems = itemCaptor.getValue();
+        assertEquals(2, createdItems.size());
+        assertEquals("测试商品A", createdItems.get(0).getProductName());
+        assertEquals(1, createdItems.get(0).getQuantity().intValue());
+        assertEquals(new BigDecimal("1280.00"), createdItems.get(0).getLineAmount());
+        assertEquals("测试商品B", createdItems.get(1).getProductName());
+        assertEquals(2, createdItems.get(1).getQuantity().intValue());
+        assertEquals(new BigDecimal("1720.00"), createdItems.get(1).getLineAmount());
         BaihouMiniContext.clear();
     }
 
     @Test
-    void createMiniOrderShouldApplyDesignerDiscountToUnitPrice()
+    void createMiniOrderShouldApplyDesignerDiscountToEachOrderItem()
     {
         BaihouOrderMapper orderMapper = Mockito.mock(BaihouOrderMapper.class);
+        BaihouOrderItemMapper orderItemMapper = Mockito.mock(BaihouOrderItemMapper.class);
         BaihouProductMapper productMapper = Mockito.mock(BaihouProductMapper.class);
-        BaihouProduct product = new BaihouProduct(1001L, "测试商品", "BH-001", "on_shelf");
-        product.setGuidePrice(new BigDecimal("1280.00"));
-        product.setDesignerDiscount(new BigDecimal("0.85"));
-        product.setRegions("[\"foshan\"]");
-        Mockito.when(productMapper.selectProductById(1001L)).thenReturn(product);
+        BaihouProduct productA = new BaihouProduct(1001L, "测试商品A", "BH-001", "on_shelf");
+        productA.setGuidePrice(new BigDecimal("1280.00"));
+        productA.setDesignerDiscount(new BigDecimal("0.85"));
+        productA.setRegions("[\"foshan\"]");
+        BaihouProduct productB = new BaihouProduct(1002L, "测试商品B", "BH-002", "on_shelf");
+        productB.setGuidePrice(new BigDecimal("860.00"));
+        productB.setDesignerDiscount(new BigDecimal("0.80"));
+        productB.setRegions("[\"foshan\"]");
+        Mockito.when(productMapper.selectProductById(1001L)).thenReturn(productA);
+        Mockito.when(productMapper.selectProductById(1002L)).thenReturn(productB);
 
         BaihouOrderServiceImpl service = new BaihouOrderServiceImpl();
         ReflectionTestUtils.setField(service, "orderMapper", orderMapper);
+        ReflectionTestUtils.setField(service, "orderItemMapper", orderItemMapper);
         ReflectionTestUtils.setField(service, "productMapper", productMapper);
 
         com.ruoyi.baihou.dto.miniapp.MiniOrderCreateRequest request = new com.ruoyi.baihou.dto.miniapp.MiniOrderCreateRequest();
-        request.setProductId(1001L);
         request.setRegionId("foshan");
+        request.setItems(List.of(item(1001L, 1), item(1002L, 2)));
 
         BaihouMiniContext.set(10001L, 2, "openid");
         service.createMiniOrder(10001L, request);
 
-        ArgumentCaptor<BaihouOrder> captor = ArgumentCaptor.forClass(BaihouOrder.class);
-        Mockito.verify(orderMapper).insertOrder(captor.capture());
-        BaihouOrder created = captor.getValue();
-        assertEquals(new BigDecimal("1280.00").multiply(new BigDecimal("0.85")).setScale(2, RoundingMode.HALF_UP), created.getUnitPrice());
-        assertEquals(created.getUnitPrice(), created.getPayAmount());
+        ArgumentCaptor<BaihouOrder> orderCaptor = ArgumentCaptor.forClass(BaihouOrder.class);
+        Mockito.verify(orderMapper).insertOrder(orderCaptor.capture());
+        BaihouOrder created = orderCaptor.getValue();
+        assertEquals(new BigDecimal("2464.00"), created.getPayAmount());
+        assertEquals(created.getPayAmount(), created.getTotalAmount());
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<BaihouOrderItem>> itemCaptor = ArgumentCaptor.forClass(List.class);
+        Mockito.verify(orderItemMapper).batchInsertOrderItems(itemCaptor.capture());
+        List<BaihouOrderItem> createdItems = itemCaptor.getValue();
+        assertEquals(new BigDecimal("1088.00"), createdItems.get(0).getUnitPrice());
+        assertEquals(new BigDecimal("1088.00"), createdItems.get(0).getLineAmount());
+        assertEquals(new BigDecimal("688.00"), createdItems.get(1).getUnitPrice());
+        assertEquals(new BigDecimal("1376.00"), createdItems.get(1).getLineAmount());
         BaihouMiniContext.clear();
     }
 
@@ -165,6 +205,7 @@ class BaihouMiniServiceGapTest
     void buildMiniPrepayShouldRequirePendingPayOrder()
     {
         BaihouOrderMapper orderMapper = Mockito.mock(BaihouOrderMapper.class);
+        BaihouOrderItemMapper orderItemMapper = Mockito.mock(BaihouOrderItemMapper.class);
         BaihouProductMapper productMapper = Mockito.mock(BaihouProductMapper.class);
         BaihouOrder order = new BaihouOrder();
         order.setOrderId(2001L);
@@ -175,6 +216,7 @@ class BaihouMiniServiceGapTest
 
         BaihouOrderServiceImpl service = new BaihouOrderServiceImpl();
         ReflectionTestUtils.setField(service, "orderMapper", orderMapper);
+        ReflectionTestUtils.setField(service, "orderItemMapper", orderItemMapper);
         ReflectionTestUtils.setField(service, "productMapper", productMapper);
 
         assertThrows(ServiceException.class, () -> service.buildMiniPrepay(10001L, 2001L));
@@ -184,6 +226,7 @@ class BaihouMiniServiceGapTest
     void markMiniOrderPaidShouldUpdateStatus()
     {
         BaihouOrderMapper orderMapper = Mockito.mock(BaihouOrderMapper.class);
+        BaihouOrderItemMapper orderItemMapper = Mockito.mock(BaihouOrderItemMapper.class);
         BaihouProductMapper productMapper = Mockito.mock(BaihouProductMapper.class);
         BaihouOrder order = new BaihouOrder();
         order.setOrderId(2001L);
@@ -194,8 +237,17 @@ class BaihouMiniServiceGapTest
 
         BaihouOrderServiceImpl service = new BaihouOrderServiceImpl();
         ReflectionTestUtils.setField(service, "orderMapper", orderMapper);
+        ReflectionTestUtils.setField(service, "orderItemMapper", orderItemMapper);
         ReflectionTestUtils.setField(service, "productMapper", productMapper);
 
         assertEquals(1, service.markMiniOrderPaid(10001L, 2001L));
+    }
+
+    private MiniOrderItemCreateRequest item(Long productId, Integer quantity)
+    {
+        MiniOrderItemCreateRequest item = new MiniOrderItemCreateRequest();
+        item.setProductId(productId);
+        item.setQuantity(quantity);
+        return item;
     }
 }

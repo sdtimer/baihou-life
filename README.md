@@ -27,6 +27,12 @@
 - `frontend/baihou-life-miniprogram/`：微信原生小程序工程，按小程序实施方案搭建
 - `backend/ruoyi-baihou-life/`：若依后台与 `ruoyi-baihou` 业务模块，包含后台管理端 Vue3 工程
 
+仓库约束补充：
+
+- 当前唯一有效的小程序主工程是 `frontend/baihou-life-miniprogram/`
+- `frontend/dz-app-shop/` 不参与当前版本交付，不纳入开发、联调、测试与 review 范围
+- `frontend/dz-app-shop/` 后续按独立仓库治理任务处理，不与业务功能修复混改
+
 ## 品牌与命名约定
 
 - 中文品牌名：柏厚生活

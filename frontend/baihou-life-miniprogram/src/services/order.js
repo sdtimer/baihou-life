@@ -28,6 +28,8 @@ function normalizeOrder(item = {}) {
     order_no: item.order_no || item.orderNo || "",
     product_id: item.product_id || item.productId || null,
     product_name: item.product_name || item.productName || "精选产品",
+    product_summary: item.product_summary || item.productSummary || item.product_name || item.productName || "精选产品",
+    item_count: item.item_count || item.itemCount || 0,
     unit_price: item.unit_price || item.unitPrice || 0,
     region_id: item.region_id || item.regionId || "",
     region_name: item.region_name || item.regionName || REGION_NAMES[item.region_id || item.regionId] || "",
@@ -35,7 +37,15 @@ function normalizeOrder(item = {}) {
     pay_amount: item.pay_amount || item.payAmount || 0,
     status: item.status || "",
     expires_at: formatDateText(item.expires_at || item.expiresAt),
-    created_at: formatDateText(item.created_at || item.create_time || item.createTime)
+    created_at: formatDateText(item.created_at || item.create_time || item.createTime),
+    items: (item.items || []).map((orderItem) => ({
+      item_id: orderItem.item_id || orderItem.itemId,
+      product_id: orderItem.product_id || orderItem.productId,
+      product_name: orderItem.product_name || orderItem.productName || "",
+      quantity: orderItem.quantity || 0,
+      unit_price: orderItem.unit_price || orderItem.unitPrice || 0,
+      line_amount: orderItem.line_amount || orderItem.lineAmount || 0
+    }))
   };
 }
 
@@ -62,12 +72,27 @@ async function getOrderDetail(orderId) {
 
 async function createOrder(payload) {
   if (env.useMock) {
+    const targetProduct = mock.products.find((item) => item.id === Number(payload.items?.[0]?.product_id));
+    const quantity = Number(payload.items?.[0]?.quantity || 1);
+    const unitPrice = Number(targetProduct?.guide_price || 1280);
+    const lineAmount = unitPrice * quantity;
     return mock.delay({
       order_id: Date.now(),
       order_no: `ORD${Date.now()}`,
-      product_id: payload.product_id,
-      product_name: "精选产品",
-      unit_price: 1280
+      product_summary: targetProduct?.name || "精选产品",
+      item_count: quantity,
+      pay_amount: lineAmount,
+      total_amount: lineAmount,
+      items: [
+        {
+          item_id: Date.now() + 1,
+          product_id: payload.items?.[0]?.product_id,
+          product_name: targetProduct?.name || "精选产品",
+          quantity,
+          unit_price: unitPrice,
+          line_amount: lineAmount
+        }
+      ]
     });
   }
   const response = await request({

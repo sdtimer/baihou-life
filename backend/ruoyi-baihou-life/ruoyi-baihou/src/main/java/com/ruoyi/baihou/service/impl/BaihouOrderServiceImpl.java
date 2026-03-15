@@ -2,6 +2,8 @@ package com.ruoyi.baihou.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,10 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.baihou.domain.BaihouOrder;
+import com.ruoyi.baihou.domain.BaihouOrderItem;
 import com.ruoyi.baihou.domain.BaihouProduct;
 import com.ruoyi.baihou.dto.BaihouOrderUpdateRequest;
 import com.ruoyi.baihou.dto.miniapp.MiniOrderCreateRequest;
+import com.ruoyi.baihou.dto.miniapp.MiniOrderItemCreateRequest;
 import com.ruoyi.baihou.mapper.BaihouOrderMapper;
+import com.ruoyi.baihou.mapper.BaihouOrderItemMapper;
 import com.ruoyi.baihou.mapper.BaihouProductMapper;
 import com.ruoyi.baihou.service.IBaihouOrderService;
 import com.ruoyi.common.exception.ServiceException;
@@ -40,18 +45,21 @@ public class BaihouOrderServiceImpl implements IBaihouOrderService
     private BaihouOrderMapper orderMapper;
 
     @Autowired
+    private BaihouOrderItemMapper orderItemMapper;
+
+    @Autowired
     private BaihouProductMapper productMapper;
 
     @Override
     public List<BaihouOrder> selectOrderList(BaihouOrder query)
     {
-        return orderMapper.selectOrderList(query);
+        return enrichOrders(orderMapper.selectOrderList(query));
     }
 
     @Override
     public BaihouOrder selectOrderById(Long orderId)
     {
-        return orderMapper.selectOrderById(orderId);
+        return enrichOrder(orderMapper.selectOrderById(orderId));
     }
 
     @Override
@@ -81,44 +89,50 @@ public class BaihouOrderServiceImpl implements IBaihouOrderService
     @Override
     public BaihouOrder createMiniOrder(Long uid, MiniOrderCreateRequest request)
     {
-        BaihouProduct product = productMapper.selectProductById(request.getProductId());
-        if (product == null || !"on_shelf".equals(product.getStatus()))
-        {
-            throw new ServiceException("商品不存在或已下架");
-        }
         if (request.getRegionId() == null || request.getRegionId().isBlank())
         {
             throw new ServiceException("区域不能为空");
         }
-        if (!regionMatches(product.getRegions(), request.getRegionId()))
+        if (request.getItems() == null || request.getItems().isEmpty())
         {
-            throw new ServiceException("当前区域不可售");
+            throw new ServiceException("订单项不能为空");
         }
 
-        BigDecimal price = resolveMiniOrderPrice(product, BaihouMiniContext.getRole());
         String orderNo = "ORD" + System.currentTimeMillis();
+        List<BaihouOrderItem> items = buildOrderItems(request.getItems(), request.getRegionId(), BaihouMiniContext.getRole());
+        BigDecimal totalAmount = items.stream()
+                .map(BaihouOrderItem::getLineAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
+        BaihouOrderItem firstItem = items.get(0);
 
         BaihouOrder order = new BaihouOrder();
         order.setOrderNo(orderNo);
         order.setUserId(uid);
         order.setRegionId(request.getRegionId());
-        order.setProductId(product.getId());
-        order.setProductName(product.getName());
-        order.setUnitPrice(price);
-        order.setTotalAmount(price);
-        order.setPayAmount(price);
+        order.setProductId(firstItem.getProductId());
+        order.setProductName(firstItem.getProductName());
+        order.setUnitPrice(firstItem.getUnitPrice());
+        order.setProductSummary(buildProductSummary(items));
+        order.setItemCount(sumQuantities(items));
+        order.setRemark(request.getRemark());
+        order.setTotalAmount(totalAmount);
+        order.setPayAmount(totalAmount);
         order.setStatus("pending_pay");
         // 30 分钟后过期
         order.setExpiresAt(new Date(System.currentTimeMillis() + 30L * 60 * 1000));
 
         orderMapper.insertOrder(order);
+        items.forEach((item) -> item.setOrderId(order.getOrderId()));
+        orderItemMapper.batchInsertOrderItems(items);
+        order.setItems(items);
         return order;
     }
 
     @Override
     public List<BaihouOrder> selectOrderListByUserId(Long userId)
     {
-        return orderMapper.selectOrderListByUserId(userId);
+        return enrichOrders(orderMapper.selectOrderListByUserId(userId));
     }
 
     @Override
@@ -194,11 +208,87 @@ public class BaihouOrderServiceImpl implements IBaihouOrderService
 
     private BaihouOrder requireMiniOrderOwner(Long uid, Long orderId)
     {
-        BaihouOrder order = orderMapper.selectOrderById(orderId);
+        BaihouOrder order = selectOrderById(orderId);
         if (order == null || order.getUserId() == null || !order.getUserId().equals(uid))
         {
             throw new ServiceException("订单不存在");
         }
         return order;
+    }
+
+    private List<BaihouOrderItem> buildOrderItems(List<MiniOrderItemCreateRequest> requestItems, String regionId, Integer role)
+    {
+        List<BaihouOrderItem> items = new ArrayList<>();
+        for (MiniOrderItemCreateRequest requestItem : requestItems)
+        {
+            if (requestItem.getProductId() == null)
+            {
+                throw new ServiceException("商品不能为空");
+            }
+            if (requestItem.getQuantity() == null || requestItem.getQuantity() < 1)
+            {
+                throw new ServiceException("商品数量非法");
+            }
+
+            BaihouProduct product = productMapper.selectProductById(requestItem.getProductId());
+            if (product == null || !"on_shelf".equals(product.getStatus()))
+            {
+                throw new ServiceException("商品不存在或已下架");
+            }
+            if (!regionMatches(product.getRegions(), regionId))
+            {
+                throw new ServiceException("当前区域不可售");
+            }
+
+            BigDecimal unitPrice = resolveMiniOrderPrice(product, role);
+            BaihouOrderItem item = new BaihouOrderItem();
+            item.setProductId(product.getId());
+            item.setProductName(product.getName());
+            item.setQuantity(requestItem.getQuantity());
+            item.setUnitPrice(unitPrice);
+            item.setLineAmount(unitPrice.multiply(BigDecimal.valueOf(requestItem.getQuantity())).setScale(2, RoundingMode.HALF_UP));
+            items.add(item);
+        }
+        return items;
+    }
+
+    private List<BaihouOrder> enrichOrders(List<BaihouOrder> orders)
+    {
+        if (orders == null || orders.isEmpty())
+        {
+            return orders;
+        }
+        orders.forEach(this::enrichOrder);
+        return orders;
+    }
+
+    private BaihouOrder enrichOrder(BaihouOrder order)
+    {
+        if (order == null)
+        {
+            return null;
+        }
+        List<BaihouOrderItem> items = orderItemMapper != null
+                ? orderItemMapper.selectOrderItemsByOrderId(order.getOrderId())
+                : Collections.emptyList();
+        order.setItems(items);
+        order.setItemCount(sumQuantities(items));
+        order.setProductSummary(buildProductSummary(items));
+        return order;
+    }
+
+    private Integer sumQuantities(List<BaihouOrderItem> items)
+    {
+        return items.stream().map(BaihouOrderItem::getQuantity).reduce(0, Integer::sum);
+    }
+
+    private String buildProductSummary(List<BaihouOrderItem> items)
+    {
+        if (items == null || items.isEmpty())
+        {
+            return "";
+        }
+        String firstName = items.get(0).getProductName();
+        return items.size() > 1 ? firstName + " 等" + items.size() + "件" : firstName;
     }
 }

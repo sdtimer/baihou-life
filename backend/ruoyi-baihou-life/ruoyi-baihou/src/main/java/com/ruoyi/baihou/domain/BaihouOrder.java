@@ -2,6 +2,7 @@ package com.ruoyi.baihou.domain;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
@@ -50,6 +51,12 @@ public class BaihouOrder extends BaseEntity
     private Date closedAt;
 
     private Date expiresAt;
+
+    private List<BaihouOrderItem> items;
+
+    private Integer itemCount;
+
+    private String productSummary;
 
     public BaihouOrder()
     {
@@ -260,5 +267,35 @@ public class BaihouOrder extends BaseEntity
     public void setExpiresAt(Date expiresAt)
     {
         this.expiresAt = expiresAt;
+    }
+
+    public List<BaihouOrderItem> getItems()
+    {
+        return items;
+    }
+
+    public void setItems(List<BaihouOrderItem> items)
+    {
+        this.items = items;
+    }
+
+    public Integer getItemCount()
+    {
+        return itemCount;
+    }
+
+    public void setItemCount(Integer itemCount)
+    {
+        this.itemCount = itemCount;
+    }
+
+    public String getProductSummary()
+    {
+        return productSummary;
+    }
+
+    public void setProductSummary(String productSummary)
+    {
+        this.productSummary = productSummary;
     }
 }
