@@ -16,7 +16,9 @@
         </div>
         <div class="baihou-panel__body">
           <div class="baihou-filter">
-            <el-input v-model="queryParams.regionId" placeholder="区域 ID" clearable />
+            <el-select v-model="queryParams.regionId" placeholder="区域" clearable>
+              <el-option v-for="item in regionOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
             <el-select v-model="queryParams.status" placeholder="状态" clearable>
               <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
@@ -82,10 +84,12 @@
 
 <script setup name="BaihouAppointments">
 import { listAppointments, updateAppointment } from "@/api/baihou/appointments"
+import { getRegionOptions } from "@/api/baihou/regions"
 
 const { proxy } = getCurrentInstance()
 
 const loading = ref(false)
+const regionOptions = ref([])
 const open = ref(false)
 const formRef = ref()
 const appointmentList = ref([])
@@ -162,6 +166,9 @@ function appointmentStatusClass(status) {
 }
 
 onMounted(() => {
+  getRegionOptions().then((res) => {
+    regionOptions.value = res.data || []
+  })
   getList()
 })
 </script>
