@@ -2,6 +2,7 @@ package com.ruoyi.baihou.controller.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +38,7 @@ public class BaihouDesignerController extends BaseController
     @PreAuthorize("@ss.hasPermi('baihou:designer:add')")
     @Log(title = "设计师管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody BaihouDesigner designer)
+    public AjaxResult add(@Validated @RequestBody BaihouDesigner designer)
     {
         return toAjax(designerService.insertDesigner(designer));
     }
@@ -45,7 +46,7 @@ public class BaihouDesignerController extends BaseController
     @PreAuthorize("@ss.hasPermi('baihou:designer:edit')")
     @Log(title = "设计师管理", businessType = BusinessType.UPDATE)
     @PutMapping("/{designerId}")
-    public AjaxResult edit(@PathVariable Long designerId, @RequestBody BaihouDesigner designer)
+    public AjaxResult edit(@PathVariable Long designerId, @Validated @RequestBody BaihouDesigner designer)
     {
         designer.setDesignerId(designerId);
         return toAjax(designerService.updateDesigner(designer));

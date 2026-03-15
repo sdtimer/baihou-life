@@ -2,6 +2,7 @@ package com.ruoyi.baihou.controller.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,7 +46,7 @@ public class BaihouProductController extends BaseController
     @PreAuthorize("@ss.hasPermi('baihou:product:add')")
     @Log(title = "商品管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody BaihouProduct product)
+    public AjaxResult add(@Validated @RequestBody BaihouProduct product)
     {
         return toAjax(productService.insertProduct(product));
     }
@@ -61,7 +62,7 @@ public class BaihouProductController extends BaseController
     @PreAuthorize("@ss.hasPermi('baihou:product:edit')")
     @Log(title = "商品管理", businessType = BusinessType.UPDATE)
     @PutMapping("/{id}")
-    public AjaxResult edit(@PathVariable Long id, @RequestBody BaihouProduct product)
+    public AjaxResult edit(@PathVariable Long id, @Validated @RequestBody BaihouProduct product)
     {
         product.setId(id);
         return toAjax(productService.updateProduct(product));

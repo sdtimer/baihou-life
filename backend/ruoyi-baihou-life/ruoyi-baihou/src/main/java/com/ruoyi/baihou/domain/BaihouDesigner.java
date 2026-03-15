@@ -1,6 +1,7 @@
 package com.ruoyi.baihou.domain;
 
 import java.math.BigDecimal;
+import javax.validation.constraints.Pattern;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
@@ -16,6 +17,10 @@ public class BaihouDesigner extends BaseEntity
 
     private String name;
 
+    @Pattern(
+        regexp = "^1\\d{10}$",
+        message = "手机号格式不正确"
+    )
     private String phone;
 
     private String phoneHash;

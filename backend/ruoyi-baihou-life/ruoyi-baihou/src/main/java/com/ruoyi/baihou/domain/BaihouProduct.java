@@ -2,6 +2,7 @@ package com.ruoyi.baihou.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.validation.constraints.Pattern;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
@@ -41,6 +42,10 @@ public class BaihouProduct extends BaseEntity
 
     private String description;
 
+    @Pattern(
+        regexp = "^(draft|on_shelf|off_shelf|archived)$",
+        message = "商品状态只能是 draft、on_shelf、off_shelf、archived 之一"
+    )
     private String status;
 
     private Integer sortOrder;
