@@ -1,5 +1,6 @@
 package com.ruoyi.baihou.domain;
 
+import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
@@ -9,26 +10,36 @@ public class BaihouLead extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
+    @Excel(name = "线索ID")
     private Long leadId;
 
     private Long userId;
 
+    @Excel(name = "商品ID")
     private Long productId;
 
+    @Excel(name = "品类ID")
     private Long categoryId;
 
+    @Excel(name = "商品名称")
     private String productName;
 
+    @Excel(name = "客户姓名")
     private String name;
 
+    @Excel(name = "手机号")
     private String phone;
 
+    @Excel(name = "区域")
     private String regionId;
 
+    @Excel(name = "状态")
     private String status;
 
+    @Excel(name = "分配给")
     private Long assignedTo;
 
+    @Excel(name = "跟进记录")
     private String followNote;
 
     private String startDate;

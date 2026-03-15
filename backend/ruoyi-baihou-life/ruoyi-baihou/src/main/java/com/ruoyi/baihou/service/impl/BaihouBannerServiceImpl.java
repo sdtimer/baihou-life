@@ -1,11 +1,13 @@
 package com.ruoyi.baihou.service.impl;
 
+import java.util.Objects;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.baihou.domain.BaihouBanner;
 import com.ruoyi.baihou.mapper.BaihouBannerMapper;
 import com.ruoyi.baihou.service.IBaihouBannerService;
+import com.ruoyi.common.exception.ServiceException;
 
 /**
  * Baihou banner service implementation.
@@ -29,12 +31,14 @@ public class BaihouBannerServiceImpl implements IBaihouBannerService
         {
             banner.setIsActive(1);
         }
+        validateRegions(banner);
         return bannerMapper.insertBanner(banner);
     }
 
     @Override
     public int updateBanner(BaihouBanner banner)
     {
+        validateRegions(banner);
         return bannerMapper.updateBanner(banner);
     }
 
@@ -42,5 +46,18 @@ public class BaihouBannerServiceImpl implements IBaihouBannerService
     public int deleteBanner(Long bannerId)
     {
         return bannerMapper.deleteBanner(bannerId);
+    }
+
+    private void validateRegions(BaihouBanner banner)
+    {
+        if (banner == null || banner.getRegions() == null)
+        {
+            return;
+        }
+        String normalized = banner.getRegions().replace(" ", "");
+        if (normalized.contains("\"ALL\"") && !Objects.equals(normalized, "[\"ALL\"]"))
+        {
+            throw new ServiceException("全部区域不能与具体区域同时选择");
+        }
     }
 }

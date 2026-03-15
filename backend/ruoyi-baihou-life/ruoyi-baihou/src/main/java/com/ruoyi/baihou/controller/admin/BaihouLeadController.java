@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import javax.servlet.http.HttpServletResponse;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.baihou.domain.BaihouLead;
 import com.ruoyi.baihou.dto.BaihouLeadUpdateRequest;
@@ -15,6 +16,7 @@ import com.ruoyi.baihou.service.IBaihouLeadService;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 
 /**
  * Baihou lead admin controller.
@@ -44,8 +46,9 @@ public class BaihouLeadController extends BaseController
     @PreAuthorize("@ss.hasPermi('baihou:lead:export')")
     @Log(title = "线索管理", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(BaihouLead query)
+    public void export(HttpServletResponse response, BaihouLead query)
     {
-        return success(leadService.exportLeadList(query));
+        ExcelUtil<BaihouLead> util = new ExcelUtil<>(BaihouLead.class);
+        util.exportExcel(response, leadService.exportLeadList(query), "线索数据");
     }
 }

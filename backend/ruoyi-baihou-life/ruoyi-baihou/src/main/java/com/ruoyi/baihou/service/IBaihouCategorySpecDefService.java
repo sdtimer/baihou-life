@@ -15,4 +15,6 @@ public interface IBaihouCategorySpecDefService
     int updateSpecDef(BaihouCategorySpecDef specDef);
 
     int deleteSpecDef(Long specDefId);
+
+    int updateSpecDefSort(Long categoryId, List<BaihouCategorySpecDef> specDefs);
 }

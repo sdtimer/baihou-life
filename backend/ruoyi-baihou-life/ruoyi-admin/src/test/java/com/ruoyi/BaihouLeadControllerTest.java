@@ -1,8 +1,8 @@
 package com.ruoyi;
 
 import java.util.List;
-import com.ruoyi.baihou.controller.admin.BaihouLeadController;
 import com.ruoyi.baihou.domain.BaihouLead;
+import com.ruoyi.baihou.controller.admin.BaihouLeadController;
 import com.ruoyi.baihou.dto.BaihouLeadUpdateRequest;
 import com.ruoyi.baihou.service.IBaihouLeadService;
 import org.junit.jupiter.api.Test;
@@ -80,7 +80,12 @@ class BaihouLeadControllerTest
 
         mockMvc.perform(get("/admin/leads/export").param("regionId", "foshan"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.data[0].status").value("following"));
+                .andExpect(result -> {
+                    String contentType = result.getResponse().getContentType();
+                    if (contentType == null || !contentType.contains("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    {
+                        throw new AssertionError("Expected Excel content type but was: " + contentType);
+                    }
+                });
     }
 }

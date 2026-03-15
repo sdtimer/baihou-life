@@ -39,4 +39,15 @@ public class BaihouCategorySpecDefServiceImpl implements IBaihouCategorySpecDefS
     {
         return specDefMapper.deleteSpecDef(specDefId);
     }
+
+    @Override
+    public int updateSpecDefSort(Long categoryId, List<BaihouCategorySpecDef> specDefs)
+    {
+        int updated = 0;
+        for (BaihouCategorySpecDef specDef : specDefs)
+        {
+            updated += specDefMapper.updateSpecDefSort(categoryId, specDef.getSpecDefId(), specDef.getSortOrder());
+        }
+        return updated;
+    }
 }

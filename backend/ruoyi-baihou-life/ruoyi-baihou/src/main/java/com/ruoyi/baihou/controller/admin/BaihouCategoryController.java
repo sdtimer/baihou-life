@@ -88,6 +88,18 @@ public class BaihouCategoryController extends BaseController
 
     @PreAuthorize("@ss.hasPermi('baihou:category:edit')")
     @Log(title = "规格模板", businessType = BusinessType.UPDATE)
+    @PutMapping("/{categoryId}/spec-defs/sort")
+    public AjaxResult sortSpecDefs(@PathVariable Long categoryId, @RequestBody java.util.List<BaihouCategorySpecDef> specDefs)
+    {
+        if (specDefs == null || specDefs.isEmpty())
+        {
+            return success();
+        }
+        return toAjax(specDefService.updateSpecDefSort(categoryId, specDefs));
+    }
+
+    @PreAuthorize("@ss.hasPermi('baihou:category:edit')")
+    @Log(title = "规格模板", businessType = BusinessType.UPDATE)
     @PutMapping("/{categoryId}/spec-defs/{specDefId}")
     public AjaxResult editSpecDef(@PathVariable Long categoryId, @PathVariable Long specDefId, @RequestBody BaihouCategorySpecDef specDef)
     {

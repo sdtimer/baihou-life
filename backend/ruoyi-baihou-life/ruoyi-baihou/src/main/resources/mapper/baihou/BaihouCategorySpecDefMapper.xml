@@ -60,4 +60,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from bh_category_spec_def where spec_def_id = #{specDefId}
     </delete>
 
+    <update id="updateSpecDefSort">
+        update bh_category_spec_def
+        set sort_order = #{sortOrder},
+            update_time = now()
+        where category_id = #{categoryId}
+          and spec_def_id = #{specDefId}
+    </update>
+
 </mapper>

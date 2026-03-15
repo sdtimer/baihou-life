@@ -4,11 +4,13 @@ import java.util.List;
 import com.ruoyi.baihou.domain.BaihouBanner;
 import com.ruoyi.baihou.mapper.BaihouBannerMapper;
 import com.ruoyi.baihou.service.impl.BaihouBannerServiceImpl;
+import com.ruoyi.common.exception.ServiceException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BaihouBannerServiceImplTest
 {
@@ -60,5 +62,18 @@ class BaihouBannerServiceImplTest
         ReflectionTestUtils.setField(service, "bannerMapper", bannerMapper);
 
         assertEquals(1, service.deleteBanner(1L));
+    }
+
+    @Test
+    void bannerInsertShouldRejectAllMixedWithSpecificRegions()
+    {
+        BaihouBannerMapper bannerMapper = Mockito.mock(BaihouBannerMapper.class);
+        BaihouBannerServiceImpl service = new BaihouBannerServiceImpl();
+        ReflectionTestUtils.setField(service, "bannerMapper", bannerMapper);
+
+        BaihouBanner banner = new BaihouBanner();
+        banner.setRegions("[\"ALL\", \"chengdu\"]");
+
+        assertThrows(ServiceException.class, () -> service.insertBanner(banner));
     }
 }
