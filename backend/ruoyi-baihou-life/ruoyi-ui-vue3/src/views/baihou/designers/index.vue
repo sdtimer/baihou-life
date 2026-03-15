@@ -52,8 +52,8 @@
           <el-form-item label="手机号" prop="phone">
             <el-input v-model="form.phone" />
           </el-form-item>
-          <el-form-item label="手机号哈希" prop="phoneHash">
-            <el-input v-model="form.phoneHash" />
+          <el-form-item label="微信绑定号" prop="phoneHash">
+            <el-input v-model="form.phoneHash" placeholder="微信手机号哈希（由系统或开发人员填入）" />
           </el-form-item>
           <el-form-item label="公司">
             <el-input v-model="form.company" />
@@ -102,7 +102,7 @@ const form = reactive({
 
 const rules = {
   name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-  phoneHash: [{ required: true, message: "请输入手机号哈希", trigger: "blur" }]
+  phoneHash: [{ required: true, message: "请输入微信绑定手机号哈希", trigger: "blur" }]
 }
 
 function getList() {

@@ -120,13 +120,12 @@ const statusOptions = [
   { label: "已放弃", value: "abandoned" }
 ]
 
-function syncDateRange() {
-  queryParams.startDate = dateRange.value?.[0] || ""
-  queryParams.endDate = dateRange.value?.[1] || ""
-}
+watch(dateRange, (val) => {
+  queryParams.startDate = val?.[0] || ""
+  queryParams.endDate = val?.[1] || ""
+})
 
 function getList() {
-  syncDateRange()
   loading.value = true
   listLeads(queryParams).then((res) => {
     leadList.value = res.data || []
@@ -167,7 +166,6 @@ function submitForm() {
 }
 
 function handleExport() {
-  syncDateRange()
   exportLeads(queryParams).then((res) => {
     const rows = res.data || []
     const headers = ["线索ID", "客户称呼", "手机号", "商品", "区域", "状态", "负责人", "备注"]

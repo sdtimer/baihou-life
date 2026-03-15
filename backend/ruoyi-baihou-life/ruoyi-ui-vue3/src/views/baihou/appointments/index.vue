@@ -59,8 +59,8 @@
     </div>
 
     <el-dialog v-model="open" title="更新预约" width="520px" append-to-body>
-      <el-form :model="form" label-width="90px">
-        <el-form-item label="状态">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="90px">
+        <el-form-item label="状态" prop="status">
           <el-select v-model="form.status">
             <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
@@ -87,6 +87,7 @@ const { proxy } = getCurrentInstance()
 
 const loading = ref(false)
 const open = ref(false)
+const formRef = ref()
 const appointmentList = ref([])
 const currentId = ref()
 const queryParams = reactive({
@@ -98,6 +99,10 @@ const form = reactive({
   assignedTo: undefined,
   adminNote: ""
 })
+
+const rules = {
+  status: [{ required: true, message: "请选择状态", trigger: "change" }]
+}
 
 const statusOptions = [
   { label: "待确认", value: "pending" },
@@ -132,10 +137,13 @@ function handleUpdate(row) {
 }
 
 function submitForm() {
-  updateAppointment(currentId.value, { ...form }).then(() => {
-    proxy.$modal.msgSuccess("预约已更新")
-    open.value = false
-    getList()
+  formRef.value.validate((valid) => {
+    if (!valid) return
+    updateAppointment(currentId.value, { ...form }).then(() => {
+      proxy.$modal.msgSuccess("预约已更新")
+      open.value = false
+      getList()
+    })
   })
 }
 

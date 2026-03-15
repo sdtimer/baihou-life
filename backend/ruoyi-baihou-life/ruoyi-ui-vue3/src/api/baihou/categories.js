@@ -66,3 +66,11 @@ export function removeSpecDef(categoryId, specDefId) {
     method: "delete"
   })
 }
+
+export function updateSpecDefSort(categoryId, data) {
+  return request({
+    url: `/admin/categories/${categoryId}/spec-defs/sort`,
+    method: "put",
+    data
+  })
+}

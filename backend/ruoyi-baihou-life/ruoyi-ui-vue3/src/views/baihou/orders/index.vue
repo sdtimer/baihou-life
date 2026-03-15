@@ -58,14 +58,14 @@
     </div>
 
     <el-dialog v-model="open" title="更新订单" width="520px" append-to-body>
-      <el-form :model="form" label-width="90px">
-        <el-form-item label="状态">
+      <el-form ref="formRef" :model="form" :rules="orderUpdateRules" label-width="90px">
+        <el-form-item label="状态" prop="status">
           <el-select v-model="form.status">
             <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="物流单号">
-          <el-input v-model="form.trackingNo" placeholder="发货时必填" />
+        <el-form-item label="物流单号" prop="trackingNo">
+          <el-input v-model="form.trackingNo" placeholder="发货状态下必填" />
         </el-form-item>
         <el-form-item label="管理备注">
           <el-input v-model="form.adminNote" type="textarea" :rows="4" />
@@ -113,6 +113,7 @@ const { proxy } = getCurrentInstance()
 
 const loading = ref(false)
 const open = ref(false)
+const formRef = ref()
 const detailOpen = ref(false)
 const orderList = ref([])
 const detailData = ref()
@@ -126,6 +127,13 @@ const form = reactive({
   trackingNo: "",
   adminNote: ""
 })
+
+const orderUpdateRules = computed(() => ({
+  status: [{ required: true, message: "请选择状态", trigger: "change" }],
+  trackingNo: form.status === "shipped"
+    ? [{ required: true, message: "发货状态下物流单号必填", trigger: "blur" }]
+    : []
+}))
 
 const statusOptions = [
   { label: "待支付", value: "pending_pay" },
@@ -161,10 +169,13 @@ function handleUpdate(row) {
 }
 
 function submitForm() {
-  updateOrder(currentId.value, { ...form }).then(() => {
-    proxy.$modal.msgSuccess("订单已更新")
-    open.value = false
-    getList()
+  formRef.value.validate((valid) => {
+    if (!valid) return
+    updateOrder(currentId.value, { ...form }).then(() => {
+      proxy.$modal.msgSuccess("订单已更新")
+      open.value = false
+      getList()
+    })
   })
 }
 

@@ -214,6 +214,7 @@
 </template>
 
 <script setup name="BaihouProducts">
+import { ElMessageBox } from "element-plus"
 import { listCategories, listSpecDefs } from "@/api/baihou/categories"
 import { getRegionOptions } from "@/api/baihou/regions"
 import { addProduct, batchProductAction, changeProductStatus, getProduct, listProducts, removeProduct, updateProduct } from "@/api/baihou/products"
@@ -236,6 +237,7 @@ const spaceTagsArr = ref([])
 const sceneTagsArr = ref([])
 const specDefs = ref([])
 const specParamsObj = ref({})
+const specParamCache = new Map()
 
 const formRef = ref()
 const queryParams = reactive({
@@ -331,6 +333,7 @@ function resetFormState() {
   sceneTagsArr.value = []
   specDefs.value = []
   specParamsObj.value = {}
+  specParamCache.clear()
   proxy.resetForm("formRef")
 }
 
@@ -372,7 +375,18 @@ function handleStatus(row, status) {
   })
 }
 
-function handleBatchAction(action) {
+async function handleBatchAction(action) {
+  if (action === "archive") {
+    try {
+      await ElMessageBox.confirm(
+        `确认归档选中的 ${selectionIds.value.length} 件商品？归档后不可撤销。`,
+        "批量归档确认",
+        { type: "warning" }
+      )
+    } catch {
+      return
+    }
+  }
   batchProductAction({ ids: selectionIds.value, action }).then(() => {
     proxy.$modal.msgSuccess("批量操作成功")
     getList()
@@ -399,9 +413,10 @@ function parseOptions(optionsStr) {
 }
 
 watch(() => form.categoryId, (newVal, oldVal) => {
-  if (newVal && newVal !== oldVal) {
-    specParamsObj.value = {}
-    loadSpecDefs(newVal)
+  if (newVal !== oldVal) {
+    if (oldVal) specParamCache.set(oldVal, { ...specParamsObj.value })
+    specParamsObj.value = specParamCache.get(newVal) ?? {}
+    if (newVal) loadSpecDefs(newVal)
   }
 })
 

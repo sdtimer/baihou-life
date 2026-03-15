@@ -67,8 +67,9 @@
 
     <!-- 规格模板对话框 -->
     <el-dialog v-model="specDefOpen" :title="`规格模板 — ${specDefCategoryName}`" width="720px" append-to-body>
-      <div class="baihou-toolbar" style="margin-bottom: 12px">
+      <div class="baihou-toolbar" style="margin-bottom: 12px; display: flex; gap: 8px">
         <el-button type="primary" size="small" @click="handleAddSpecDef">新增规格</el-button>
+        <el-button size="small" @click="submitSort" :disabled="specDefList.length < 2">保存排序</el-button>
       </div>
       <el-table :data="specDefList" v-loading="specDefLoading">
         <el-table-column prop="specLabel" label="显示名称" min-width="120" />
@@ -79,50 +80,53 @@
           <template #default="scope">{{ scope.row.isRequired === 1 ? "是" : "否" }}</template>
         </el-table-column>
         <el-table-column prop="sortOrder" label="排序" width="80" />
-        <el-table-column label="操作" width="140">
+        <el-table-column label="操作" width="180">
           <template #default="scope">
+            <el-button link type="primary" @click="handleMoveUp(scope.$index)" :disabled="scope.$index === 0">↑</el-button>
+            <el-button link type="primary" @click="handleMoveDown(scope.$index)" :disabled="scope.$index === specDefList.length - 1">↓</el-button>
             <el-button link type="primary" @click="handleEditSpecDef(scope.row)">编辑</el-button>
             <el-button link type="danger" @click="handleDeleteSpecDef(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
+    </el-dialog>
 
-      <el-dialog v-model="specDefFormOpen" :title="specDefFormTitle" width="500px" append-to-body>
-        <el-form ref="specDefFormRef" :model="specDefForm" :rules="specDefRules" label-width="90px">
-          <el-form-item label="显示名称" prop="specLabel">
-            <el-input v-model="specDefForm.specLabel" />
-          </el-form-item>
-          <el-form-item label="字段Key" prop="specKey">
-            <el-input v-model="specDefForm.specKey" placeholder="英文字母/下划线" />
-          </el-form-item>
-          <el-form-item label="输入类型" prop="inputType">
-            <el-select v-model="specDefForm.inputType" style="width: 100%">
-              <el-option label="文本" value="text" />
-              <el-option label="数字" value="number" />
-              <el-option label="下拉选择" value="select" />
-            </el-select>
-          </el-form-item>
-          <el-form-item v-if="specDefForm.inputType === 'select'" label="选项">
-            <el-input v-model="specDefForm.options" placeholder='["选项1","选项2"]' />
-          </el-form-item>
-          <el-form-item label="单位">
-            <el-input v-model="specDefForm.unit" placeholder="如 mm、kg" />
-          </el-form-item>
-          <el-form-item label="必填">
-            <el-radio-group v-model="specDefForm.isRequired">
-              <el-radio :value="1">是</el-radio>
-              <el-radio :value="0">否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="排序">
-            <el-input-number v-model="specDefForm.sortOrder" :min="0" :controls="false" style="width: 100%" />
-          </el-form-item>
-        </el-form>
-        <template #footer>
-          <el-button @click="specDefFormOpen = false">取消</el-button>
-          <el-button type="primary" @click="submitSpecDefForm">保存</el-button>
-        </template>
-      </el-dialog>
+    <!-- 规格编辑表单对话框（平级，避免嵌套 dialog z-index 问题） -->
+    <el-dialog v-model="specDefFormOpen" :title="specDefFormTitle" width="500px" append-to-body>
+      <el-form ref="specDefFormRef" :model="specDefForm" :rules="specDefRules" label-width="90px">
+        <el-form-item label="显示名称" prop="specLabel">
+          <el-input v-model="specDefForm.specLabel" />
+        </el-form-item>
+        <el-form-item label="字段Key" prop="specKey">
+          <el-input v-model="specDefForm.specKey" placeholder="英文字母/下划线" />
+        </el-form-item>
+        <el-form-item label="输入类型" prop="inputType">
+          <el-select v-model="specDefForm.inputType" style="width: 100%">
+            <el-option label="文本" value="text" />
+            <el-option label="数字" value="number" />
+            <el-option label="下拉选择" value="select" />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="specDefForm.inputType === 'select'" label="选项">
+          <el-input v-model="specDefForm.options" placeholder='["选项1","选项2"]' />
+        </el-form-item>
+        <el-form-item label="单位">
+          <el-input v-model="specDefForm.unit" placeholder="如 mm、kg" />
+        </el-form-item>
+        <el-form-item label="必填">
+          <el-radio-group v-model="specDefForm.isRequired">
+            <el-radio :value="1">是</el-radio>
+            <el-radio :value="0">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="排序">
+          <el-input-number v-model="specDefForm.sortOrder" :min="0" :controls="false" style="width: 100%" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="specDefFormOpen = false">取消</el-button>
+        <el-button type="primary" @click="submitSpecDefForm">保存</el-button>
+      </template>
     </el-dialog>
 
     <el-dialog v-model="open" :title="title" width="560px" append-to-body>
@@ -157,7 +161,7 @@
 </template>
 
 <script setup name="BaihouCategories">
-import { addCategory, addSpecDef, changeCategoryStatus, listCategories, listSpecDefs, removeSpecDef, updateCategory, updateSpecDef } from "@/api/baihou/categories"
+import { addCategory, addSpecDef, changeCategoryStatus, listCategories, listSpecDefs, removeSpecDef, updateCategory, updateSpecDef, updateSpecDefSort } from "@/api/baihou/categories"
 
 const { proxy } = getCurrentInstance()
 
@@ -305,6 +309,29 @@ function handleDeleteSpecDef(row) {
   removeSpecDef(specDefCategoryId.value, row.specDefId).then(() => {
     proxy.$modal.msgSuccess("删除成功")
     loadSpecDefList()
+  })
+}
+
+function handleMoveUp(index) {
+  if (index === 0) return
+  const list = [...specDefList.value]
+  ;[list[index - 1].sortOrder, list[index].sortOrder] = [list[index].sortOrder, list[index - 1].sortOrder]
+  ;[list[index - 1], list[index]] = [list[index], list[index - 1]]
+  specDefList.value = list
+}
+
+function handleMoveDown(index) {
+  if (index === specDefList.value.length - 1) return
+  const list = [...specDefList.value]
+  ;[list[index].sortOrder, list[index + 1].sortOrder] = [list[index + 1].sortOrder, list[index].sortOrder]
+  ;[list[index], list[index + 1]] = [list[index + 1], list[index]]
+  specDefList.value = list
+}
+
+function submitSort() {
+  const payload = specDefList.value.map(({ specDefId, sortOrder }) => ({ specDefId, sortOrder }))
+  updateSpecDefSort(specDefCategoryId.value, payload).then(() => {
+    proxy.$modal.msgSuccess("排序已保存")
   })
 }
 

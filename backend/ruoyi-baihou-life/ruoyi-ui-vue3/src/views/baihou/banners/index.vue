@@ -97,7 +97,7 @@
           <el-form-item label="开始时间">
             <el-date-picker v-model="form.startTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%" />
           </el-form-item>
-          <el-form-item label="结束时间">
+          <el-form-item label="结束时间" prop="endTime">
             <el-date-picker v-model="form.endTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%" />
           </el-form-item>
           <el-form-item label="状态">
@@ -144,7 +144,17 @@ const form = reactive({
 
 const rules = {
   title: [{ required: true, message: "请输入标题", trigger: "blur" }],
-  imageUrl: [{ required: true, message: "请输入图片地址", trigger: "blur" }]
+  imageUrl: [{ required: true, message: "请输入图片地址", trigger: "blur" }],
+  endTime: [{
+    validator: (rule, value, callback) => {
+      if (value && form.startTime && value <= form.startTime) {
+        callback(new Error("结束时间必须晚于开始时间"))
+      } else {
+        callback()
+      }
+    },
+    trigger: "change"
+  }]
 }
 
 function getList() {
