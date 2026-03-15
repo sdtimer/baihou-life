@@ -21,6 +21,25 @@ function request({ url, method = "GET", data = {}, header = {} }) {
         ...header
       },
       success: ({ statusCode, data: response }) => {
+        // 401：自动静默重新登录后重放原请求
+        if (statusCode === 401) {
+          const authService = require('../services/auth');
+          authService.silentLogin()
+            .then(() => {
+              // token 已更新，重放原始请求
+              request({ url, method, data, header }).then(resolve).catch(reject);
+            })
+            .catch(() => {
+              // 重新登录失败，跳转登录页
+              const userStore = require('../store/user');
+              userStore.logout();
+              wx.navigateTo({ url: '/pages/auth/index' });
+              const authError = new Error('登录已过期，请重新登录');
+              authError.code = 401;
+              reject(authError);
+            });
+          return;
+        }
         if (statusCode >= 200 && statusCode < 300) {
           if (response && typeof response === "object" && Object.prototype.hasOwnProperty.call(response, "code")) {
             if (response.code === 200) {

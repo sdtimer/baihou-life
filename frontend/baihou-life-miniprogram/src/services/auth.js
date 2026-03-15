@@ -42,6 +42,18 @@ async function login() {
   });
 }
 
+/**
+ * 静默重新登录（用于 401 自动重试场景）。
+ * 通过 wx.login() 重新获取 code，换取新 token 后写入 store。
+ * @returns {Promise<void>} 登录成功后 token 已写入 store
+ */
+async function silentLogin() {
+  const result = await login();
+  const userStore = require('../store/user');
+  userStore.setAuth({ token: result.data.token, user: result.data.user });
+}
+
 module.exports = {
-  login
+  login,
+  silentLogin
 };
