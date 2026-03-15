@@ -4,73 +4,96 @@ import com.ruoyi.baihou.service.impl.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class BaihouTransactionalAnnotationTest {
 
     @Test
     void productServiceImplShouldBeTransactional() {
-        assertNotNull(BaihouProductServiceImpl.class.getAnnotation(Transactional.class),
-            "BaihouProductServiceImpl missing @Transactional");
+        Transactional ann = BaihouProductServiceImpl.class.getAnnotation(Transactional.class);
+        assertNotNull(ann, "BaihouProductServiceImpl missing @Transactional");
+        assertArrayEquals(new Class[]{Exception.class}, ann.rollbackFor(),
+            "BaihouProductServiceImpl @Transactional must have rollbackFor = Exception.class");
     }
 
     @Test
     void bannerServiceImplShouldBeTransactional() {
-        assertNotNull(BaihouBannerServiceImpl.class.getAnnotation(Transactional.class),
-            "BaihouBannerServiceImpl missing @Transactional");
+        Transactional ann = BaihouBannerServiceImpl.class.getAnnotation(Transactional.class);
+        assertNotNull(ann, "BaihouBannerServiceImpl missing @Transactional");
+        assertArrayEquals(new Class[]{Exception.class}, ann.rollbackFor(),
+            "BaihouBannerServiceImpl @Transactional must have rollbackFor = Exception.class");
     }
 
     @Test
     void categoryServiceImplShouldBeTransactional() {
-        assertNotNull(BaihouCategoryServiceImpl.class.getAnnotation(Transactional.class),
-            "BaihouCategoryServiceImpl missing @Transactional");
+        Transactional ann = BaihouCategoryServiceImpl.class.getAnnotation(Transactional.class);
+        assertNotNull(ann, "BaihouCategoryServiceImpl missing @Transactional");
+        assertArrayEquals(new Class[]{Exception.class}, ann.rollbackFor(),
+            "BaihouCategoryServiceImpl @Transactional must have rollbackFor = Exception.class");
     }
 
     @Test
     void categorySpecDefServiceImplShouldBeTransactional() {
-        assertNotNull(BaihouCategorySpecDefServiceImpl.class.getAnnotation(Transactional.class),
-            "BaihouCategorySpecDefServiceImpl missing @Transactional");
+        Transactional ann = BaihouCategorySpecDefServiceImpl.class.getAnnotation(Transactional.class);
+        assertNotNull(ann, "BaihouCategorySpecDefServiceImpl missing @Transactional");
+        assertArrayEquals(new Class[]{Exception.class}, ann.rollbackFor(),
+            "BaihouCategorySpecDefServiceImpl @Transactional must have rollbackFor = Exception.class");
     }
 
     @Test
     void regionServiceImplShouldBeTransactional() {
-        assertNotNull(BaihouRegionServiceImpl.class.getAnnotation(Transactional.class),
-            "BaihouRegionServiceImpl missing @Transactional");
+        Transactional ann = BaihouRegionServiceImpl.class.getAnnotation(Transactional.class);
+        assertNotNull(ann, "BaihouRegionServiceImpl missing @Transactional");
+        assertArrayEquals(new Class[]{Exception.class}, ann.rollbackFor(),
+            "BaihouRegionServiceImpl @Transactional must have rollbackFor = Exception.class");
     }
 
     @Test
     void designerServiceImplShouldBeTransactional() {
-        assertNotNull(BaihouDesignerServiceImpl.class.getAnnotation(Transactional.class),
-            "BaihouDesignerServiceImpl missing @Transactional");
+        Transactional ann = BaihouDesignerServiceImpl.class.getAnnotation(Transactional.class);
+        assertNotNull(ann, "BaihouDesignerServiceImpl missing @Transactional");
+        assertArrayEquals(new Class[]{Exception.class}, ann.rollbackFor(),
+            "BaihouDesignerServiceImpl @Transactional must have rollbackFor = Exception.class");
     }
 
     @Test
     void designerGroupServiceImplShouldBeTransactional() {
-        assertNotNull(BaihouDesignerGroupServiceImpl.class.getAnnotation(Transactional.class),
-            "BaihouDesignerGroupServiceImpl missing @Transactional");
+        Transactional ann = BaihouDesignerGroupServiceImpl.class.getAnnotation(Transactional.class);
+        assertNotNull(ann, "BaihouDesignerGroupServiceImpl missing @Transactional");
+        assertArrayEquals(new Class[]{Exception.class}, ann.rollbackFor(),
+            "BaihouDesignerGroupServiceImpl @Transactional must have rollbackFor = Exception.class");
     }
 
     @Test
     void leadServiceImplShouldBeTransactional() {
-        assertNotNull(BaihouLeadServiceImpl.class.getAnnotation(Transactional.class),
-            "BaihouLeadServiceImpl missing @Transactional");
+        Transactional ann = BaihouLeadServiceImpl.class.getAnnotation(Transactional.class);
+        assertNotNull(ann, "BaihouLeadServiceImpl missing @Transactional");
+        assertArrayEquals(new Class[]{Exception.class}, ann.rollbackFor(),
+            "BaihouLeadServiceImpl @Transactional must have rollbackFor = Exception.class");
     }
 
     @Test
     void appointmentServiceImplShouldBeTransactional() {
-        assertNotNull(BaihouAppointmentServiceImpl.class.getAnnotation(Transactional.class),
-            "BaihouAppointmentServiceImpl missing @Transactional");
+        Transactional ann = BaihouAppointmentServiceImpl.class.getAnnotation(Transactional.class);
+        assertNotNull(ann, "BaihouAppointmentServiceImpl missing @Transactional");
+        assertArrayEquals(new Class[]{Exception.class}, ann.rollbackFor(),
+            "BaihouAppointmentServiceImpl @Transactional must have rollbackFor = Exception.class");
     }
 
     @Test
     void orderServiceImplShouldBeTransactional() {
-        assertNotNull(BaihouOrderServiceImpl.class.getAnnotation(Transactional.class),
-            "BaihouOrderServiceImpl missing @Transactional");
+        Transactional ann = BaihouOrderServiceImpl.class.getAnnotation(Transactional.class);
+        assertNotNull(ann, "BaihouOrderServiceImpl missing @Transactional");
+        assertArrayEquals(new Class[]{Exception.class}, ann.rollbackFor(),
+            "BaihouOrderServiceImpl @Transactional must have rollbackFor = Exception.class");
     }
 
     @Test
     void wxUserServiceImplShouldBeTransactional() {
-        assertNotNull(BaihouWxUserServiceImpl.class.getAnnotation(Transactional.class),
-            "BaihouWxUserServiceImpl missing @Transactional");
+        Transactional ann = BaihouWxUserServiceImpl.class.getAnnotation(Transactional.class);
+        assertNotNull(ann, "BaihouWxUserServiceImpl missing @Transactional");
+        assertArrayEquals(new Class[]{Exception.class}, ann.rollbackFor(),
+            "BaihouWxUserServiceImpl @Transactional must have rollbackFor = Exception.class");
     }
 }
