@@ -12,6 +12,7 @@ import com.ruoyi.baihou.service.IBaihouDesignerGroupService;
  * Baihou designer group service implementation.
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class BaihouDesignerGroupServiceImpl implements IBaihouDesignerGroupService
 {
     @Autowired

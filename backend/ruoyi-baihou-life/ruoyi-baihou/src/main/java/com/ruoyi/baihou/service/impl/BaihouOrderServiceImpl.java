@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.baihou.domain.BaihouOrder;
 import com.ruoyi.baihou.domain.BaihouProduct;
 import com.ruoyi.baihou.dto.BaihouOrderUpdateRequest;
@@ -22,6 +23,7 @@ import com.ruoyi.common.utils.StringUtils;
  * Baihou order service implementation.
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class BaihouOrderServiceImpl implements IBaihouOrderService
 {
     private static final Map<String, Set<String>> ALLOWED_TRANSITIONS = Map.of(

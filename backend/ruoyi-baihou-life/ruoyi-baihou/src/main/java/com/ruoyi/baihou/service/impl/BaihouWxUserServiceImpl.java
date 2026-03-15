@@ -2,6 +2,7 @@ package com.ruoyi.baihou.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.baihou.domain.BaihouWxUser;
 import com.ruoyi.baihou.mapper.BaihouWxUserMapper;
 import com.ruoyi.baihou.service.IBaihouWxUserService;
@@ -10,6 +11,7 @@ import com.ruoyi.baihou.service.IBaihouWxUserService;
  * 小程序用户服务实现（测试阶段：code 直接用作 openid）
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class BaihouWxUserServiceImpl implements IBaihouWxUserService
 {
     @Autowired
