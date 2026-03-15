@@ -10,6 +10,8 @@ public class BaihouLead extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
+    private static final int MAX_PAGE_SIZE = 100;
+
     @Excel(name = "线索ID")
     private Long leadId;
 
@@ -45,6 +47,8 @@ public class BaihouLead extends BaseEntity
     private String startDate;
 
     private String endDate;
+
+    private Integer pageSize;
 
     public BaihouLead()
     {
@@ -185,5 +189,19 @@ public class BaihouLead extends BaseEntity
     public void setEndDate(String endDate)
     {
         this.endDate = endDate;
+    }
+
+    public Integer getPageSize()
+    {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize)
+    {
+        if (pageSize != null && pageSize > MAX_PAGE_SIZE) {
+            this.pageSize = MAX_PAGE_SIZE;
+        } else {
+            this.pageSize = pageSize;
+        }
     }
 }

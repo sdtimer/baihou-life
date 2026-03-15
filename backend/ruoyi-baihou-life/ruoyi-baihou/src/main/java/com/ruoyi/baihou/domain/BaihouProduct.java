@@ -11,6 +11,8 @@ public class BaihouProduct extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
+    private static final int MAX_PAGE_SIZE = 100;
+
     private Long id;
 
     private String name;
@@ -292,7 +294,11 @@ public class BaihouProduct extends BaseEntity
 
     public void setPageSize(Integer pageSize)
     {
-        this.pageSize = pageSize;
+        if (pageSize != null && pageSize > MAX_PAGE_SIZE) {
+            this.pageSize = MAX_PAGE_SIZE;
+        } else {
+            this.pageSize = pageSize;
+        }
     }
 
     public List<BaihouMedia> getSceneImages()
