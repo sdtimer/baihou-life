@@ -1,6 +1,16 @@
 package com.ruoyi;
 
-import com.ruoyi.baihou.service.impl.*;
+import com.ruoyi.baihou.service.impl.BaihouAppointmentServiceImpl;
+import com.ruoyi.baihou.service.impl.BaihouBannerServiceImpl;
+import com.ruoyi.baihou.service.impl.BaihouCategoryServiceImpl;
+import com.ruoyi.baihou.service.impl.BaihouCategorySpecDefServiceImpl;
+import com.ruoyi.baihou.service.impl.BaihouDesignerGroupServiceImpl;
+import com.ruoyi.baihou.service.impl.BaihouDesignerServiceImpl;
+import com.ruoyi.baihou.service.impl.BaihouLeadServiceImpl;
+import com.ruoyi.baihou.service.impl.BaihouOrderServiceImpl;
+import com.ruoyi.baihou.service.impl.BaihouProductServiceImpl;
+import com.ruoyi.baihou.service.impl.BaihouRegionServiceImpl;
+import com.ruoyi.baihou.service.impl.BaihouWxUserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
 
