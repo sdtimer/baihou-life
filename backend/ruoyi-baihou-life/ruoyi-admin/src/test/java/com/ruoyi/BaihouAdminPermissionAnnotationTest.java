@@ -23,6 +23,7 @@ import com.ruoyi.baihou.dto.BaihouAppointmentUpdateRequest;
 import com.ruoyi.baihou.dto.BaihouLeadUpdateRequest;
 import com.ruoyi.baihou.dto.BaihouOrderUpdateRequest;
 import com.ruoyi.baihou.dto.BaihouProductBatchRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -94,7 +95,7 @@ class BaihouAdminPermissionAnnotationTest
     {
         assertPermission(BaihouLeadController.class, "list", "@ss.hasPermi('baihou:lead:list')", BaihouLead.class);
         assertPermission(BaihouLeadController.class, "update", "@ss.hasPermi('baihou:lead:edit')", Long.class, BaihouLeadUpdateRequest.class);
-        assertPermission(BaihouLeadController.class, "export", "@ss.hasPermi('baihou:lead:export')", BaihouLead.class);
+        assertPermission(BaihouLeadController.class, "export", "@ss.hasPermi('baihou:lead:export')", HttpServletResponse.class, BaihouLead.class);
     }
 
     @Test
