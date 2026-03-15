@@ -34,6 +34,7 @@ public class BaihouBannerServiceImpl implements IBaihouBannerService
             banner.setIsActive(1);
         }
         validateRegions(banner);
+        validateTime(banner);
         return bannerMapper.insertBanner(banner);
     }
 
@@ -41,6 +42,7 @@ public class BaihouBannerServiceImpl implements IBaihouBannerService
     public int updateBanner(BaihouBanner banner)
     {
         validateRegions(banner);
+        validateTime(banner);
         return bannerMapper.updateBanner(banner);
     }
 
@@ -60,6 +62,18 @@ public class BaihouBannerServiceImpl implements IBaihouBannerService
         if (normalized.contains("\"ALL\"") && !Objects.equals(normalized, "[\"ALL\"]"))
         {
             throw new ServiceException("全部区域不能与具体区域同时选择");
+        }
+    }
+
+    private void validateTime(BaihouBanner banner)
+    {
+        if (banner == null || banner.getStartTime() == null || banner.getEndTime() == null)
+        {
+            return;
+        }
+        if (!banner.getEndTime().after(banner.getStartTime()))
+        {
+            throw new ServiceException("结束时间必须晚于开始时间");
         }
     }
 }

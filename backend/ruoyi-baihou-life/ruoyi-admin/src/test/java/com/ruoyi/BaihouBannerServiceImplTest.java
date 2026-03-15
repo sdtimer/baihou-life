@@ -76,4 +76,57 @@ class BaihouBannerServiceImplTest
 
         assertThrows(ServiceException.class, () -> service.insertBanner(banner));
     }
+
+    @Test
+    void bannerInsertShouldRejectEndTimeBeforeStartTime()
+    {
+        BaihouBannerMapper bannerMapper = Mockito.mock(BaihouBannerMapper.class);
+        BaihouBannerServiceImpl service = new BaihouBannerServiceImpl();
+        ReflectionTestUtils.setField(service, "bannerMapper", bannerMapper);
+
+        BaihouBanner banner = new BaihouBanner();
+        banner.setTitle("测试");
+        banner.setImageUrl("https://cdn.example.com/a.jpg");
+        banner.setStartTime(new java.util.Date(System.currentTimeMillis() + 3600_000)); // 1 hour later
+        banner.setEndTime(new java.util.Date(System.currentTimeMillis()));              // now (BEFORE start)
+
+        assertThrows(com.ruoyi.common.exception.ServiceException.class,
+            () -> service.insertBanner(banner),
+            "end before start should throw ServiceException");
+    }
+
+    @Test
+    void bannerUpdateShouldRejectEndTimeEqualToStartTime()
+    {
+        BaihouBannerMapper bannerMapper = Mockito.mock(BaihouBannerMapper.class);
+        BaihouBannerServiceImpl service = new BaihouBannerServiceImpl();
+        ReflectionTestUtils.setField(service, "bannerMapper", bannerMapper);
+
+        long now = System.currentTimeMillis();
+        BaihouBanner banner = new BaihouBanner();
+        banner.setBannerId(1L);
+        banner.setTitle("测试");
+        banner.setImageUrl("https://cdn.example.com/a.jpg");
+        banner.setStartTime(new java.util.Date(now));
+        banner.setEndTime(new java.util.Date(now));  // equal → should also fail
+
+        assertThrows(com.ruoyi.common.exception.ServiceException.class,
+            () -> service.updateBanner(banner),
+            "end equal to start should throw ServiceException");
+    }
+
+    @Test
+    void bannerInsertShouldAllowNullTimes()
+    {
+        BaihouBannerMapper bannerMapper = Mockito.mock(BaihouBannerMapper.class);
+        Mockito.when(bannerMapper.insertBanner(Mockito.any())).thenReturn(1);
+        BaihouBannerServiceImpl service = new BaihouBannerServiceImpl();
+        ReflectionTestUtils.setField(service, "bannerMapper", bannerMapper);
+
+        BaihouBanner banner = new BaihouBanner();
+        banner.setTitle("测试");
+        banner.setImageUrl("https://cdn.example.com/a.jpg");
+        // startTime and endTime both null → should pass without exception
+        assertEquals(1, service.insertBanner(banner));
+    }
 }
