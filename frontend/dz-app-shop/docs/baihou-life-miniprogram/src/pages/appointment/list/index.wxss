@@ -1,0 +1,31 @@
+.appointment-create {
+  margin-bottom: 22rpx;
+}
+
+.appointment-list {
+  display: grid;
+  gap: 18rpx;
+}
+
+.appointment-item {
+  padding: 24rpx;
+}
+
+.appointment-item__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18rpx;
+}
+
+.appointment-item__no {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.appointment-item__meta,
+.appointment-item__service {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #8c847c;
+}

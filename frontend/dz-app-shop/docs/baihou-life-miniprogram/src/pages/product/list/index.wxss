@@ -1,0 +1,34 @@
+.product-search {
+  display: flex;
+  gap: 16rpx;
+  padding: 18rpx;
+}
+
+.product-search input {
+  flex: 1;
+  height: 88rpx;
+  padding: 0 24rpx;
+  border-radius: 999rpx;
+  background: #f7f4ef;
+}
+
+.filter-row {
+  margin-top: 16rpx;
+  white-space: nowrap;
+}
+
+.filter-row__track {
+  display: inline-flex;
+  gap: 10rpx;
+}
+
+.product-list {
+  display: grid;
+  gap: 18rpx;
+  margin-top: 24rpx;
+}
+
+.product-skeleton {
+  height: 520rpx;
+  border-radius: 24rpx;
+}

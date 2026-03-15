@@ -1,0 +1,40 @@
+.bh-product-card {
+  overflow: hidden;
+}
+
+.bh-product-card__image {
+  width: 100%;
+  height: 320rpx;
+  display: block;
+}
+
+.bh-product-card__body {
+  padding: 22rpx;
+}
+
+.bh-product-card__topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.bh-product-card__brand {
+  font-size: 24rpx;
+  color: #8c847c;
+}
+
+.bh-product-card__name {
+  margin-top: 16rpx;
+  font-size: 30rpx;
+  line-height: 1.4;
+  font-weight: 600;
+  color: #2f2a26;
+}
+
+.bh-product-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  margin: 18rpx 0;
+}

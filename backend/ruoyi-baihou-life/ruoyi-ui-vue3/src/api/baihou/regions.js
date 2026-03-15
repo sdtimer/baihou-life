@@ -36,3 +36,10 @@ export function changeRegionStatus(regionId, isActive) {
     method: "put"
   })
 }
+
+export function getRegionOptions() {
+  return request({
+    url: "/admin/regions/options",
+    method: "get"
+  })
+}

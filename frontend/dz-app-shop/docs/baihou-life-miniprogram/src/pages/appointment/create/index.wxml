@@ -1,0 +1,22 @@
+<bh-shell title="预约服务时间" subtitle="日期不可早于今天，服务类型与区域要保持一致。">
+  <view class="form-card bh-card">
+    <input class="form-card__input" placeholder="姓名" data-field="customer_name" bindinput="bindField" value="{{form.customer_name}}" />
+    <input class="form-card__input" placeholder="手机号" type="number" maxlength="11" data-field="customer_phone" bindinput="bindField" value="{{form.customer_phone}}" />
+    <view class="form-card__group">
+      <view
+        wx:for="{{serviceTypes}}"
+        wx:key="value"
+        class="bh-pill {{form.service_type === item.value ? 'bh-pill--active' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="pickService"
+      >
+        {{item.label}}
+      </view>
+    </view>
+    <picker mode="date" start="{{minDate}}" bindchange="bindField" data-field="preferred_date">
+      <view class="form-card__input">{{preferredDateText}}</view>
+    </picker>
+    <textarea class="form-card__textarea" placeholder="补充地址或备注" data-field="remark" bindinput="bindField" value="{{form.remark}}" />
+    <button class="bh-button-primary" bindtap="submit">提交预约</button>
+  </view>
+</bh-shell>

@@ -1,0 +1,24 @@
+<bh-shell title="订单详情" subtitle="状态、金额、时间信息按优先级分层，不混淆主动作。">
+  <bh-empty wx:if="{{!detail}}" title="订单不存在" subtitle="请返回订单列表重新进入。" />
+  <view wx:else class="detail-card bh-card">
+    <view class="detail-card__row">
+      <view>
+        <view class="detail-card__title">{{detail.order_no}}</view>
+        <view class="detail-card__meta">{{detail.created_at}}</view>
+      </view>
+      <bh-status-chip status="{{detail.status}}" text="{{detail.status_text}}" />
+    </view>
+    <view class="detail-card__row detail-card__row--stack">
+      <text class="detail-card__label">产品</text>
+      <text class="detail-card__value">{{detail.product_name}}</text>
+    </view>
+    <view class="detail-card__row detail-card__row--stack">
+      <text class="detail-card__label">区域</text>
+      <text class="detail-card__value">{{detail.region_name}}</text>
+    </view>
+    <view class="detail-card__row detail-card__row--stack">
+      <text class="detail-card__label">金额</text>
+      <text class="detail-card__amount">¥{{detail.pay_amount}}</text>
+    </view>
+  </view>
+</bh-shell>

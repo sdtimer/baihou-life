@@ -1,0 +1,15 @@
+<view class="bh-shell page-shell">
+  <view class="bh-shell__hero {{compact ? 'bh-shell__hero--compact' : ''}}" style="padding-top: {{topInset}}px;">
+    <view class="bh-shell__toolbar">
+      <view class="bh-shell__back" bindtap="handleBack">返回</view>
+      <view class="bh-shell__brand">Baihou Life</view>
+    </view>
+    <view class="bh-shell__headline">
+      <text class="bh-shell__title">{{title}}</text>
+      <text wx:if="{{subtitle}}" class="bh-shell__subtitle">{{subtitle}}</text>
+    </view>
+  </view>
+  <view class="page-content bh-shell__body">
+    <slot />
+  </view>
+</view>

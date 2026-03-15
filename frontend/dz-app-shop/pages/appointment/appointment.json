@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "bh-picker": "/components/bh-picker/index"
+  },
+  "navigationBarTitleText": "预约"
+}

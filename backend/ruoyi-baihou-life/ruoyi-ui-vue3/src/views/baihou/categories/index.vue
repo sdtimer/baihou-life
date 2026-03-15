@@ -54,15 +54,76 @@
                 />
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="120" fixed="right">
+            <el-table-column label="操作" width="180" fixed="right">
               <template #default="scope">
                 <el-button link type="primary" @click="handleEdit(scope.row)" v-hasPermi="['baihou:category:edit']">编辑</el-button>
+                <el-button link type="primary" @click="handleSpecDef(scope.row)" v-hasPermi="['baihou:category:edit']">规格模板</el-button>
               </template>
             </el-table-column>
           </el-table>
         </div>
       </section>
     </div>
+
+    <!-- 规格模板对话框 -->
+    <el-dialog v-model="specDefOpen" :title="`规格模板 — ${specDefCategoryName}`" width="720px" append-to-body>
+      <div class="baihou-toolbar" style="margin-bottom: 12px">
+        <el-button type="primary" size="small" @click="handleAddSpecDef">新增规格</el-button>
+      </div>
+      <el-table :data="specDefList" v-loading="specDefLoading">
+        <el-table-column prop="specLabel" label="显示名称" min-width="120" />
+        <el-table-column prop="specKey" label="字段Key" min-width="120" />
+        <el-table-column prop="inputType" label="输入类型" width="100" />
+        <el-table-column prop="unit" label="单位" width="80" />
+        <el-table-column label="必填" width="80">
+          <template #default="scope">{{ scope.row.isRequired === 1 ? "是" : "否" }}</template>
+        </el-table-column>
+        <el-table-column prop="sortOrder" label="排序" width="80" />
+        <el-table-column label="操作" width="140">
+          <template #default="scope">
+            <el-button link type="primary" @click="handleEditSpecDef(scope.row)">编辑</el-button>
+            <el-button link type="danger" @click="handleDeleteSpecDef(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-dialog v-model="specDefFormOpen" :title="specDefFormTitle" width="500px" append-to-body>
+        <el-form ref="specDefFormRef" :model="specDefForm" :rules="specDefRules" label-width="90px">
+          <el-form-item label="显示名称" prop="specLabel">
+            <el-input v-model="specDefForm.specLabel" />
+          </el-form-item>
+          <el-form-item label="字段Key" prop="specKey">
+            <el-input v-model="specDefForm.specKey" placeholder="英文字母/下划线" />
+          </el-form-item>
+          <el-form-item label="输入类型" prop="inputType">
+            <el-select v-model="specDefForm.inputType" style="width: 100%">
+              <el-option label="文本" value="text" />
+              <el-option label="数字" value="number" />
+              <el-option label="下拉选择" value="select" />
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="specDefForm.inputType === 'select'" label="选项">
+            <el-input v-model="specDefForm.options" placeholder='["选项1","选项2"]' />
+          </el-form-item>
+          <el-form-item label="单位">
+            <el-input v-model="specDefForm.unit" placeholder="如 mm、kg" />
+          </el-form-item>
+          <el-form-item label="必填">
+            <el-radio-group v-model="specDefForm.isRequired">
+              <el-radio :value="1">是</el-radio>
+              <el-radio :value="0">否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="排序">
+            <el-input-number v-model="specDefForm.sortOrder" :min="0" :controls="false" style="width: 100%" />
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button @click="specDefFormOpen = false">取消</el-button>
+          <el-button type="primary" @click="submitSpecDefForm">保存</el-button>
+        </template>
+      </el-dialog>
+    </el-dialog>
 
     <el-dialog v-model="open" :title="title" width="560px" append-to-body>
       <el-form ref="formRef" :model="form" :rules="rules" label-width="90px">
@@ -96,7 +157,7 @@
 </template>
 
 <script setup name="BaihouCategories">
-import { addCategory, changeCategoryStatus, listCategories, updateCategory } from "@/api/baihou/categories"
+import { addCategory, addSpecDef, changeCategoryStatus, listCategories, listSpecDefs, removeSpecDef, updateCategory, updateSpecDef } from "@/api/baihou/categories"
 
 const { proxy } = getCurrentInstance()
 
@@ -104,6 +165,31 @@ const loading = ref(false)
 const open = ref(false)
 const title = ref("")
 const categoryList = ref([])
+
+// 规格模板状态
+const specDefOpen = ref(false)
+const specDefLoading = ref(false)
+const specDefCategoryId = ref(null)
+const specDefCategoryName = ref("")
+const specDefList = ref([])
+const specDefFormOpen = ref(false)
+const specDefFormTitle = ref("")
+const specDefFormRef = ref()
+const specDefForm = reactive({
+  specDefId: undefined,
+  specLabel: "",
+  specKey: "",
+  inputType: "text",
+  options: "",
+  unit: "",
+  isRequired: 0,
+  sortOrder: 10
+})
+const specDefRules = {
+  specLabel: [{ required: true, message: "请输入显示名称", trigger: "blur" }],
+  specKey: [{ required: true, message: "请输入字段Key", trigger: "blur" }],
+  inputType: [{ required: true, message: "请选择输入类型", trigger: "change" }]
+}
 
 const formRef = ref()
 const form = reactive({
@@ -173,6 +259,67 @@ function submitForm() {
       proxy.$modal.msgSuccess("保存成功")
       open.value = false
       getList()
+    })
+  })
+}
+
+function handleSpecDef(row) {
+  specDefCategoryId.value = row.categoryId
+  specDefCategoryName.value = row.categoryName
+  specDefList.value = []
+  specDefOpen.value = true
+  loadSpecDefList()
+}
+
+function loadSpecDefList() {
+  specDefLoading.value = true
+  listSpecDefs(specDefCategoryId.value).then((res) => {
+    specDefList.value = res.data || []
+  }).finally(() => {
+    specDefLoading.value = false
+  })
+}
+
+function handleAddSpecDef() {
+  Object.assign(specDefForm, {
+    specDefId: undefined,
+    specLabel: "",
+    specKey: "",
+    inputType: "text",
+    options: "",
+    unit: "",
+    isRequired: 0,
+    sortOrder: 10
+  })
+  specDefFormTitle.value = "新增规格"
+  specDefFormOpen.value = true
+}
+
+function handleEditSpecDef(row) {
+  Object.assign(specDefForm, row)
+  specDefFormTitle.value = "编辑规格"
+  specDefFormOpen.value = true
+}
+
+function handleDeleteSpecDef(row) {
+  removeSpecDef(specDefCategoryId.value, row.specDefId).then(() => {
+    proxy.$modal.msgSuccess("删除成功")
+    loadSpecDefList()
+  })
+}
+
+function submitSpecDefForm() {
+  specDefFormRef.value.validate((valid) => {
+    if (!valid) {
+      return
+    }
+    const request = specDefForm.specDefId
+      ? updateSpecDef(specDefCategoryId.value, specDefForm.specDefId, { ...specDefForm })
+      : addSpecDef(specDefCategoryId.value, { ...specDefForm })
+    request.then(() => {
+      proxy.$modal.msgSuccess("保存成功")
+      specDefFormOpen.value = false
+      loadSpecDefList()
     })
   })
 }

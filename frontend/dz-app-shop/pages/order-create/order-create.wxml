@@ -1,0 +1,105 @@
+<view class="page">
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-back" bindtap="goBack">
+      <view class="nav-back-icon"></view>
+    </view>
+    <view class="nav-title">确认订单</view>
+  </view>
+
+  <view class="content" style="padding-top: {{navBarHeight}}px;">
+    <view class="section" bindtap="selectAddress">
+      <view class="address-card" wx:if="{{address}}">
+        <view class="address-header">
+          <view class="address-icon"></view>
+          <view class="address-name">{{address.name}}</view>
+          <view class="address-phone">{{address.phone}}</view>
+          <view class="tag tag-success" wx:if="{{address.isDefault}}">默认</view>
+        </view>
+        <view class="address-detail">{{address.province}}{{address.city}}{{address.district}}{{address.detail}}</view>
+        <view class="address-arrow"></view>
+      </view>
+      <view class="address-empty" wx:else>
+        <view class="address-add-icon"></view>
+        <view class="address-add-text">添加收货地址</view>
+        <view class="address-arrow"></view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="goods-card">
+        <image class="goods-image" src="{{product.image}}" mode="aspectFill" />
+        <view class="goods-info">
+          <view class="goods-name">{{product.name}}</view>
+          <view class="goods-desc">{{product.desc}}</view>
+          <view class="goods-spec" wx:if="{{product.spec}}">{{product.spec}}</view>
+          <view class="goods-price-row">
+            <view class="goods-price">
+              <text class="price-symbol">¥</text>
+              <text class="price-value">{{product.price}}</text>
+            </view>
+            <view class="goods-quantity">x{{quantity}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="info-row" bindtap="showRemarkPopup">
+        <view class="info-label">订单备注</view>
+        <view class="info-value">
+          <text class="info-text {{remark ? '' : 'placeholder'}}">{{remark || '选填，请先与商家协商'}}</text>
+          <view class="info-arrow"></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="price-row">
+        <view class="price-label">商品金额</view>
+        <view class="price-value">¥{{product.price}}</view>
+      </view>
+      <view class="price-row">
+        <view class="price-label">运费</view>
+        <view class="price-value">{{freight > 0 ? '¥' + freight : '免运费'}}</view>
+      </view>
+      <view class="price-row" wx:if="{{discount > 0}}">
+        <view class="price-label">优惠</view>
+        <view class="price-value discount">-¥{{discount}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-bar safe-area-bottom">
+    <view class="bottom-content">
+      <view class="total-info">
+        <text class="total-label">合计：</text>
+        <text class="total-price">¥{{totalPrice}}</text>
+      </view>
+      <view class="btn btn-primary submit-btn" bindtap="submitOrder">提交订单</view>
+    </view>
+  </view>
+
+  <view class="popup-mask" wx:if="{{showRemark}}" bindtap="hideRemarkPopup"></view>
+  <view class="popup {{showRemark ? 'show' : ''}}">
+    <view class="popup-header">
+      <view class="popup-title">订单备注</view>
+      <view class="popup-close" bindtap="hideRemarkPopup"></view>
+    </view>
+    <view class="popup-body">
+      <textarea 
+        class="remark-input" 
+        placeholder="请输入备注信息" 
+        value="{{remark}}"
+        bindinput="onRemarkInput"
+        maxlength="200"
+      />
+    </view>
+    <view class="popup-footer">
+      <view class="btn btn-primary" bindtap="confirmRemark">确定</view>
+    </view>
+  </view>
+</view>
+
+
+
+

@@ -1,0 +1,14 @@
+<bh-shell title="确认订单" subtitle="订单页强调状态清晰和支付动作的确定性。">
+  <view wx:if="{{product}}" class="order-confirm bh-card">
+    <image class="order-confirm__image" src="{{product.cover_image}}" mode="aspectFill" />
+    <view class="order-confirm__body">
+      <view class="order-confirm__name">{{product.name}}</view>
+      <view class="order-confirm__meta">{{product.brand}} · {{product.category_name}}</view>
+      <view class="bh-price">
+        <text class="bh-price__main">¥{{product.guide_price}}</text>
+        <text class="bh-meta">{{product.price_unit}}</text>
+      </view>
+      <button class="bh-button-primary" bindtap="submitOrder">创建订单并支付</button>
+    </view>
+  </view>
+</bh-shell>

@@ -1,0 +1,53 @@
+<view class="page">
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-back" bindtap="goBack">
+      <view class="nav-back-icon"></view>
+    </view>
+  </view>
+
+  <swiper class="goods-swiper" indicator-dots autoplay circular>
+    <swiper-item wx:for="{{product.images}}" wx:key="*this">
+      <image class="goods-swiper__image" src="{{item}}" mode="aspectFill" />
+    </swiper-item>
+  </swiper>
+
+  <view class="goods-info">
+    <view class="goods-price-row">
+      <view class="goods-price">
+        <text class="price-symbol">¥</text>
+        <text class="price-value">{{product.price}}</text>
+      </view>
+      <view class="price-original" wx:if="{{product.originalPrice}}">¥{{product.originalPrice}}</view>
+    </view>
+    <view class="goods-name">{{product.name}}</view>
+    <view class="goods-desc">{{product.desc}}</view>
+    <view class="goods-tags">
+      <view class="tag tag-success" wx:if="{{product.isDesigner}}">设计师专属价</view>
+      <view class="tag">{{product.category}}</view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">规格参数</view>
+    <view class="spec-list">
+      <view class="spec-item" wx:for="{{product.specs}}" wx:key="label">
+        <view class="spec-label">{{item.label}}</view>
+        <view class="spec-value">{{item.value}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">商品详情</view>
+    <view class="detail-content">
+      <view class="detail-text">{{product.detail}}</view>
+    </view>
+  </view>
+
+  <view class="bottom-bar safe-area-bottom">
+    <view class="bottom-buttons">
+      <view class="btn btn-secondary" bindtap="onConsult">留资咨询</view>
+      <view class="btn btn-primary" bindtap="onOrder">立即下单</view>
+    </view>
+  </view>
+</view>

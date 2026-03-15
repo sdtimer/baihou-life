@@ -1,6 +1,7 @@
 package com.ruoyi.baihou.service.impl;
 
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.baihou.domain.BaihouRegion;
@@ -44,5 +45,11 @@ public class BaihouRegionServiceImpl implements IBaihouRegionService
     public int updateRegionStatus(String regionId, Integer isActive)
     {
         return regionMapper.updateRegionStatus(regionId, isActive);
+    }
+
+    @Override
+    public List<Map<String, String>> selectActiveOptions()
+    {
+        return regionMapper.selectActiveOptions();
     }
 }

@@ -1,0 +1,29 @@
+.bh-status-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48rpx;
+  padding: 0 16rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.bh-status-chip--warning {
+  background: #fbf3e4;
+  color: #b9852b;
+}
+
+.bh-status-chip--info {
+  background: #eaf0f4;
+  color: #4e6a7d;
+}
+
+.bh-status-chip--success {
+  background: #eaf5ee;
+  color: #3e7b57;
+}
+
+.bh-status-chip--error {
+  background: #f9ecea;
+  color: #b74d45;
+}

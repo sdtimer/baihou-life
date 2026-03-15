@@ -36,3 +36,33 @@ export function changeCategoryStatus(categoryId, isActive) {
     method: "put"
   })
 }
+
+export function listSpecDefs(categoryId) {
+  return request({
+    url: `/admin/categories/${categoryId}/spec-defs`,
+    method: "get"
+  })
+}
+
+export function addSpecDef(categoryId, data) {
+  return request({
+    url: `/admin/categories/${categoryId}/spec-defs`,
+    method: "post",
+    data
+  })
+}
+
+export function updateSpecDef(categoryId, specDefId, data) {
+  return request({
+    url: `/admin/categories/${categoryId}/spec-defs/${specDefId}`,
+    method: "put",
+    data
+  })
+}
+
+export function removeSpecDef(categoryId, specDefId) {
+  return request({
+    url: `/admin/categories/${categoryId}/spec-defs/${specDefId}`,
+    method: "delete"
+  })
+}

@@ -1,0 +1,24 @@
+.order-confirm {
+  overflow: hidden;
+}
+
+.order-confirm__image {
+  width: 100%;
+  height: 360rpx;
+}
+
+.order-confirm__body {
+  display: grid;
+  gap: 14rpx;
+  padding: 24rpx;
+}
+
+.order-confirm__name {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+
+.order-confirm__meta {
+  font-size: 24rpx;
+  color: #8c847c;
+}

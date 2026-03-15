@@ -1,0 +1,38 @@
+.order-list {
+  display: grid;
+  gap: 18rpx;
+}
+
+.order-item {
+  padding: 24rpx;
+}
+
+.order-item__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18rpx;
+}
+
+.order-item__no,
+.order-item__name {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.order-item__meta {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #8c847c;
+}
+
+.order-item__name {
+  margin-top: 18rpx;
+}
+
+.order-item__amount {
+  margin-top: 12rpx;
+  font-size: 34rpx;
+  color: #6f5a45;
+  font-weight: 600;
+}

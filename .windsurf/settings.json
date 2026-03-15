@@ -1,0 +1,43 @@
+{
+  "java.home": "/Library/Java/JavaVirtualMachines/zulu-8.jdk/Contents/Home",
+  "java.configuration.maven.userSettings": "/Users/timer/.m2/settings.xml",
+  "maven.executable.path": "/usr/local/bin/mvn",
+  "java.compile.nullAnalysis.mode": "automatic",
+  "java.debug.settings.enableRunDebugCodeLens": true,
+  "java.debug.settings.onBuildFailureProceed": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/node_modules": true,
+    "**/target": true,
+    "**/dist": true,
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/target": true,
+    "**/dist": true,
+    "**/.git": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/target/**": true,
+    "**/dist/**": true
+  },
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  },
+  "java.saveActions.organizeImports": true,
+  "maven.terminal.useJavaHome": true,
+  "spring-boot.ls.checkJVM": false,
+  "workbench.colorTheme": "Default Dark+",
+  "workbench.iconTheme": "material-icon-theme"
+}

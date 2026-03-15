@@ -1,0 +1,51 @@
+<view class="page" style="padding-top: {{navBarTotalHeight}}px;">
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px; height: {{navBarHeight}}px;">
+    <view class="nav-back" bindtap="goBack">
+      <view class="nav-back-icon"></view>
+    </view>
+    <view class="nav-title">留资咨询</view>
+    <view class="nav-placeholder"></view>
+  </view>
+
+  <view class="product-info" wx:if="{{productName}}">
+    <view class="product-label">咨询商品</view>
+    <view class="product-name">{{productName}}</view>
+  </view>
+
+  <view class="form-card">
+    <view class="form-item">
+      <view class="form-label"><text class="required">*</text>姓名</view>
+      <input class="input" placeholder="请输入您的姓名" placeholder-class="input-placeholder" value="{{form.name}}" bindinput="onInput" data-field="name" />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label"><text class="required">*</text>手机号</view>
+      <input class="input" type="number" placeholder="请输入您的手机号" placeholder-class="input-placeholder" value="{{form.phone}}" bindinput="onInput" data-field="phone" />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">所在区域</view>
+      <bh-picker 
+        placeholder="请选择区域" 
+        options="{{regionOptions}}" 
+        value="{{form.region}}" 
+        bind:change="onRegionChange" 
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">咨询内容</view>
+      <textarea class="textarea" placeholder="请描述您的需求或问题，我们会尽快与您联系" placeholder-class="input-placeholder" value="{{form.content}}" bindinput="onInput" data-field="content" />
+    </view>
+  </view>
+
+  <view class="tips">
+    <view class="tips-title">温馨提示</view>
+    <view class="tips-item">1. 提交后我们将在1-2个工作日内与您联系</view>
+    <view class="tips-item">2. 您的信息将严格保密，仅用于此次咨询</view>
+  </view>
+
+  <view class="submit-bar safe-area-bottom">
+    <view class="btn btn-primary" bindtap="onSubmit">提交咨询</view>
+  </view>
+</view>

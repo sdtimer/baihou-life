@@ -1,0 +1,24 @@
+.bh-section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.bh-section-header__title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #2f2a26;
+}
+
+.bh-section-header__subtitle {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #8c847c;
+}
+
+.bh-section-header__action {
+  font-size: 24rpx;
+  color: #6f5a45;
+}

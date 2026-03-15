@@ -67,4 +67,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where region_id = #{regionId}
     </update>
 
+    <select id="selectActiveOptions" resultType="map">
+        select region_id as `value`, region_name as `label`
+        from bh_region
+        where is_active = 1
+        order by sort_order asc, region_id asc
+    </select>
+
 </mapper>

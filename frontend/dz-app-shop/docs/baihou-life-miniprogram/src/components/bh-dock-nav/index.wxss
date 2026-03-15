@@ -1,0 +1,45 @@
+.bh-dock-nav {
+  position: sticky;
+  bottom: 20rpx;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8rpx;
+  margin-top: 28rpx;
+  padding: 12rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 252, 248, 0.94);
+  border: 1rpx solid rgba(221, 213, 204, 0.9);
+  box-shadow: 0 16rpx 36rpx rgba(64, 45, 25, 0.12);
+  backdrop-filter: blur(16rpx);
+}
+
+.bh-dock-nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  min-height: 88rpx;
+  border-radius: 999rpx;
+  color: #8c847c;
+  font-size: 22rpx;
+  transition: all 160ms ease;
+}
+
+.bh-dock-nav__dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: rgba(125, 138, 99, 0.2);
+}
+
+.bh-dock-nav__item--active {
+  background: linear-gradient(135deg, rgba(111, 90, 69, 0.14), rgba(125, 138, 99, 0.14));
+  color: #6f5a45;
+  font-weight: 600;
+}
+
+.bh-dock-nav__item--active .bh-dock-nav__dot {
+  background: #6f5a45;
+}

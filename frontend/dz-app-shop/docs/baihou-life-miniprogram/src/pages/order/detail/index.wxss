@@ -1,0 +1,41 @@
+.detail-card {
+  display: grid;
+  gap: 20rpx;
+  padding: 28rpx;
+}
+
+.detail-card__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18rpx;
+}
+
+.detail-card__row--stack {
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: 20rpx;
+  border-top: 1rpx solid rgba(221, 213, 204, 0.72);
+}
+
+.detail-card__title {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.detail-card__meta,
+.detail-card__label {
+  font-size: 24rpx;
+  color: #8c847c;
+}
+
+.detail-card__value {
+  font-size: 28rpx;
+  color: #2f2a26;
+}
+
+.detail-card__amount {
+  font-size: 40rpx;
+  color: #6f5a45;
+  font-weight: 600;
+}

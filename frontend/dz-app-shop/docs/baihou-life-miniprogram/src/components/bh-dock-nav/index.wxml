@@ -1,0 +1,13 @@
+<view class="bh-dock-nav">
+  <view
+    wx:for="{{items}}"
+    wx:key="key"
+    class="bh-dock-nav__item {{current === item.key ? 'bh-dock-nav__item--active' : ''}}"
+    data-key="{{item.key}}"
+    data-url="{{item.url}}"
+    bindtap="navigate"
+  >
+    <view class="bh-dock-nav__dot"></view>
+    <text>{{item.label}}</text>
+  </view>
+</view>

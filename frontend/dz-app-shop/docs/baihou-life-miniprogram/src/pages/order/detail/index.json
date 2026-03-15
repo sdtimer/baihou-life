@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "bh-shell": "/components/bh-shell/index",
+    "bh-status-chip": "/components/bh-status-chip/index",
+    "bh-empty": "/components/bh-empty/index"
+  }
+}

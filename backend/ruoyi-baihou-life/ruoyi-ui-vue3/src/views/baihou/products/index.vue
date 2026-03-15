@@ -39,7 +39,7 @@
               <el-option v-for="item in categoryOptions" :key="item.categoryId" :label="item.categoryName" :value="item.categoryId" />
             </el-select>
             <el-select v-model="queryParams.regionId" placeholder="区域" clearable>
-              <el-option v-for="item in regionOptions" :key="item.regionId" :label="item.regionName" :value="item.regionId" />
+              <el-option v-for="item in regionSelectOptions" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
             <el-select v-model="queryParams.status" placeholder="状态" clearable>
               <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
@@ -129,17 +129,34 @@
           <el-form-item label="设计师折扣">
             <el-input-number v-model="form.designerDiscount" :precision="2" :min="0" :max="1" :step="0.01" style="width: 100%" />
           </el-form-item>
-          <el-form-item label="区域" prop="regions">
-            <el-input v-model="form.regions" placeholder='如 ["foshan","guangzhou"]' />
+          <el-form-item label="区域" prop="regionsArr">
+            <el-select v-model="regionsArr" multiple placeholder="请选择区域" style="width: 100%" @change="handleRegionsChange">
+              <el-option v-for="item in regionSelectOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
           </el-form-item>
           <el-form-item label="空间标签">
-            <el-input v-model="form.spaceTags" placeholder='如 ["客厅","餐厅"]' />
+            <el-select v-model="spaceTagsArr" multiple placeholder="请选择空间标签" style="width: 100%">
+              <el-option v-for="item in spaceTagOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
           </el-form-item>
           <el-form-item label="场景标签">
-            <el-input v-model="form.sceneTags" placeholder='如 ["现代","奶油"]' />
+            <el-select v-model="sceneTagsArr" multiple placeholder="请选择场景标签" style="width: 100%">
+              <el-option v-for="item in sceneTagOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
           </el-form-item>
-          <el-form-item label="规格参数">
-            <el-input v-model="form.specParams" placeholder='如 {"材质":"胡桃木"}' />
+          <el-form-item v-if="specDefs.length > 0" label="规格参数" style="grid-column: 1 / -1">
+            <div class="baihou-spec-grid">
+              <template v-for="def in specDefs" :key="def.specDefId">
+                <div class="baihou-spec-item">
+                  <div class="baihou-spec-label">{{ def.specLabel }}<span v-if="def.unit" style="color:#999;font-size:12px">（{{ def.unit }}）</span></div>
+                  <el-input v-if="def.inputType === 'text'" v-model="specParamsObj[def.specKey]" />
+                  <el-input-number v-else-if="def.inputType === 'number'" v-model="specParamsObj[def.specKey]" style="width: 100%" />
+                  <el-select v-else-if="def.inputType === 'select'" v-model="specParamsObj[def.specKey]" style="width: 100%">
+                    <el-option v-for="opt in parseOptions(def.options)" :key="opt" :label="opt" :value="opt" />
+                  </el-select>
+                </div>
+              </template>
+            </div>
           </el-form-item>
           <el-form-item label="状态">
             <el-select v-model="form.status">
@@ -197,11 +214,13 @@
 </template>
 
 <script setup name="BaihouProducts">
-import { listCategories } from "@/api/baihou/categories"
-import { listRegions } from "@/api/baihou/regions"
+import { listCategories, listSpecDefs } from "@/api/baihou/categories"
+import { getRegionOptions } from "@/api/baihou/regions"
 import { addProduct, batchProductAction, changeProductStatus, getProduct, listProducts, removeProduct, updateProduct } from "@/api/baihou/products"
+import { useDict } from "@/utils/dict"
 
 const { proxy } = getCurrentInstance()
+const { baihou_space_tag: spaceTagOptions, baihou_scene_tag: sceneTagOptions } = useDict("baihou_space_tag", "baihou_scene_tag")
 
 const loading = ref(false)
 const open = ref(false)
@@ -209,9 +228,14 @@ const detailOpen = ref(false)
 const title = ref("")
 const productList = ref([])
 const categoryOptions = ref([])
-const regionOptions = ref([])
+const regionSelectOptions = ref([])
 const detailData = ref()
 const selectionIds = ref([])
+const regionsArr = ref([])
+const spaceTagsArr = ref([])
+const sceneTagsArr = ref([])
+const specDefs = ref([])
+const specParamsObj = ref({})
 
 const formRef = ref()
 const queryParams = reactive({
@@ -243,7 +267,7 @@ const rules = {
   name: [{ required: true, message: "请输入商品名称", trigger: "blur" }],
   skuCode: [{ required: true, message: "请输入 SKU", trigger: "blur" }],
   categoryId: [{ required: true, message: "请选择品类", trigger: "change" }],
-  regions: [{ required: true, message: "请输入区域配置", trigger: "blur" }]
+  regionsArr: [{ required: true, message: "请选择区域", trigger: "change" }]
 }
 
 const statusOptions = [
@@ -273,8 +297,8 @@ function loadOptions() {
   listCategories().then((res) => {
     categoryOptions.value = res.data || []
   })
-  listRegions().then((res) => {
-    regionOptions.value = res.data || []
+  getRegionOptions().then((res) => {
+    regionSelectOptions.value = res.data || []
   })
 }
 
@@ -302,6 +326,11 @@ function resetFormState() {
     status: "draft",
     sortOrder: 10
   })
+  regionsArr.value = []
+  spaceTagsArr.value = []
+  sceneTagsArr.value = []
+  specDefs.value = []
+  specParamsObj.value = {}
   proxy.resetForm("formRef")
 }
 
@@ -314,6 +343,13 @@ function handleAdd() {
 function handleEdit(row) {
   resetFormState()
   Object.assign(form, row)
+  try { regionsArr.value = JSON.parse(row.regions || "[]") } catch (e) { regionsArr.value = [] }
+  try { spaceTagsArr.value = JSON.parse(row.spaceTags || "[]") } catch (e) { spaceTagsArr.value = [] }
+  try { sceneTagsArr.value = JSON.parse(row.sceneTags || "[]") } catch (e) { sceneTagsArr.value = [] }
+  if (row.categoryId) {
+    loadSpecDefs(row.categoryId)
+    try { specParamsObj.value = JSON.parse(row.specParams || "{}") } catch (e) { specParamsObj.value = {} }
+  }
   title.value = "编辑商品"
   open.value = true
 }
@@ -343,12 +379,44 @@ function handleBatchAction(action) {
   })
 }
 
+function handleRegionsChange() {
+  // no-op, validation handled by form rule
+}
+
+function loadSpecDefs(categoryId) {
+  listSpecDefs(categoryId).then((res) => {
+    specDefs.value = res.data || []
+    const newObj = {}
+    specDefs.value.forEach((def) => {
+      newObj[def.specKey] = specParamsObj.value[def.specKey] ?? undefined
+    })
+    specParamsObj.value = newObj
+  })
+}
+
+function parseOptions(optionsStr) {
+  try { return JSON.parse(optionsStr || "[]") } catch (e) { return [] }
+}
+
+watch(() => form.categoryId, (newVal, oldVal) => {
+  if (newVal && newVal !== oldVal) {
+    specParamsObj.value = {}
+    loadSpecDefs(newVal)
+  }
+})
+
 function submitForm() {
   formRef.value.validate((valid) => {
     if (!valid) {
       return
     }
-    const payload = { ...form }
+    const payload = {
+      ...form,
+      regions: JSON.stringify(regionsArr.value),
+      spaceTags: JSON.stringify(spaceTagsArr.value),
+      sceneTags: JSON.stringify(sceneTagsArr.value),
+      specParams: JSON.stringify(specParamsObj.value)
+    }
     const request = form.id ? updateProduct(form.id, payload) : addProduct(payload)
     request.then(() => {
       proxy.$modal.msgSuccess("保存成功")

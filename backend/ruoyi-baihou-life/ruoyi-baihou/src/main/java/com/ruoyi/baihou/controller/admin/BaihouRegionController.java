@@ -63,4 +63,11 @@ public class BaihouRegionController extends BaseController
     {
         return toAjax(regionService.updateRegionStatus(regionId, isActive));
     }
+
+    @PreAuthorize("@ss.hasPermi('baihou:region:list')")
+    @GetMapping("/options")
+    public AjaxResult options()
+    {
+        return success(regionService.selectActiveOptions());
+    }
 }

@@ -1,0 +1,86 @@
+.home-hero {
+  padding: 28rpx;
+  overflow: hidden;
+}
+
+.home-hero__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.home-hero__eyebrow {
+  display: block;
+  font-size: 22rpx;
+  color: #9b938b;
+}
+
+.home-hero__region {
+  display: inline-flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 10rpx;
+  padding: 14rpx 18rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.84);
+  color: #2f2a26;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.home-hero__region-meta {
+  font-size: 22rpx;
+  color: #8c847c;
+}
+
+.home-hero__role {
+  min-height: 64rpx;
+  padding: 0 22rpx;
+  border-radius: 999rpx;
+  background: #f2eee8;
+  color: #6f5a45;
+  font-size: 24rpx;
+}
+
+.home-hero__role--designer {
+  background: #eef1e8;
+  color: #7d8a63;
+}
+
+.home-hero__copy {
+  margin-top: 30rpx;
+}
+
+.home-hero__headline {
+  display: block;
+  font-size: 44rpx;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.home-hero__desc {
+  display: block;
+  margin-top: 16rpx;
+  font-size: 26rpx;
+  line-height: 1.6;
+  color: #6c655e;
+}
+
+.home-hero__actions {
+  margin-top: 28rpx;
+}
+
+.home-scenes {
+  white-space: nowrap;
+}
+
+.home-scenes__track {
+  display: inline-flex;
+  gap: 12rpx;
+}
+
+.home-products {
+  display: grid;
+  gap: 18rpx;
+}

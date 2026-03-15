@@ -27,7 +27,20 @@
               </template>
             </el-table-column>
             <el-table-column prop="linkType" label="跳转类型" width="120" />
-            <el-table-column prop="regions" label="区域" min-width="160" show-overflow-tooltip />
+            <el-table-column label="区域" min-width="200">
+              <template #default="scope">
+                <template v-if="parseRegionTags(scope.row.regions).length">
+                  <el-tag
+                    v-for="tag in parseRegionTags(scope.row.regions)"
+                    :key="tag.value"
+                    :type="tag.value === 'ALL' ? 'primary' : 'info'"
+                    size="small"
+                    style="margin-right: 4px; margin-bottom: 2px"
+                  >{{ tag.label }}</el-tag>
+                </template>
+                <span v-else>--</span>
+              </template>
+            </el-table-column>
             <el-table-column prop="sortOrder" label="排序" width="100" />
             <el-table-column label="状态" width="120">
               <template #default="scope">
@@ -63,7 +76,20 @@
             <el-input v-model="form.linkValue" />
           </el-form-item>
           <el-form-item label="投放区域">
-            <el-input v-model="form.regions" placeholder='如 ["foshan"]' />
+            <el-select
+              v-model="regionsArr"
+              multiple
+              placeholder="请选择投放区域"
+              style="width: 100%"
+              @change="handleRegionChange"
+            >
+              <el-option label="全部区域" value="ALL" />
+              <el-option v-for="item in regionOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+            <div style="margin-top: 6px; display: flex; gap: 8px">
+              <el-button size="small" @click="selectAllRegions">全选</el-button>
+              <el-button size="small" @click="regionsArr = []">清空</el-button>
+            </div>
           </el-form-item>
           <el-form-item label="排序">
             <el-input-number v-model="form.sortOrder" :min="0" :controls="false" style="width: 100%" />
@@ -92,6 +118,7 @@
 
 <script setup name="BaihouBanners">
 import { addBanner, listBanners, removeBanner, updateBanner } from "@/api/baihou/banners"
+import { getRegionOptions } from "@/api/baihou/regions"
 
 const { proxy } = getCurrentInstance()
 
@@ -99,6 +126,8 @@ const loading = ref(false)
 const open = ref(false)
 const title = ref("")
 const bannerList = ref([])
+const regionOptions = ref([])
+const regionsArr = ref([])
 const formRef = ref()
 const form = reactive({
   bannerId: undefined,
@@ -140,6 +169,7 @@ function resetFormState() {
     sortOrder: 10,
     isActive: 1
   })
+  regionsArr.value = []
   proxy.resetForm("formRef")
 }
 
@@ -152,6 +182,7 @@ function handleAdd() {
 function handleEdit(row) {
   resetFormState()
   Object.assign(form, row)
+  try { regionsArr.value = JSON.parse(row.regions || "[]") } catch (e) { regionsArr.value = [] }
   title.value = "编辑 Banner"
   open.value = true
 }
@@ -163,12 +194,41 @@ function handleDelete(row) {
   })
 }
 
+function handleRegionChange(val) {
+  if (val.includes("ALL") && val.length > 1) {
+    const lastSelected = val[val.length - 1]
+    if (lastSelected === "ALL") {
+      regionsArr.value = ["ALL"]
+    } else {
+      regionsArr.value = val.filter((v) => v !== "ALL")
+    }
+  }
+}
+
+function selectAllRegions() {
+  regionsArr.value = ["ALL"]
+}
+
+function parseRegionTags(regionsStr) {
+  try {
+    const arr = JSON.parse(regionsStr || "[]")
+    return arr.map((v) => {
+      if (v === "ALL") return { value: "ALL", label: "全部区域" }
+      const found = regionOptions.value.find((r) => r.value === v)
+      return { value: v, label: found ? found.label : v }
+    })
+  } catch (e) {
+    return []
+  }
+}
+
 function submitForm() {
   formRef.value.validate((valid) => {
     if (!valid) {
       return
     }
-    const request = form.bannerId ? updateBanner(form.bannerId, { ...form }) : addBanner({ ...form })
+    const payload = { ...form, regions: JSON.stringify(regionsArr.value) }
+    const request = form.bannerId ? updateBanner(form.bannerId, payload) : addBanner(payload)
     request.then(() => {
       proxy.$modal.msgSuccess("保存成功")
       open.value = false
@@ -178,6 +238,9 @@ function submitForm() {
 }
 
 onMounted(() => {
+  getRegionOptions().then((res) => {
+    regionOptions.value = res.data || []
+  })
   getList()
 })
 </script>

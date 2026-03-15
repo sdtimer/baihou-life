@@ -1,0 +1,9 @@
+<view class="bh-picker {{disabled ? 'bh-picker--disabled' : ''}}" bindtap="handleTap">
+  <view class="bh-picker__label" wx:if="{{label}}">{{label}}</view>
+  <view class="bh-picker__content">
+    <view class="bh-picker__value {{!displayValue ? 'bh-picker__placeholder' : ''}}">
+      {{displayValue || placeholder}}
+    </view>
+    <view class="bh-picker__arrow"></view>
+  </view>
+</view>

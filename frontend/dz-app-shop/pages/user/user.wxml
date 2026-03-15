@@ -1,0 +1,94 @@
+<view class="page">
+  <view class="user-header" style="padding-top: {{navBarHeight}}px;">
+    <view class="header-bg"></view>
+    <view class="header-content">
+      <view class="user-avatar">
+        <image class="avatar-image" src="{{userInfo.avatar}}" mode="aspectFill" />
+      </view>
+      <view class="user-info" bindtap="goProfile">
+        <view class="user-name">{{userInfo.name}}</view>
+        <view class="user-tag">
+          <view class="tag tag-accent">{{userInfo.level}}</view>
+        </view>
+      </view>
+      <view class="header-actions">
+        <view class="action-btn" bindtap="goSetting">
+          <view class="action-icon setting-icon"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="stats-card">
+    <view class="stat-item" bindtap="goOrder" data-status="pending">
+      <view class="stat-value">{{orderStats.pending}}</view>
+      <view class="stat-label">待付款</view>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item" bindtap="goOrder" data-status="paid">
+      <view class="stat-value">{{orderStats.paid}}</view>
+      <view class="stat-label">待发货</view>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item" bindtap="goOrder" data-status="shipped">
+      <view class="stat-value">{{orderStats.shipped}}</view>
+      <view class="stat-label">待收货</view>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item" bindtap="goOrder" data-status="completed">
+      <view class="stat-value">{{orderStats.completed}}</view>
+      <view class="stat-label">已完成</view>
+    </view>
+  </view>
+
+  <view class="menu-card">
+    <view class="menu-item" bindtap="goOrder" data-status="all">
+      <view class="menu-icon menu-icon-order"></view>
+      <view class="menu-text">我的订单</view>
+      <view class="menu-badge" wx:if="{{orderStats.total > 0}}">{{orderStats.total}}</view>
+      <view class="menu-arrow"></view>
+    </view>
+    <view class="menu-item" bindtap="goAppointment">
+      <view class="menu-icon menu-icon-appointment"></view>
+      <view class="menu-text">我的预约</view>
+      <view class="menu-arrow"></view>
+    </view>
+    <view class="menu-item" bindtap="goLead">
+      <view class="menu-icon menu-icon-lead"></view>
+      <view class="menu-text">我的线索</view>
+      <view class="menu-arrow"></view>
+    </view>
+    <view class="menu-item" bindtap="goFavorite">
+      <view class="menu-icon menu-icon-favorite"></view>
+      <view class="menu-text">我的收藏</view>
+      <view class="menu-arrow"></view>
+    </view>
+  </view>
+
+  <view class="menu-card">
+    <view class="menu-item" bindtap="goAddress">
+      <view class="menu-icon menu-icon-address"></view>
+      <view class="menu-text">收货地址</view>
+      <view class="menu-arrow"></view>
+    </view>
+    <view class="menu-item" bindtap="contactService">
+      <view class="menu-icon menu-icon-service"></view>
+      <view class="menu-text">联系客服</view>
+      <view class="menu-arrow"></view>
+    </view>
+    <view class="menu-item" bindtap="goSetting">
+      <view class="menu-icon menu-icon-setting"></view>
+      <view class="menu-text">设置</view>
+      <view class="menu-arrow"></view>
+    </view>
+  </view>
+
+  <view class="designer-entry" bindtap="goDesigner">
+    <view class="designer-icon"></view>
+    <view class="designer-content">
+      <view class="designer-title">成为设计师</view>
+      <view class="designer-desc">获取设计师身份，享受专属权益</view>
+    </view>
+    <view class="designer-arrow"></view>
+  </view>
+</view>

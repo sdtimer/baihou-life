@@ -1,0 +1,97 @@
+<view class="page">
+  <view class="banner">
+    <view class="banner-bg"></view>
+    <view class="banner-content">
+      <view class="brand-name">柏厚生活</view>
+      <view class="brand-tagline">家居领先品牌</view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <view class="section-left">
+        <view class="section-title">选择区域</view>
+        <view class="section-subtitle">Region</view>
+      </view>
+    </view>
+    <view class="picker-trigger" bindtap="showRegionPicker">
+      <view class="picker-value {{currentRegion ? '' : 'picker-placeholder'}}">
+        {{regionLabel || '请选择服务区域'}}
+      </view>
+      <view class="picker-arrow"></view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="quick-entry">
+      <view class="entry-item {{currentTab === 'category' ? 'active' : ''}}" bindtap="onTabChange" data-tab="category">
+        <view class="entry-title">品类</view>
+        <view class="entry-subtitle">Category</view>
+      </view>
+      <view class="entry-item {{currentTab === 'space' ? 'active' : ''}}" bindtap="onTabChange" data-tab="space">
+        <view class="entry-title">空间</view>
+        <view class="entry-subtitle">Space</view>
+      </view>
+      <view class="entry-item {{currentTab === 'scene' ? 'active' : ''}}" bindtap="onTabChange" data-tab="scene">
+        <view class="entry-title">场景</view>
+        <view class="entry-subtitle">Scene</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <view class="section-title">区域精选</view>
+    </view>
+    <scroll-view class="scene-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="scene-card" wx:for="{{products}}" wx:key="id" bindtap="goGoods" data-id="{{item.id}}">
+        <image class="scene-image" src="{{item.image}}" mode="aspectFill" />
+        <view class="scene-info">
+          <view class="scene-name">{{item.name}}</view>
+          <view class="scene-desc">{{item.desc}}</view>
+          <view class="scene-price">
+            <text class="price-current">¥{{item.price}}</text>
+            <text class="price-original" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="section">
+    <view class="cta-card">
+      <view class="cta-content">
+        <view class="cta-title">免费获取设计方案</view>
+        <view class="cta-desc">专业设计师一对一服务</view>
+      </view>
+      <view class="btn btn-primary" bindtap="goAppointment">立即预约</view>
+    </view>
+  </view>
+
+  <view class="footer">
+    <view class="footer-text">柏厚生活 · 自然与人文的融合</view>
+  </view>
+
+  <view class="picker-popup {{pickerVisible ? 'picker-popup--visible' : ''}}" catchtouchmove="preventMove">
+    <view class="picker-mask" bindtap="closePicker"></view>
+    <view class="picker-panel">
+      <view class="picker-header">
+        <view class="picker-cancel" bindtap="closePicker">取消</view>
+        <view class="picker-title">选择区域</view>
+        <view class="picker-confirm" bindtap="confirmPicker">确定</view>
+      </view>
+      <scroll-view scroll-y class="picker-body">
+        <view 
+          wx:for="{{regionOptions}}" 
+          wx:key="value" 
+          class="picker-option {{tempPickerValue === item.value ? 'picker-option--active' : ''}}"
+          data-value="{{item.value}}"
+          bindtap="selectPickerOption"
+        >
+          <view class="picker-option__text">{{item.label}}</view>
+          <view class="picker-option__check" wx:if="{{tempPickerValue === item.value}}"></view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

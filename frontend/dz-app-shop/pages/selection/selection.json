@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "bh-picker": "/components/bh-picker/index"
+  },
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "选品"
+}

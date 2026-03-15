@@ -1,0 +1,16 @@
+<bh-shell title="设计师素材" subtitle="下载前先换取临时链接，普通客户不显示下载入口。">
+  <bh-empty wx:if="{{!isDesigner}}" title="当前账号暂无素材权限" subtitle="设计师登录后可查看原文件与节点图下载入口。" />
+  <view wx:elif="{{product}}" class="assets-card bh-card">
+    <view class="assets-card__name">{{product.name}}</view>
+    <view class="assets-card__desc">原文件链接默认 5 分钟内有效，下载动作会写入日志。</view>
+    <view class="assets-list">
+      <view wx:for="{{product.source_files}}" wx:key="media_id" class="assets-item">
+        <view>
+          <view class="assets-item__title">{{item.name}}</view>
+          <view class="assets-item__meta">权限：{{item.access_level}}</view>
+        </view>
+        <button class="bh-button-secondary" data-media-id="{{item.media_id}}" bindtap="downloadAsset">获取链接</button>
+      </view>
+    </view>
+  </view>
+</bh-shell>

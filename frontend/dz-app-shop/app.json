@@ -1,0 +1,53 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/selection/selection",
+    "pages/goods/goods",
+    "pages/lead/lead",
+    "pages/appointment/appointment",
+    "pages/order-create/order-create",
+    "pages/order-result/order-result",
+    "pages/order/order",
+    "pages/order-detail/order-detail",
+    "pages/user/user"
+  ],
+  "window": {
+    "navigationStyle": "custom",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "柏厚生活",
+    "navigationBarBackgroundColor": "#21362c",
+    "scrollBackground": "transparent"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#21362c",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/selection/selection",
+        "text": "选品"
+      },
+      {
+        "pagePath": "pages/appointment/appointment",
+        "text": "预约"
+      },
+      {
+        "pagePath": "pages/order/order",
+        "text": "订单"
+      },
+      {
+        "pagePath": "pages/user/user",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

@@ -1,0 +1,19 @@
+<view class="bh-product-card bh-card" bindtap="handleTap">
+  <image class="bh-product-card__image" mode="aspectFill" src="{{item.cover_image}}" />
+  <view class="bh-product-card__body">
+    <view class="bh-product-card__topline">
+      <text class="bh-product-card__brand">{{item.brand}}</text>
+      <text class="bh-pill">{{item.category_name}}</text>
+    </view>
+    <view class="bh-product-card__name">{{item.name}}</view>
+    <view class="bh-product-card__tags">
+      <text wx:for="{{item.space_tags}}" wx:key="*this" class="bh-pill">{{item}}</text>
+      <text wx:for="{{item.scene_tags}}" wx:key="*this" class="bh-pill">{{item}}</text>
+    </view>
+    <view class="bh-price">
+      <text class="bh-price__main">¥{{showDesigner ? item.designer_price : item.guide_price}}</text>
+      <text wx:if="{{showDesigner}}" class="bh-price__secondary">¥{{item.guide_price}}</text>
+      <text class="bh-meta">{{item.price_unit}}</text>
+    </view>
+  </view>
+</view>

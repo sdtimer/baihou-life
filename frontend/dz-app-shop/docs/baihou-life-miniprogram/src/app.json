@@ -1,0 +1,25 @@
+{
+  "pages": [
+    "pages/home/index",
+    "pages/auth/index",
+    "pages/product/list/index",
+    "pages/product/detail/index",
+    "pages/designer/assets/index",
+    "pages/lead/form/index",
+    "pages/appointment/create/index",
+    "pages/appointment/list/index",
+    "pages/order/confirm/index",
+    "pages/order/list/index",
+    "pages/order/detail/index",
+    "pages/profile/index"
+  ],
+  "window": {
+    "navigationStyle": "custom",
+    "backgroundTextStyle": "light",
+    "backgroundColor": "#F7F4EF",
+    "backgroundColorTop": "#F7F4EF",
+    "backgroundColorBottom": "#F7F4EF"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

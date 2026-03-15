@@ -1,0 +1,71 @@
+<view class="page">
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-bar-content">
+      <view class="nav-title">我的订单</view>
+    </view>
+  </view>
+
+  <view class="tabs" style="top: {{navBarHeight}}px;">
+    <view 
+      class="tab {{currentTab === item.value ? 'active' : ''}}" 
+      wx:for="{{tabList}}" 
+      wx:key="value"
+      bindtap="onTabChange"
+      data-value="{{item.value}}"
+    >{{item.label}}</view>
+  </view>
+
+  <scroll-view 
+    class="order-list" 
+    scroll-y 
+    style="top: {{contentTop}}px;"
+    bindscrolltolower="onLoadMore"
+    lower-threshold="100"
+  >
+    <view class="order-card" wx:for="{{orders}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+      <view class="order-header">
+        <view class="order-no">订单号：{{item.orderNo}}</view>
+        <view class="order-status status-{{item.status}}">{{item.statusText}}</view>
+      </view>
+      
+      <view class="order-goods" wx:for="{{item.goods}}" wx:for-item="goods" wx:key="id">
+        <image class="goods-image" src="{{goods.image}}" mode="aspectFill" />
+        <view class="goods-info">
+          <view class="goods-name">{{goods.name}}</view>
+          <view class="goods-spec">{{goods.spec}}</view>
+          <view class="goods-price-row">
+            <view class="goods-price">¥{{goods.price}}</view>
+            <view class="goods-quantity">x{{goods.quantity}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="order-total">
+          共{{item.totalQuantity}}件商品 合计：<text class="total-price">¥{{item.totalPrice}}</text>
+        </view>
+
+      <view class="order-footer">
+        <view class="order-actions">
+          <view class="btn-text" wx:if="{{item.status === 'pending'}}" catchtap="cancelOrder" data-id="{{item.id}}">取消订单</view>
+          <view class="btn-text" wx:if="{{item.status === 'completed'}}" catchtap="reorder" data-id="{{item.id}}">再次购买</view>
+          <view class="btn-small btn-primary" wx:if="{{item.status === 'pending'}}" catchtap="payOrder" data-id="{{item.id}}">立即付款</view>
+          <view class="btn-small btn-secondary" wx:if="{{item.status === 'shipped'}}" catchtap="confirmReceive" data-id="{{item.id}}">确认收货</view>
+          <view class="btn-small btn-secondary" wx:if="{{item.status === 'completed'}}" catchtap="goReview" data-id="{{item.id}}">评价</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="load-more" wx:if="{{loading}}">
+      <view class="load-more-text">加载中...</view>
+    </view>
+    <view class="load-more" wx:elif="{{!hasMore && orders.length > 0}}">
+      <view class="load-more-text">没有更多了</view>
+    </view>
+
+    <view class="empty" wx:if="{{orders.length === 0 && !loading}}">
+      <view class="empty-icon"></view>
+      <view class="empty-text">暂无订单</view>
+      <view class="btn btn-primary" bindtap="goShopping">去逛逛</view>
+    </view>
+  </scroll-view>
+</view>

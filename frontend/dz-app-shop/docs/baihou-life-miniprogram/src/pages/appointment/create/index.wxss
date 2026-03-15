@@ -1,0 +1,24 @@
+.form-card {
+  display: grid;
+  gap: 18rpx;
+  padding: 30rpx;
+}
+
+.form-card__input,
+.form-card__textarea {
+  width: 100%;
+  padding: 24rpx;
+  border-radius: 20rpx;
+  background: #f7f4ef;
+  font-size: 28rpx;
+}
+
+.form-card__group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.form-card__textarea {
+  min-height: 220rpx;
+}

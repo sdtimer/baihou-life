@@ -1,0 +1,89 @@
+<view class="page">
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-bar-content">
+      <view class="area-selector" bindtap="showAreaPicker">
+        <text class="area-text">{{regionLabel}}</text>
+        <text class="area-arrow">▼</text>
+      </view>
+      <view class="nav-tabs">
+        <view class="nav-tab {{currentTab === 'category' ? 'active' : ''}}" bindtap="onTabChange" data-tab="category">品类</view>
+        <view class="nav-tab {{currentTab === 'space' ? 'active' : ''}}" bindtap="onTabChange" data-tab="space">空间</view>
+        <view class="nav-tab {{currentTab === 'scene' ? 'active' : ''}}" bindtap="onTabChange" data-tab="scene">场景</view>
+      </view>
+      <view class="area-placeholder"></view>
+    </view>
+  </view>
+
+  <view class="sub-tabs-wrap" style="top: {{navBarHeight}}px;">
+    <scroll-view class="sub-tabs" scroll-x enhanced show-scrollbar="{{false}}" scroll-left="{{subScrollLeft}}">
+      <view class="sub-tab {{currentSubTab === index ? 'active' : ''}}" 
+            wx:for="{{currentTab === 'category' ? categoryTabs : currentTab === 'space' ? spaceTabs : sceneTabs}}" 
+            wx:key="index" 
+            bindtap="onSubTabChange" 
+            data-index="{{index}}">
+        {{item}}
+      </view>
+    </scroll-view>
+  </view>
+
+  <scroll-view 
+    class="product-list" 
+    scroll-y 
+    style="top: {{contentTop}}px;"
+    bindscrolltolower="onLoadMore"
+    lower-threshold="100"
+  >
+    <view class="product-grid">
+      <view class="product-card" wx:for="{{products}}" wx:key="id" bindtap="goGoods" data-id="{{item.id}}">
+        <image class="product-image" src="{{item.image}}" mode="aspectFill" />
+        <view class="product-info">
+          <view class="product-name">{{item.name}}</view>
+          <view class="product-spec">{{item.spec}}</view>
+          <view class="product-price-row">
+            <view class="product-price">
+              <text class="price-unit">¥</text>
+              <text class="price-value">{{item.price}}</text>
+            </view>
+            <view class="price-original" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</view>
+          </view>
+          <view class="product-tags">
+            <view class="tag tag-success" wx:if="{{item.isDesigner}}">设计师价</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="load-more" wx:if="{{loading}}">
+      <view class="load-more-text">加载中...</view>
+    </view>
+    <view class="load-more" wx:elif="{{!hasMore && products.length > 0}}">
+      <view class="load-more-text">没有更多了</view>
+    </view>
+    <view class="empty" wx:if="{{products.length === 0 && !loading}}">
+      <view class="empty-icon"></view>
+      <view class="empty-text">暂无商品</view>
+    </view>
+  </scroll-view>
+
+  <view class="area-picker-popup {{showAreaPicker ? 'show' : ''}}" catchtouchmove="preventMove">
+    <view class="area-picker-mask" bindtap="hideAreaPicker"></view>
+    <view class="area-picker-panel">
+      <view class="area-picker-header">
+        <view class="area-picker-cancel" bindtap="hideAreaPicker">取消</view>
+        <view class="area-picker-title">选择区域</view>
+        <view class="area-picker-confirm" bindtap="confirmArea">确定</view>
+      </view>
+      <scroll-view scroll-y class="area-picker-body">
+        <view 
+          class="area-picker-option {{tempRegion === item.value ? 'active' : ''}}" 
+          wx:for="{{regionOptions}}" 
+          wx:key="value"
+          data-value="{{item.value}}"
+          bindtap="selectArea"
+        >
+          <view class="area-picker-option__text">{{item.label}}</view>
+          <view class="area-picker-option__check" wx:if="{{tempRegion === item.value}}"></view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

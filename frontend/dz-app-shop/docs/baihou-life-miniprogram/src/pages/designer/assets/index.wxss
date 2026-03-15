@@ -1,0 +1,42 @@
+.assets-card {
+  padding: 28rpx;
+}
+
+.assets-card__name {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+
+.assets-card__desc {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  line-height: 1.6;
+  color: #6c655e;
+}
+
+.assets-list {
+  display: grid;
+  gap: 18rpx;
+  margin-top: 28rpx;
+}
+
+.assets-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  padding: 22rpx;
+  border-radius: 20rpx;
+  background: #f7f4ef;
+}
+
+.assets-item__title {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.assets-item__meta {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #8c847c;
+}
