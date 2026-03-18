@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -247,11 +248,26 @@ public class BaihouMiniProductController
         {
             return List.of();
         }
-        return Arrays.stream(source.split(","))
-                .map(String::trim)
-                .filter(value -> !value.isEmpty())
-                .limit(3)
-                .collect(Collectors.toList());
+        String normalized = source.trim();
+        if (normalized.startsWith("[") && normalized.endsWith("]"))
+        {
+            normalized = normalized.substring(1, normalized.length() - 1);
+        }
+
+        List<String> tags = new ArrayList<>();
+        for (String value : normalized.split(","))
+        {
+            String cleaned = value.trim().replace("\"", "");
+            if (!cleaned.isEmpty())
+            {
+                tags.add(cleaned);
+            }
+            if (tags.size() >= 3)
+            {
+                break;
+            }
+        }
+        return tags;
     }
 
     private Map<String, Object> buildFeedPrice(MiniProductVO product, Integer role)
