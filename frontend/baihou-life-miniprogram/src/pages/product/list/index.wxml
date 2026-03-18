@@ -1,95 +1,126 @@
-<bh-shell title="选品中心" subtitle="以品类、空间、场景三轴浏览区域内可落地的产品方案。">
-  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
-    <view class="nav-bar-content">
-      <view class="area-selector" bindtap="showAreaPicker">
-        <text class="area-text">{{regionLabel}}</text>
-        <text class="area-arrow">▼</text>
-      </view>
-      <view class="nav-tabs">
-        <view class="nav-tab {{currentTab === 'category' ? 'active' : ''}}" bindtap="onTabChange" data-tab="category">品类</view>
-        <view class="nav-tab {{currentTab === 'space' ? 'active' : ''}}" bindtap="onTabChange" data-tab="space">空间</view>
-        <view class="nav-tab {{currentTab === 'scene' ? 'active' : ''}}" bindtap="onTabChange" data-tab="scene">场景</view>
-      </view>
-      <view class="area-placeholder"></view>
+<bh-shell title="选品中心" subtitle="把品类、空间、场景筛选完整收拢到这里，首页只负责发现。">
+  <view class="toolbar">
+    <view class="toolbar-region" bindtap="showAreaPicker">
+      <text class="toolbar-region__text">{{regionLabel}}</text>
+      <text class="toolbar-region__arrow">▼</text>
+    </view>
+    <view class="toolbar-search">
+      <input class="search-input" placeholder="搜索品牌或产品名" value="{{filters.keyword}}" bindinput="bindKeyword" confirm-type="search" bindconfirm="handleSearch" />
+      <view class="search-button" bindtap="handleSearch">搜索</view>
     </view>
   </view>
 
-  <view class="sub-tabs-wrap" style="top: {{navBarHeight}}px;">
-    <scroll-view class="sub-tabs" scroll-x enhanced show-scrollbar="{{false}}">
+  <view class="top-tabs">
+    <view class="nav-tab {{currentTab === 'category' ? 'active' : ''}}" bindtap="onTabChange" data-tab="category">品类</view>
+    <view class="nav-tab {{currentTab === 'space' ? 'active' : ''}}" bindtap="onTabChange" data-tab="space">空间</view>
+    <view class="nav-tab {{currentTab === 'scene' ? 'active' : ''}}" bindtap="onTabChange" data-tab="scene">场景</view>
+  </view>
+
+  <view class="filter-panel">
+    <view class="filter-panel__header">
+      <view class="filter-panel__title">{{currentTab === 'category' ? '按品类筛选' : currentTab === 'space' ? '按空间筛选' : '按场景筛选'}}</view>
+      <view class="filter-panel__hint" wx:if="{{currentTab === 'space'}}">空间入口已保留，2.0 会继续加强。</view>
+      <view class="filter-panel__hint" wx:elif="{{currentTab === 'scene'}}">先用场景快速找风格方向。</view>
+      <view class="filter-panel__hint" wx:else>品类默认全展开，不再折叠到首页。</view>
+    </view>
+
+    <view wx:if="{{currentTab === 'category'}}" class="category-grid">
       <view
-        class="sub-tab {{currentSubTab === index ? 'active' : ''}}"
-        wx:for="{{currentTab === 'category' ? categoryTabs : currentTab === 'space' ? spaceTabs : sceneTabs}}"
+        wx:for="{{categoryTabs}}"
         wx:key="index"
+        class="category-chip {{currentSubTab === index ? 'active' : ''}}"
         bindtap="onSubTabChange"
         data-index="{{index}}"
       >
-        {{item}}
+        {{item.label}}
+      </view>
+    </view>
+
+    <scroll-view wx:elif="{{currentTab === 'space'}}" class="sub-tabs" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="sub-tabs__track">
+        <view
+          wx:for="{{spaceTabs}}"
+          wx:key="index"
+          class="sub-tab {{currentSubTab === index ? 'active' : ''}}"
+          bindtap="onSubTabChange"
+          data-index="{{index}}"
+        >
+          {{item.label}}
+        </view>
+      </view>
+    </scroll-view>
+
+    <scroll-view wx:else class="sub-tabs" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="sub-tabs__track">
+        <view
+          wx:for="{{sceneTabs}}"
+          wx:key="index"
+          class="sub-tab {{currentSubTab === index ? 'active' : ''}}"
+          bindtap="onSubTabChange"
+          data-index="{{index}}"
+        >
+          {{item.label}}
+        </view>
       </view>
     </scroll-view>
   </view>
 
-  <scroll-view
-    class="product-list-scroll"
-    scroll-y
-    style="top: {{contentTop}}px;"
-    bindscrolltolower="onReachBottom"
-    lower-threshold="100"
-  >
-    <view class="search-box">
-      <input class="search-input" placeholder="搜索品牌或产品名" value="{{filters.keyword}}" bindinput="bindKeyword" />
-      <view class="search-button" bindtap="handleSearch">搜索</view>
+  <view class="sort-row">
+    <view
+      wx:for="{{sortOptions}}"
+      wx:key="value"
+      class="sort-pill {{filters.sort_by === item.value ? 'sort-pill--active' : ''}}"
+      data-field="sort_by"
+      data-value="{{item.value}}"
+      bindtap="activateFilter"
+    >
+      {{item.label}}
     </view>
+    <view class="sort-reset" bindtap="resetFilters">重置</view>
+  </view>
 
-    <view class="sort-row">
-      <view
-        wx:for="{{sortOptions}}"
-        wx:key="value"
-        class="sort-pill {{filters.sort_by === item.value ? 'sort-pill--active' : ''}}"
-        data-field="sort_by"
-        data-value="{{item.value}}"
-        bindtap="activateFilter"
-      >
-        {{item.label}}
-      </view>
-      <view class="sort-reset" bindtap="resetFilters">重置</view>
-    </view>
+  <bh-empty wx:if="{{errorMessage}}" title="产品加载失败" subtitle="{{errorMessage}}" />
 
-    <bh-empty wx:if="{{errorMessage}}" title="产品加载失败" subtitle="{{errorMessage}}" />
-
-    <view wx:elif="{{products.length}}" class="product-grid">
-      <view class="product-card" wx:for="{{products}}" wx:key="id" bindtap="openDetail" data-id="{{item.id}}">
-        <image class="product-image" src="{{item.cover_image}}" mode="aspectFill" />
-        <view class="product-info">
+  <view wx:elif="{{products.length}}" class="product-list">
+    <view class="product-card" wx:for="{{products}}" wx:key="id" bindtap="openDetail" data-id="{{item.id}}">
+      <image class="product-image" src="{{item.cover_image}}" mode="aspectFill" />
+      <view class="product-content">
+        <view class="product-main">
           <view class="product-name">{{item.name}}</view>
           <view class="product-spec">{{item.brand}} · {{item.category_name}}</view>
-          <view class="product-price-row">
+          <view class="product-tags">
+            <view class="tag tag-success" wx:if="{{isDesigner && item.designer_price}}">设计师价</view>
+            <view class="tag" wx:if="{{item.space_tags.length}}">{{item.space_tags[0]}}</view>
+            <view class="tag" wx:if="{{item.scene_tags.length}}">{{item.scene_tags[0]}}</view>
+          </view>
+        </view>
+        <view class="product-side">
+          <view wx:if="{{item.guide_price || item.designer_price}}" class="product-price-row">
             <view class="product-price">
               <text class="price-unit">¥</text>
               <text class="price-value">{{isDesigner && item.designer_price ? item.designer_price : item.guide_price}}</text>
             </view>
             <view class="price-original" wx:if="{{isDesigner && item.guide_price}}">¥{{item.guide_price}}</view>
           </view>
-          <view class="product-tags">
-            <view class="tag tag-success" wx:if="{{isDesigner && item.designer_price}}">设计师价</view>
-            <view class="tag" wx:if="{{item.space_tags.length}}">{{item.space_tags[0]}}</view>
-          </view>
+          <view wx:else class="price-ghost">登录后查看价格</view>
+          <view class="product-arrow"></view>
         </view>
       </view>
     </view>
+  </view>
 
-    <view class="loading-block" wx:elif="{{loading}}">
-      <view class="loading-text">加载中...</view>
-    </view>
+  <view class="loading-block" wx:elif="{{loading}}">
+    <view class="loading-text">加载中...</view>
+  </view>
 
-    <bh-empty wx:else title="暂无符合条件的产品" subtitle="换一个场景、空间或区域，再看一组新的方案。" />
+  <bh-empty wx:else title="暂无符合条件的产品" subtitle="换一个场景、空间或区域，再看一组新的方案。" />
 
-    <view class="loading-block" wx:if="{{loadingMore}}">
-      <view class="loading-text">正在加载更多...</view>
-    </view>
-    <view class="loading-block" wx:elif="{{!pagination.hasMore && products.length}}">
-      <view class="loading-text">没有更多了</view>
-    </view>
-  </scroll-view>
+  <view class="loading-block" wx:if="{{loadingMore}}">
+    <view class="loading-text">正在加载更多...</view>
+  </view>
+  <view class="loading-block" wx:elif="{{!pagination.hasMore && products.length}}">
+    <view class="loading-text">没有更多了</view>
+  </view>
 
   <view class="area-picker-popup {{showAreaPicker ? 'show' : ''}}" catchtouchmove="preventMove">
     <view class="area-picker-mask" bindtap="hideAreaPicker"></view>
@@ -113,5 +144,4 @@
       </scroll-view>
     </view>
   </view>
-
 </bh-shell>

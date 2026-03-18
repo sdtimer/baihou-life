@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/splash/index",
     "pages/home/index",
     "pages/auth/index",
     "pages/product/list/index",

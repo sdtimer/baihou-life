@@ -1,8 +1,10 @@
 const env = require("../config/env");
 const request = require("../utils/request");
 const mock = require("../utils/mock");
+const userStore = require("../store/user");
 
 const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_FEED_PAGE_SIZE = 8;
 
 function toAbsoluteUrl(url) {
   if (!url) {
@@ -118,6 +120,56 @@ function normalizeProduct(product = {}) {
   };
 }
 
+function buildFeedPrice(product = {}) {
+  const role = userStore.getRole();
+  if (!role) {
+    return {
+      visible: false,
+      label: "登录后查看",
+      amount: null,
+      unit: product.price_unit || ""
+    };
+  }
+  return {
+    visible: true,
+    label: role === 2 ? "设计师价" : "指导价",
+    amount: role === 2 && product.designer_price ? product.designer_price : product.guide_price,
+    unit: product.price_unit || ""
+  };
+}
+
+function normalizeFeedItem(item = {}) {
+  if (item.type) {
+    return {
+      type: item.type,
+      id: item.id,
+      title: item.title || "",
+      cover_image: toAbsoluteUrl(item.cover_image || item.coverImage || ""),
+      subtitle: item.subtitle || "",
+      tags: parseArray(item.tags).slice(0, 3),
+      price: item.price || { visible: false, label: "登录后查看", amount: null, unit: "" },
+      action: item.action || ""
+    };
+  }
+
+  const product = normalizeProduct(item);
+  const tags = []
+    .concat(product.scene_tags || [])
+    .concat(product.space_tags || [])
+    .filter(Boolean)
+    .slice(0, 3);
+  return {
+    type: "product",
+    id: product.id,
+    title: product.name,
+    cover_image: product.cover_image,
+    subtitle: product.brand || product.category_name || "柏厚生活",
+    tags,
+    price: buildFeedPrice(product),
+    action: `/pages/product/detail/index?id=${product.id}`
+  };
+}
+
 function applyMockFilters(items, params = {}) {
   return items.filter((item) => {
     if (params.keyword && !`${item.name}${item.brand}`.includes(params.keyword)) {
@@ -191,6 +243,48 @@ async function listProducts(params = {}) {
   };
 }
 
+async function getFeed(params = {}) {
+  if (env.useMock) {
+    const filtered = applyMockSort(applyMockFilters(mock.products, {
+      region_id: params.region_id
+    }), "default");
+    const safePageNum = Number(params.pageNum || 1);
+    const safePageSize = Number(params.pageSize || DEFAULT_FEED_PAGE_SIZE);
+    const start = (safePageNum - 1) * safePageSize;
+    const rows = filtered
+      .slice(start, start + safePageSize)
+      .map(normalizeFeedItem)
+      .filter((item) => item.cover_image);
+    return mock.delay({
+      rows,
+      total: filtered.length,
+      pageNum: safePageNum,
+      pageSize: safePageSize,
+      hasMore: start + rows.length < filtered.length
+    });
+  }
+
+  const response = await request({
+    url: "/v1/feed/list",
+    data: {
+      pageNum: params.pageNum || 1,
+      pageSize: params.pageSize || DEFAULT_FEED_PAGE_SIZE,
+      ...params
+    }
+  });
+  const rows = (response.rows || []).map(normalizeFeedItem);
+  const total = Number(response.total || rows.length);
+  const pageNum = Number(params.pageNum || 1);
+  const pageSize = Number(params.pageSize || DEFAULT_FEED_PAGE_SIZE);
+  return {
+    rows,
+    total,
+    pageNum,
+    pageSize,
+    hasMore: pageNum * pageSize < total
+  };
+}
+
 async function getProductDetail(id, region_id) {
   if (env.useMock) {
     const product = mock.products.find((item) => item.id === Number(id) && (item.regions.includes("ALL") || item.regions.includes(region_id)));
@@ -218,6 +312,7 @@ async function getCategories() {
 }
 
 module.exports = {
+  getFeed,
   listProducts,
   getProductDetail,
   getCategories

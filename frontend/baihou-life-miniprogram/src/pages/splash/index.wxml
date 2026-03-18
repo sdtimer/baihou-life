@@ -1,0 +1,15 @@
+<view class="splash-page">
+  <view class="splash-halo splash-halo--one"></view>
+  <view class="splash-halo splash-halo--two"></view>
+
+  <view class="splash-main">
+    <view class="splash-brand">Baihou Life</view>
+    <view class="splash-title">柏厚生活</view>
+    <view class="splash-subtitle">从区域交付能力出发，重构家居发现与选品体验</view>
+  </view>
+
+  <view class="splash-footer">
+    <view class="splash-region">{{regionLabel}}</view>
+    <view class="splash-loading">{{loadingText}}</view>
+  </view>
+</view>

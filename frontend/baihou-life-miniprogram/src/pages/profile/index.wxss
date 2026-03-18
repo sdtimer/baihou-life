@@ -237,6 +237,34 @@
   border-radius: 50%;
 }
 
+.menu-icon-favorite {
+  border-radius: 12rpx;
+  background: rgba(201, 169, 110, 0.16);
+}
+
+.menu-icon-favorite::before,
+.menu-icon-favorite::after {
+  content: '';
+  position: absolute;
+  top: 10rpx;
+  width: 12rpx;
+  height: 20rpx;
+  background: #8a6a2d;
+  border-radius: 12rpx 12rpx 0 0;
+}
+
+.menu-icon-favorite::before {
+  left: 8rpx;
+  transform: rotate(-45deg);
+  transform-origin: right bottom;
+}
+
+.menu-icon-favorite::after {
+  right: 8rpx;
+  transform: rotate(45deg);
+  transform-origin: left bottom;
+}
+
 .menu-icon-service {
   border: 4rpx solid #6f5a45;
   border-radius: 50%;

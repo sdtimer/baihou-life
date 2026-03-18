@@ -120,5 +120,12 @@ Page({
       icon: "none"
     });
     navigation.navigate("/pages/product/list/index");
+  },
+
+  openFavoritesPlaceholder() {
+    wx.showToast({
+      title: "我的收藏即将上线",
+      icon: "none"
+    });
   }
 });

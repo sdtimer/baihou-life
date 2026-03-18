@@ -1,168 +1,113 @@
-<bh-shell title="柏厚生活" subtitle="以区域化选品、空间方案和场景灵感，组织更轻的家居决策。">
-  <view class="banner">
-    <view class="banner-bg"></view>
-    <view class="banner-content">
-      <view class="brand-name">柏厚生活</view>
-      <view class="brand-tagline">Baihou Life</view>
-      <view class="banner-actions">
-        <button class="{{isDesigner ? 'role-button role-button--designer' : 'role-button'}}" bindtap="goAuth">
-          {{isDesigner ? '设计师身份已启用' : '登录查看专属价'}}
-        </button>
+<bh-shell title="柏厚生活" subtitle="品牌入口、区域选品与高质量商品流，在首页轻量完成。">
+  <view class="topbar">
+    <view class="topbar-search" bindtap="openSearch">
+      <input
+        class="topbar-search__input"
+        placeholder="搜索品牌、品类或产品名"
+        value="{{searchKeyword}}"
+        bindinput="bindSearchKeyword"
+        bindconfirm="goProductList"
+        confirm-type="search"
+      />
+      <view class="topbar-search__button" bindtap="goProductList">搜索</view>
+    </view>
+    <view class="topbar-region" bindtap="showRegionPicker">
+      <view class="topbar-region__label">{{regionLabel || '选择城市'}}</view>
+      <view class="topbar-region__arrow"></view>
+    </view>
+  </view>
+
+  <view class="brand-panel">
+    <view class="brand-panel__glow"></view>
+    <view class="brand-panel__content">
+      <view class="brand-panel__eyebrow">Baihou Life</view>
+      <view class="brand-panel__title">柏厚生活</view>
+      <view class="brand-panel__desc">围绕城市交付能力，组织主材、定制与设计服务，先用高质量主图筛出值得看的商品。</view>
+      <view class="brand-panel__actions">
+        <view class="brand-chip">{{isDesigner ? '设计师模式已启用' : (isLoggedIn ? '客户身份浏览中' : '游客浏览中')}}</view>
+        <view class="brand-link" bindtap="goAuth">{{isLoggedIn ? '切换身份' : '登录查看价格'}}</view>
       </view>
     </view>
   </view>
 
-  <view class="section">
+  <view class="quick-grid">
+    <view class="quick-card" bindtap="goProductList">
+      <view class="quick-card__icon quick-card__icon--product"></view>
+      <view class="quick-card__title">全部产品</view>
+      <view class="quick-card__desc">进入选品中心看完整筛选</view>
+    </view>
+    <view class="quick-card" bindtap="goAppointment">
+      <view class="quick-card__icon quick-card__icon--appointment"></view>
+      <view class="quick-card__title">预约服务</view>
+      <view class="quick-card__desc">围绕当前城市预约量尺与设计</view>
+    </view>
+    <view class="quick-card" bindtap="openDesignerEntry">
+      <view class="quick-card__icon quick-card__icon--designer"></view>
+      <view class="quick-card__title">设计师入口</view>
+      <view class="quick-card__desc">查看专属价格与高清素材下载</view>
+    </view>
+  </view>
+
+  <view class="feed-section">
     <view class="section-header">
-      <view class="section-left">
-        <view class="section-title">选择区域</view>
-        <view class="section-subtitle">Region</view>
-      </view>
-    </view>
-    <view class="picker-trigger" bindtap="showRegionPicker">
-      <view class="picker-value {{currentRegion ? '' : 'picker-placeholder'}}">
-        {{regionLabel || '请选择服务区域'}}
-      </view>
-      <view class="picker-arrow"></view>
-    </view>
-  </view>
-
-  <view class="section section--compact">
-    <view class="quick-entry">
-      <view class="entry-item {{currentTab === 'category' ? 'active' : ''}}" bindtap="onTabChange" data-tab="category">
-        <view class="entry-title">品类</view>
-        <view class="entry-subtitle">Category</view>
-      </view>
-      <view class="entry-item {{currentTab === 'space' ? 'active' : ''}}" bindtap="onTabChange" data-tab="space">
-        <view class="entry-title">空间</view>
-        <view class="entry-subtitle">Space</view>
-      </view>
-      <view class="entry-item {{currentTab === 'scene' ? 'active' : ''}}" bindtap="onTabChange" data-tab="scene">
-        <view class="entry-title">场景</view>
-        <view class="entry-subtitle">Scene</view>
-      </view>
-    </view>
-  </view>
-
-  <view class="section" wx:if="{{currentTab === 'scene'}}">
-    <view class="section-header">
-      <view class="section-left">
-        <view class="section-title">场景切换</view>
-        <view class="section-subtitle">Mood</view>
-      </view>
-    </view>
-    <scroll-view scroll-x class="home-scenes">
-      <view class="home-scenes__track">
-        <view
-          wx:for="{{sceneTabs}}"
-          wx:key="value"
-          class="scene-pill {{activeScene === item.value ? 'scene-pill--active' : ''}}"
-          data-scene="{{item.value}}"
-          bindtap="changeScene"
-        >
-          {{item.label}}
-        </view>
-      </view>
-    </scroll-view>
-  </view>
-
-  <view class="section" wx:if="{{currentTab === 'space'}}">
-    <view class="section-header">
-      <view class="section-left">
-        <view class="section-title">空间切换</view>
-        <view class="section-subtitle">Space</view>
-      </view>
-    </view>
-    <scroll-view scroll-x class="home-scenes">
-      <view class="home-scenes__track">
-        <view
-          wx:for="{{spaceTabs}}"
-          wx:key="value"
-          class="scene-pill {{activeSpace === item.value ? 'scene-pill--active' : ''}}"
-          data-space="{{item.value}}"
-          bindtap="changeSpace"
-        >
-          {{item.label}}
-        </view>
-      </view>
-    </scroll-view>
-  </view>
-
-  <view class="section" wx:if="{{currentTab === 'category'}}">
-    <view class="section-header">
-      <view class="section-left">
-        <view class="section-title">品类切换</view>
-        <view class="section-subtitle">Category</view>
-      </view>
-    </view>
-    <scroll-view scroll-x class="home-scenes">
-      <view class="home-scenes__track">
-        <view
-          class="scene-pill {{!activeCategoryId ? 'scene-pill--active' : ''}}"
-          data-category-id=""
-          bindtap="changeCategory"
-        >
-          全部
-        </view>
-        <view
-          wx:for="{{categoryTabs}}"
-          wx:key="category_id"
-          class="scene-pill {{activeCategoryId === item.category_id ? 'scene-pill--active' : ''}}"
-          data-category-id="{{item.category_id}}"
-          bindtap="changeCategory"
-        >
-          {{item.category_name}}
-        </view>
-      </view>
-    </scroll-view>
-  </view>
-
-  <view class="section">
-    <view class="section-header">
-      <view class="section-left">
-        <view class="section-title">{{currentSectionTitle}}</view>
-        <view class="section-subtitle">{{currentSectionSubtitle}}</view>
+      <view>
+        <view class="section-title">本地上新</view>
+        <view class="section-subtitle">仅展示当前区域已上架且有主图的商品</view>
       </view>
       <view class="section-more" bindtap="goProductList">查看全部</view>
     </view>
+
     <bh-empty wx:if="{{errorMessage}}" title="首页加载失败" subtitle="{{errorMessage}}" />
-    <scroll-view wx:else class="scene-scroll" scroll-x enhanced show-scrollbar="{{false}}">
-      <view
-        class="scene-card"
-        wx:for="{{heroProducts}}"
-        wx:key="id"
-        bindtap="openDetail"
-        data-id="{{item.id}}"
-      >
-        <image wx:if="{{item.cover_image}}" class="scene-image" src="{{item.cover_image}}" mode="aspectFill" />
-        <view wx:else class="scene-image scene-image--placeholder">
-          <view class="scene-image__icon"></view>
-          <view class="scene-image__text">{{item.category_name}}</view>
-        </view>
-        <view class="scene-info">
-          <view class="scene-name">{{item.name}}</view>
-          <view class="scene-desc">{{item.brand}} · {{item.category_name}}</view>
-          <view class="scene-price">
-            <text class="price-current">¥{{isDesigner && item.designer_price ? item.designer_price : item.guide_price}}</text>
-            <text class="price-original" wx:if="{{isDesigner && item.guide_price}}">¥{{item.guide_price}}</text>
+
+    <view wx:elif="{{loading}}" class="loading-block">
+      <view class="loading-text">正在加载精选内容...</view>
+    </view>
+
+    <view wx:elif="{{feedLeft.length || feedRight.length}}" class="feed-columns">
+      <view class="feed-column">
+        <view class="feed-card" wx:for="{{feedLeft}}" wx:key="id" bindtap="openDetail" data-id="{{item.id}}">
+          <image class="feed-card__image" src="{{item.cover_image}}" mode="widthFix" />
+          <view class="feed-card__body">
+            <view class="feed-card__title">{{item.title}}</view>
+            <view class="feed-card__subtitle">{{item.subtitle}}</view>
+            <view class="feed-card__tags" wx:if="{{item.tags.length}}">
+              <view class="feed-card__tag" wx:for="{{item.tags}}" wx:key="index">{{item}}</view>
+            </view>
+            <view wx:if="{{item.price.visible}}" class="feed-card__price">
+              <text class="feed-card__price-label">{{item.price.label}}</text>
+              <text class="feed-card__price-value">¥{{item.price.amount}}</text>
+              <text class="feed-card__price-unit">{{item.price.unit}}</text>
+            </view>
+            <view wx:else class="feed-card__price feed-card__price--ghost">登录后查看价格</view>
           </view>
         </view>
       </view>
-    </scroll-view>
-  </view>
-
-  <view class="section">
-    <view class="cta-card">
-      <view class="cta-content">
-        <view class="cta-title">免费获取设计方案</view>
-        <view class="cta-desc">专业设计师一对一服务，围绕当前城市提供更落地的方案。</view>
+      <view class="feed-column">
+        <view class="feed-card" wx:for="{{feedRight}}" wx:key="id" bindtap="openDetail" data-id="{{item.id}}">
+          <image class="feed-card__image" src="{{item.cover_image}}" mode="widthFix" />
+          <view class="feed-card__body">
+            <view class="feed-card__title">{{item.title}}</view>
+            <view class="feed-card__subtitle">{{item.subtitle}}</view>
+            <view class="feed-card__tags" wx:if="{{item.tags.length}}">
+              <view class="feed-card__tag" wx:for="{{item.tags}}" wx:key="index">{{item}}</view>
+            </view>
+            <view wx:if="{{item.price.visible}}" class="feed-card__price">
+              <text class="feed-card__price-label">{{item.price.label}}</text>
+              <text class="feed-card__price-value">¥{{item.price.amount}}</text>
+              <text class="feed-card__price-unit">{{item.price.unit}}</text>
+            </view>
+            <view wx:else class="feed-card__price feed-card__price--ghost">登录后查看价格</view>
+          </view>
+        </view>
       </view>
-      <view class="cta-button" bindtap="goAppointment">立即预约</view>
     </view>
+
+    <bh-empty wx:else title="当前区域暂无上新" subtitle="换一个城市，或稍后再回来看看。" />
   </view>
 
-  <view class="footer">
-    <view class="footer-text">柏厚生活 · 自然与人文的融合</view>
+  <view class="story-card">
+    <view class="story-card__title">品牌说明</view>
+    <view class="story-card__desc">柏厚生活用区域可交付商品做发现页，用完整筛选承接选品页，让首页先服务浏览，再服务决策。</view>
   </view>
 
   <view class="picker-popup {{pickerVisible ? 'picker-popup--visible' : ''}}" catchtouchmove="preventMove">
@@ -187,5 +132,4 @@
       </scroll-view>
     </view>
   </view>
-
 </bh-shell>

@@ -3,21 +3,24 @@ const productService = require("../../services/product");
 const userStore = require("../../store/user");
 const regionStore = require("../../store/region");
 const location = require("../../utils/location");
+const navigation = require("../../utils/navigation");
+const auth = require("../../utils/auth");
 
-const TAB_CONFIG = {
-  category: {
-    title: "区域精选",
-    subtitle: "Category"
-  },
-  space: {
-    title: "空间推荐",
-    subtitle: "Space"
-  },
-  scene: {
-    title: "场景灵感",
-    subtitle: "Scene"
-  }
-};
+const FEED_PAGE_SIZE = 8;
+
+function splitFeedRows(rows = []) {
+  return rows.reduce((result, item, index) => {
+    if (index % 2 === 0) {
+      result.left.push(item);
+    } else {
+      result.right.push(item);
+    }
+    return result;
+  }, {
+    left: [],
+    right: []
+  });
+}
 
 Page({
   data: {
@@ -26,106 +29,102 @@ Page({
     regionLabel: regionStore.getState().current.region_name,
     pickerVisible: false,
     tempPickerValue: "",
-    heroProducts: [],
+    feedLeft: [],
+    feedRight: [],
+    searchKeyword: "",
     errorMessage: "",
-    categoryTabs: [],
-    spaceTabs: [
-      { label: "客厅", value: "living_room" },
-      { label: "厨房", value: "kitchen" },
-      { label: "卫浴", value: "bathroom" },
-      { label: "卧室", value: "bedroom" }
-    ],
-    sceneTabs: [
-      { label: "极简", value: "minimalist" },
-      { label: "治愈", value: "healing" },
-      { label: "侘寂", value: "wabi_sabi" }
-    ],
-    activeCategoryId: "",
-    activeSpace: "living_room",
-    activeScene: "minimalist",
-    currentTab: "category",
-    currentSectionTitle: TAB_CONFIG.category.title,
-    currentSectionSubtitle: TAB_CONFIG.category.subtitle,
-    isDesigner: userStore.isDesigner()
+    loading: true,
+    isDesigner: userStore.isDesigner(),
+    isLoggedIn: userStore.isLoggedIn()
   },
 
   onShow() {
     this.setData({
       currentRegion: regionStore.getState().current,
       regionLabel: regionStore.getState().current.region_name,
-      isDesigner: userStore.isDesigner()
+      isDesigner: userStore.isDesigner(),
+      isLoggedIn: userStore.isLoggedIn()
     });
     this.bootstrap();
   },
 
   async bootstrap() {
     try {
-      const regionResponse = await configService.getRegions();
-      const regions = Array.isArray(regionResponse.data)
-        ? regionResponse.data
-        : Array.isArray(regionResponse.data?.regions)
-          ? regionResponse.data.regions
-          : Array.isArray(regionResponse.regions)
-            ? regionResponse.regions
-            : [];
+      const { current, regions } = await this.ensureRegions();
+      const prefetched = getApp().globalData.homePrefetch;
       if (!regions.length) {
         throw new Error("EMPTY_REGIONS");
       }
-      regionStore.setRegions(regions);
-      if (!regionStore.isInitialized()) {
-        const detected = await location.detectRegion(regions);
-        location.applyRegion(detected || regions[0]);
-      }
-      const current = regionStore.getState().current;
-      const categoryResponse = await productService.getCategories();
-      const categories = (categoryResponse.categories || []).reduce((result, item) => result.concat(item.children || []), []);
       this.setData({
         currentRegion: current,
         regionOptions: regions,
         regionLabel: current.region_name,
-        tempPickerValue: current.region_id,
-        categoryTabs: categories
+        tempPickerValue: current.region_id
       });
-      await this.loadHeroProducts();
+
+      if (prefetched && prefetched.region_id === current.region_id && Array.isArray(prefetched.rows) && prefetched.rows.length) {
+        this.applyFeed(prefetched.rows);
+      }
+
+      await this.loadFeed({ silent: Boolean(prefetched && prefetched.region_id === current.region_id) });
     } catch (error) {
       this.setData({
-        heroProducts: [],
+        feedLeft: [],
+        feedRight: [],
+        loading: false,
         errorMessage: "首页内容加载失败，请稍后重试。"
       });
     }
   },
 
-  async loadHeroProducts() {
-    const query = {
-      region_id: this.data.currentRegion.region_id,
-      pageNum: 1,
-      pageSize: 6
+  async ensureRegions() {
+    const regionResponse = await configService.getRegions();
+    const regions = Array.isArray(regionResponse.data)
+      ? regionResponse.data
+      : Array.isArray(regionResponse.data?.regions)
+        ? regionResponse.data.regions
+        : Array.isArray(regionResponse.regions)
+          ? regionResponse.regions
+          : [];
+    regionStore.setRegions(regions);
+    if (!regionStore.isInitialized()) {
+      const detected = await location.detectRegion(regions);
+      location.applyRegion(detected || regions[0]);
+    } else if (!regionStore.getState().current.region_id && regions.length) {
+      regionStore.setCurrent(regions[0]);
+    }
+    return {
+      current: regionStore.getState().current,
+      regions
     };
-    if (this.data.currentTab === "space") {
-      query.space = this.data.activeSpace;
-    }
-    if (this.data.currentTab === "category" && this.data.activeCategoryId) {
-      query.category_id = this.data.activeCategoryId;
-    }
-    if (this.data.currentTab === "scene") {
-      query.scene = this.data.activeScene;
-    }
-    const productResponse = await productService.listProducts(query);
-    const rows = await Promise.all((productResponse.rows || []).map(async (item) => {
-      if (item.cover_image) {
-        return item;
-      }
-      try {
-        const detail = await productService.getProductDetail(item.id, this.data.currentRegion.region_id);
-        return detail ? { ...item, cover_image: detail.cover_image || item.cover_image } : item;
-      } catch (error) {
-        return item;
-      }
-    }));
+  },
+
+  applyFeed(rows = []) {
+    const columns = splitFeedRows(rows);
     this.setData({
-      heroProducts: rows,
+      feedLeft: columns.left,
+      feedRight: columns.right,
+      loading: false,
       errorMessage: ""
     });
+  },
+
+  async loadFeed({ silent = false } = {}) {
+    if (!silent) {
+      this.setData({ loading: true });
+    }
+    const response = await productService.getFeed({
+      region_id: this.data.currentRegion.region_id,
+      pageNum: 1,
+      pageSize: FEED_PAGE_SIZE
+    });
+    const rows = response.rows || [];
+    getApp().globalData.homePrefetch = {
+      region_id: this.data.currentRegion.region_id,
+      rows,
+      ts: Date.now()
+    };
+    this.applyFeed(rows);
   },
 
   showRegionPicker() {
@@ -157,67 +156,47 @@ Page({
       regionLabel: nextRegion.region_name,
       pickerVisible: false
     });
-    await this.loadHeroProducts();
+    await this.loadFeed();
   },
 
   preventMove() {},
 
-  async onTabChange(event) {
-    const { tab } = event.currentTarget.dataset;
-    const nextMeta = TAB_CONFIG[tab] || TAB_CONFIG.category;
+  bindSearchKeyword(event) {
     this.setData({
-      currentTab: tab,
-      currentSectionTitle: nextMeta.title,
-      currentSectionSubtitle: nextMeta.subtitle
+      searchKeyword: event.detail.value
     });
-    await this.loadHeroProducts();
-  },
-
-  async changeScene(event) {
-    const { scene } = event.currentTarget.dataset;
-    this.setData({
-      activeScene: scene
-    });
-    if (this.data.currentTab === "scene") {
-      await this.loadHeroProducts();
-    }
-  },
-
-  async changeSpace(event) {
-    const { space } = event.currentTarget.dataset;
-    this.setData({
-      activeSpace: space
-    });
-    if (this.data.currentTab === "space") {
-      await this.loadHeroProducts();
-    }
-  },
-
-  async changeCategory(event) {
-    const { categoryId } = event.currentTarget.dataset;
-    this.setData({
-      activeCategoryId: categoryId || ""
-    });
-    if (this.data.currentTab === "category") {
-      await this.loadHeroProducts();
-    }
   },
 
   goProductList() {
-    wx.reLaunch({ url: "/pages/product/list/index" });
+    const params = this.data.searchKeyword ? { keyword: this.data.searchKeyword } : {};
+    navigation.navigate("/pages/product/list/index", { params });
   },
 
   goAppointment() {
-    wx.reLaunch({ url: "/pages/appointment/list/index" });
+    navigation.navigate("/pages/appointment/list/index");
+  },
+
+  openDesignerEntry() {
+    if (!auth.requireRole(2, {
+      redirect: "/pages/home/index",
+      message: "设计师账号可查看高清素材与专属能力"
+    })) {
+      return;
+    }
+    navigation.navigate("/pages/designer/assets/index");
   },
 
   openDetail(event) {
     const id = event.currentTarget.dataset.id || event.detail.id;
-    wx.navigateTo({ url: `/pages/product/detail/index?id=${id}` });
+    navigation.navigate(`/pages/product/detail/index?id=${id}`);
   },
 
   goAuth() {
-    wx.navigateTo({ url: "/pages/auth/index" });
+    navigation.navigate("/pages/auth/index");
+  },
+
+  openSearch() {
+    this.goProductList();
   },
 
   retry() {

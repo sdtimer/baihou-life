@@ -23,6 +23,7 @@ import com.ruoyi.common.exception.ServiceException;
 /**
  * 小程序商品接口
  * GET /v1/product/categories
+ * GET /v1/feed/list
  * GET /v2/product/list
  * GET /v2/product/{id}
  */
@@ -94,6 +95,55 @@ public class BaihouMiniProductController
         m.put("label", labelText);
         m.put("value", value);
         return m;
+    }
+
+    /**
+     * 首页商品 feed
+     */
+    @GetMapping("/v1/feed/list")
+    public AjaxResult feed(
+            HttpServletRequest request,
+            @RequestParam(name = "region_id", required = false) String regionId,
+            @RequestParam(name = "pageNum", required = false) Integer pageNum,
+            @RequestParam(name = "pageSize", required = false) Integer pageSize)
+    {
+        if (regionId == null || regionId.isBlank())
+        {
+            return AjaxResult.error(400, "region_id 不能为空");
+        }
+
+        BaihouProduct query = new BaihouProduct();
+        query.setStatus("on_shelf");
+        query.setRegionId(regionId);
+        query.setSortBy("default");
+        query.setPageNum(pageNum);
+        query.setPageSize(pageSize);
+
+        Integer role = BaihouMiniContext.getRole();
+        String serverBaseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        List<Map<String, Object>> rows = productService.selectProductList(query).stream()
+                .map(product -> {
+                    BaihouProduct detail = productService.selectProductById(product.getId());
+                    BaihouProduct target = detail != null ? detail : product;
+                    MiniProductVO vo = MiniProductVO.from(target, role, serverBaseUrl);
+                    Map<String, Object> item = new HashMap<>();
+                    item.put("type", "product");
+                    item.put("id", vo.getId());
+                    item.put("title", vo.getName());
+                    item.put("cover_image", vo.getCoverImage());
+                    item.put("subtitle", vo.getBrand());
+                    item.put("tags", buildFeedTags(target));
+                    item.put("price", buildFeedPrice(vo, role));
+                    item.put("action", "/pages/product/detail/index?id=" + vo.getId());
+                    return item;
+                })
+                .filter(item -> item.get("cover_image") != null && !String.valueOf(item.get("cover_image")).isBlank())
+                .collect(Collectors.toList());
+
+        AjaxResult result = AjaxResult.success();
+        result.put("rows", rows);
+        result.put("total", rows.size());
+        return result;
     }
 
     /**
@@ -184,5 +234,38 @@ public class BaihouMiniProductController
             return false;
         }
         return regions.contains("\"ALL\"") || regions.contains("\"" + regionId + "\"");
+    }
+
+    private List<String> buildFeedTags(BaihouProduct product)
+    {
+        String source = product.getSceneTags();
+        if (source == null || source.isBlank())
+        {
+            source = product.getSpaceTags();
+        }
+        if (source == null || source.isBlank())
+        {
+            return List.of();
+        }
+        return Arrays.stream(source.split(","))
+                .map(String::trim)
+                .filter(value -> !value.isEmpty())
+                .limit(3)
+                .collect(Collectors.toList());
+    }
+
+    private Map<String, Object> buildFeedPrice(MiniProductVO product, Integer role)
+    {
+        Map<String, Object> price = new HashMap<>();
+        if (role == null || Integer.valueOf(0).equals(role))
+        {
+            price.put("visible", false);
+            return price;
+        }
+        price.put("visible", true);
+        price.put("label", Integer.valueOf(2).equals(role) ? "设计师价" : "指导价");
+        price.put("amount", Integer.valueOf(2).equals(role) ? product.getDesignerPrice() : product.getGuidePrice());
+        price.put("unit", product.getPriceUnit());
+        return price;
     }
 }

@@ -111,6 +111,35 @@ class BaihouMiniControllerTest
     }
 
     @Test
+    void miniFeedShouldRequireRegionAndReturnProductCards()
+    {
+        IBaihouProductService productService = Mockito.mock(IBaihouProductService.class);
+        BaihouProduct product = new BaihouProduct(1001L, "测试商品", "BH-001", "on_shelf");
+        product.setBrand("柏厚精选");
+        product.setGuidePrice(new BigDecimal("1280.00"));
+        product.setDesignerDiscount(new BigDecimal("0.85"));
+        product.setSceneImages(List.of(new BaihouMedia(1L, "scene", "/profile/products/feed-cover.jpg")));
+        Mockito.when(productService.selectProductList(Mockito.any(BaihouProduct.class))).thenReturn(List.of(product));
+
+        BaihouMiniProductController controller = new BaihouMiniProductController();
+        ReflectionTestUtils.setField(controller, "productService", productService);
+        ReflectionTestUtils.setField(controller, "categoryService", Mockito.mock(IBaihouCategoryService.class));
+
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/v1/feed/list");
+        request.setScheme("http");
+        request.setServerName("localhost");
+        request.setServerPort(8080);
+
+        assertEquals(400, controller.feed(request, null, 1, 10).get("code"));
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> rows = (List<Map<String, Object>>) controller.feed(request, "foshan", 1, 10).get("rows");
+        assertEquals("product", rows.get(0).get("type"));
+        assertEquals("测试商品", rows.get(0).get("title"));
+        assertNotNull(rows.get(0).get("cover_image"));
+    }
+
+    @Test
     void miniDesignerAssetTokenShouldReturnUrl()
     {
         IBaihouProductService productService = Mockito.mock(IBaihouProductService.class);

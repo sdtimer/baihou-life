@@ -1,0 +1,85 @@
+.splash-page {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.16) 0%, transparent 28%),
+    radial-gradient(circle at bottom right, rgba(236, 242, 229, 0.12) 0%, transparent 30%),
+    linear-gradient(135deg, #5b493b 0%, #756251 46%, #76835d 100%);
+}
+
+.splash-halo {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(8rpx);
+  opacity: 0.72;
+}
+
+.splash-halo--one {
+  width: 360rpx;
+  height: 360rpx;
+  top: 120rpx;
+  right: -100rpx;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.splash-halo--two {
+  width: 420rpx;
+  height: 420rpx;
+  left: -120rpx;
+  bottom: 180rpx;
+  background: rgba(220, 231, 201, 0.12);
+}
+
+.splash-main {
+  position: absolute;
+  left: 52rpx;
+  right: 52rpx;
+  top: 18vh;
+}
+
+.splash-brand {
+  font-size: 22rpx;
+  letter-spacing: 10rpx;
+  color: rgba(255, 255, 255, 0.76);
+  margin-bottom: 20rpx;
+}
+
+.splash-title {
+  font-size: 76rpx;
+  line-height: 1.08;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 22rpx;
+}
+
+.splash-subtitle {
+  font-size: 28rpx;
+  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.splash-footer {
+  position: absolute;
+  left: 52rpx;
+  right: 52rpx;
+  bottom: 120rpx;
+}
+
+.splash-region {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 62rpx;
+  padding: 0 22rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-size: 24rpx;
+  margin-bottom: 18rpx;
+}
+
+.splash-loading {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.7);
+}

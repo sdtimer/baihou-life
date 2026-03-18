@@ -2,6 +2,7 @@ const configService = require("../../../services/config");
 const productService = require("../../../services/product");
 const regionStore = require("../../../store/region");
 const userStore = require("../../../store/user");
+const navigation = require("../../../utils/navigation");
 
 const DEFAULT_FILTERS = {
   keyword: "",
@@ -24,11 +25,30 @@ const SPACE_OPTIONS = [
   { label: "卧室", value: "bedroom" }
 ];
 
+const PRODUCT_LIST_PATH = "/pages/product/list/index";
+
+function resolveCurrentTab(filters = {}) {
+  if (filters.scene) {
+    return "scene";
+  }
+  if (filters.space) {
+    return "space";
+  }
+  return "category";
+}
+
+function resolveSubTabIndex(tab, filters, tabs = {}) {
+  if (tab === "category") {
+    return tabs.categoryTabs.findIndex((item) => String(item.value || "") === String(filters.category_id || ""));
+  }
+  if (tab === "space") {
+    return tabs.spaceTabs.findIndex((item) => String(item.value || "") === String(filters.space || ""));
+  }
+  return tabs.sceneTabs.findIndex((item) => String(item.value || "") === String(filters.scene || ""));
+}
+
 Page({
   data: {
-    statusBarHeight: 20,
-    navBarHeight: 64,
-    contentTop: 140,
     currentTab: "category",
     currentSubTab: 0,
     regionLabel: regionStore.getState().current.region_name,
@@ -42,9 +62,9 @@ Page({
     categories: [],
     spaces: [],
     scenes: [],
-    categoryTabs: ["全部"],
-    spaceTabs: ["全部"],
-    sceneTabs: ["全部"],
+    categoryTabs: [{ label: "全部", value: "" }],
+    spaceTabs: [{ label: "全部", value: "" }],
+    sceneTabs: [{ label: "全部", value: "" }],
     sortOptions: SORT_OPTIONS,
     filters: { ...DEFAULT_FILTERS },
     pagination: {
@@ -58,6 +78,7 @@ Page({
   },
 
   onShow() {
+    this.pendingRedirectState = navigation.consumeTabRedirectState(PRODUCT_LIST_PATH) || null;
     this.setData({
       currentRegion: regionStore.getState().current,
       regionLabel: regionStore.getState().current.region_name,
@@ -66,19 +87,6 @@ Page({
       isDesigner: userStore.isDesigner()
     });
     this.bootstrap();
-  },
-
-  onLoad() {
-    const { statusBarHeight, windowWidth } = wx.getSystemInfoSync();
-    const rpxToPx = windowWidth / 750;
-    const navBarHeight = (statusBarHeight || 20) + 44;
-    const subTabsHeight = Math.ceil(100 * rpxToPx);
-    const gap = Math.ceil(20 * rpxToPx);
-    this.setData({
-      statusBarHeight: statusBarHeight || 20,
-      navBarHeight,
-      contentTop: navBarHeight + subTabsHeight + gap
-    });
   },
 
   onReachBottom() {
@@ -112,6 +120,25 @@ Page({
       const categories = (categoryResponse.categories || []).reduce((result, item) => result.concat(item.children || []), []);
       const spaces = SPACE_OPTIONS;
       const scenes = categoryResponse.scenes || [];
+      const categoryTabs = [{ label: "全部", value: "" }].concat(
+        categories.map((item) => ({ label: item.category_name, value: item.category_id }))
+      );
+      const spaceTabs = [{ label: "全部", value: "" }].concat(
+        spaces.map((item) => ({ label: item.label, value: item.value }))
+      );
+      const sceneTabs = [{ label: "全部", value: "" }].concat(
+        scenes.map((item) => ({ label: item.label, value: item.value }))
+      );
+      const nextFilters = {
+        ...DEFAULT_FILTERS,
+        ...(this.pendingRedirectState || {})
+      };
+      const currentTab = resolveCurrentTab(nextFilters);
+      const currentSubTab = Math.max(0, resolveSubTabIndex(currentTab, nextFilters, {
+        categoryTabs,
+        spaceTabs,
+        sceneTabs
+      }));
       this.setData({
         currentRegion,
         regionLabel: currentRegion.region_name,
@@ -119,10 +146,14 @@ Page({
         spaces,
         scenes,
         regionOptions: regions || [],
-        categoryTabs: ["全部"].concat(categories.map((item) => item.category_name)),
-        spaceTabs: ["全部"].concat(spaces.map((item) => item.label)),
-        sceneTabs: ["全部"].concat(scenes.map((item) => item.label))
+        categoryTabs,
+        spaceTabs,
+        sceneTabs,
+        currentTab,
+        currentSubTab,
+        filters: nextFilters
       });
+      this.pendingRedirectState = null;
       await this.fetchProducts({ reset: true });
     } catch (error) {
       this.setData({
@@ -211,13 +242,13 @@ Page({
     const { index } = event.currentTarget.dataset;
     const nextFilters = { ...this.data.filters };
     if (this.data.currentTab === "category") {
-      nextFilters.category_id = index === 0 ? "" : (this.data.categories[index - 1] ? this.data.categories[index - 1].category_id : "");
+      nextFilters.category_id = this.data.categoryTabs[index] ? this.data.categoryTabs[index].value : "";
     }
     if (this.data.currentTab === "space") {
-      nextFilters.space = index === 0 ? "" : (this.data.spaces[index - 1] ? this.data.spaces[index - 1].value : "");
+      nextFilters.space = this.data.spaceTabs[index] ? this.data.spaceTabs[index].value : "";
     }
     if (this.data.currentTab === "scene") {
-      nextFilters.scene = index === 0 ? "" : (this.data.scenes[index - 1] ? this.data.scenes[index - 1].value : "");
+      nextFilters.scene = this.data.sceneTabs[index] ? this.data.sceneTabs[index].value : "";
     }
     this.setData({
       currentSubTab: index,
@@ -270,8 +301,6 @@ Page({
 
   openDetail(event) {
     const id = event.currentTarget.dataset.id || event.detail.id;
-    wx.navigateTo({
-      url: `/pages/product/detail/index?id=${id}`
-    });
+    navigation.navigate(`/pages/product/detail/index?id=${id}`);
   }
 });
